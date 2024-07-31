@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
@@ -6,6 +6,11 @@ import { Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '@/firebaseConfig';
+
+
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -15,21 +20,46 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
+
+
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
+  useEffect(() => {
+    const checkUserId = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          const newUserId = Math.floor(Math.random() * 1000000).toString();
+
+          await AsyncStorage.setItem('userId', newUserId);
+          await addDoc(collection(db, 'userId'), {
+            userId: newUserId,
+            // Add any other initial user data you need here
+          });
+          console.log('New User ID assigned:', newUserId);
+        } else {
+          console.log('Existing User ID found:', userId);
+        }
+      } catch (error) {
+        console.error('Failed to check or assign User ID:', error);
+      }
+    };
+
+    checkUserId();
+  }, []);
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
+      
         headerShown: useClientOnlyValue(false, true),
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
@@ -50,7 +80,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="two"
         options={{
-          title: 'Tab Two',
+          title: 'You',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
