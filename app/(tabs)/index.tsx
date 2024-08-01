@@ -1,86 +1,81 @@
-import { StyleSheet , Button, TouchableOpacity} from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View} from '@/components/Themed';
-import LottieView from 'lottie-react-native';
-import { useRef, useEffect, useState } from 'react';
-import { Audio } from 'expo-av';
+import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import BitchButton from '@/components/BitchButton';
 
 export default function TabOneScreen() {
-  const animation = useRef<LottieView>(null);
-
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-
-  async function playSound() {
-    const { sound } = await Audio.Sound.createAsync( require('../../assets/bitch-101soundboards2.mp3')
-    );
-    setSound(sound);
-
-    await sound.playAsync();
-  }
 
   const deleteUserId = async () => {
-    await AsyncStorage.removeItem("userId");
-  }
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
+    await AsyncStorage.removeItem('userId');
+  };
+
+  
 
   return (
-    <View style={styles.animationContainer}>
-      <Text style={{fontFamily:"Kal", color:"red",fontSize:30,fontWeight:100}}>IS SHE BEING A </Text>
-      <Text style={{fontFamily:"Kal", color:"red",fontSize:100,fontWeight:100}}>BITCH</Text>
-      <Text style={{fontFamily:"Kal", color:"red",fontSize:30,fontWeight:100}}>TODAY</Text>
-      <TouchableOpacity 
-          onPress={() => {
-          deleteUserId()
-            }}
- 
->
-  <Text>delete user id</Text>
-</TouchableOpacity>
+    <View style={styles.container}>
+      <Text style={styles.title}>IS SHE BEING A</Text>
+      <Text style={styles.mainText}>BITCH</Text>
+      <Text style={styles.subtitle}>TODAY</Text>
 
-     <TouchableOpacity 
-  onPress={() => {
-    animation.current?.reset();
-    animation.current?.play();
-    playSound()
-  }}
-  style={{ width: 400, height: 400 }} 
->
 
-      <LottieView
-  progress={1}
-  loop={false}
-        ref={animation}
-        style={{
-          width: 400,
-          height: 400,
-        }}
-        source={require('../../assets/button.json')}
-      /> 
-      </TouchableOpacity>
+      <BitchButton />
+
      
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  animationContainer: {
+  container: {
     backgroundColor: 'purple',
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
   },
-  buttonContainer: {
-    paddingTop: 20,
+  title: {
+    fontFamily: 'Kal',
+    color: 'red',
+    fontSize: 30,
+    fontWeight: '100',
+  },
+  mainText: {
+    fontFamily: 'Kal',
+    color: 'red',
+    fontSize: 100,
+    fontWeight: '100',
+  },
+  subtitle: {
+    fontFamily: 'Kal',
+    color: 'red',
+    fontSize: 30,
+    fontWeight: '100',
+  },
+  createGroupText: {
+    color: 'black',
+    fontSize: 40,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    width: '100%',
+    paddingHorizontal: 10,
   },
 });

@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import {  Pressable } from 'react-native';
+import * as Linking from 'expo-linking';
+
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -21,6 +23,16 @@ function TabBarIcon(props: {
 }
 
 
+const prefix = Linking.createURL('/');
+
+const linking = {
+  prefixes: [prefix, 'https://bitchButton.page.link', 'bitchButton://'],
+  config: {
+    screens: {
+      JoinGroup: 'join-group',
+    },
+  },
+};
 
 
 export default function TabLayout() {
