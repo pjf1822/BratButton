@@ -23,16 +23,9 @@ function TabBarIcon(props: {
 }
 
 
-const prefix = Linking.createURL('/');
 
-const linking = {
-  prefixes: [prefix, 'https://bitchButton.page.link', 'bitchButton://'],
-  config: {
-    screens: {
-      JoinGroup: 'join-group',
-    },
-  },
-};
+
+
 
 
 export default function TabLayout() {
@@ -63,6 +56,8 @@ export default function TabLayout() {
   }, []);
   return (
     <Tabs
+
+ 
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
       

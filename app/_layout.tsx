@@ -5,6 +5,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
+import * as Linking from 'expo-linking';  // Import Linking from expo-linking
+
 
 import { QueryClient, QueryClientProvider } from "react-query";
 
@@ -60,10 +62,11 @@ function RootLayoutNav() {
   const queryClient = new QueryClient();
 
 
+
   return (
     <QueryClientProvider client={queryClient}>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>

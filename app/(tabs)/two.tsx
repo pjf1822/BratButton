@@ -3,10 +3,18 @@ import QRCode from 'react-native-qrcode-svg';
 import { useState } from 'react';
 import { createGroup } from '@/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking'; 
+import { useRouter,useLocalSearchParams} from 'expo-router';
 
 
 export default function TabTwoScreen() {
 
+  const redirectUrl = Linking.createURL('/two', {
+    queryParams: {thing: "suck a fuck"}
+  });
+
+  const local = useLocalSearchParams();
+  console.log(local,"the things")
 
   const [modalVisible, setModalVisible] = useState(false);
   const [groupName, setGroupName] = useState('');
@@ -20,17 +28,16 @@ export default function TabTwoScreen() {
       }
       
       const groupId = await createGroup({ members: [userId] }, groupName);
-      setModalVisible(false); // Close the modal after creating the group
+      setModalVisible(false);
     } catch (error) {
       console.error("Failed to create group:", error);
     }
   };
 
-  const dynamicLink = "https://yourapp.page.link/join-group?groupId=gc0lOiSUCkPjqKNK08e6";
 
   return (
     <View style={styles.container}>
-<QRCode value={dynamicLink} size={200} />
+<QRCode value={redirectUrl} size={200} />
 
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         <Text style={{color:"black",fontSize:40}}>create gruop</Text>
@@ -42,6 +49,7 @@ export default function TabTwoScreen() {
         onRequestClose={() => {
           setModalVisible(false);
         }}>
+      <Text>{typeof local === 'object' ? JSON.stringify(local, null, 2) : local}</Text>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Enter Group Name</Text>
