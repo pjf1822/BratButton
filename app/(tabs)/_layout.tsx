@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import {  Pressable } from 'react-native';
@@ -11,6 +11,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
+import { createUser, getData, userGroups } from '@/api';
 
 
 
@@ -23,12 +24,16 @@ function TabBarIcon(props: {
 }
 
 
-
+interface Group {
+  id: string;
+  // Add other fields if needed
+}
 
 
 
 
 export default function TabLayout() {
+  const [groupsOfUser, setGroupsOfUser] = useState<Group[]>([]);
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -39,18 +44,22 @@ export default function TabLayout() {
           const newUserId = Math.floor(Math.random() * 1000000).toString();
 
           await AsyncStorage.setItem('userId', newUserId);
-          await addDoc(collection(db, 'userId'), {
-            userId: newUserId,
-            // Add any other initial user data you need here
-          });
-          console.log('New User ID assigned:', newUserId);
+         
+           await createUser({ userId : newUserId }, newUserId);
+
         } else {
-          console.log('Existing User ID found:', userId);
+          const groups = await userGroups(userId);
+          setGroupsOfUser(groups ?? []);
+
+
+          console.log('Existing User ID found:', userId, "they are in these groyups ", groups);
         }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
       }
     };
+
+ 
 
     checkUserId();
   }, []);
@@ -90,6 +99,8 @@ export default function TabLayout() {
           title: 'You',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
+        initialParams={{userGroups:groupsOfUser}}
+     
       />
     </Tabs>
   );

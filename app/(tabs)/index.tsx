@@ -15,7 +15,7 @@ export default function TabOneScreen() {
       <Text style={styles.title}>IS SHE BEING A</Text>
       <Text style={styles.mainText}>BITCH</Text>
       <Text style={styles.subtitle}>TODAY</Text>
-
+      <Button onPress={deleteUserId} title="delete some shit"></Button>
 
       <BitchButton />
 

@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { createGroup } from '@/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking'; 
-import { useRouter,useLocalSearchParams} from 'expo-router';
+import {useLocalSearchParams} from 'expo-router';
 
 
 export default function TabTwoScreen() {
 
   const redirectUrl = Linking.createURL('/two', {
-    queryParams: {thing: "suck a fuck"}
+    queryParams: {groupId: "suck a fuck"}
   });
+  
 
   const local = useLocalSearchParams();
   console.log(local,"the things")
@@ -28,6 +29,7 @@ export default function TabTwoScreen() {
       }
       
       const groupId = await createGroup({ members: [userId] }, groupName);
+      console.log(groupId)
       setModalVisible(false);
     } catch (error) {
       console.error("Failed to create group:", error);
