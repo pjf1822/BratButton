@@ -20,7 +20,6 @@ export default function TabGroupScreen() {
   });
   const { groupId,invited } = useLocalSearchParams<{ groupId?: string, invited?:string }>();
 
-   // Reset selectedGroup when groupsOfUser changes
    useEffect(() => {
     if (groupsOfUser.length > 0) {
       setSelectedGroup(groupsOfUser[0]?.id);
@@ -34,8 +33,6 @@ export default function TabGroupScreen() {
 
   return (
     <View style={styles.container}>
-
-            
     <Modal
       animationType="slide"
       transparent={true}
@@ -44,59 +41,73 @@ export default function TabGroupScreen() {
         setModalVisible(false);
       }}
     >
-        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalContainer}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <QRCode
-            value={redirectUrl}
-            size={350}
-            enableLinearGradient
-           
+      <TouchableOpacity
+        onPress={() => setModalVisible(false)}
+        style={styles.modalContainer}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <QRCode
+              value={redirectUrl}
+              size={350}
+              enableLinearGradient
             />
-          <Text> hey join {groupsOfUser.find(group => group.id === selectedGroup)?.groupName || 'Unknown'} Group</Text>
+            <Text>
+              hey join{' '}
+              {groupsOfUser.find((group) => group.id === selectedGroup)
+                ?.groupName || 'Unknown'}{' '}
+              Group
+            </Text>
+          </View>
         </View>
-      </View>
-            </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
 
-  
     {invited === 'true' ? (
       <View>
-<Button title="Join Group" onPress={() => handleJoinGroup(groupId || "")} />
+        <Button
+          title="Join Group"
+          onPress={() => handleJoinGroup(groupId || '')}
+        />
       </View>
     ) : (
-      <View>
-         <TouchableOpacity onPress={() => setModalVisible(true)}>
-         <Text style={{ color: 'black', fontSize: 40 }}>Invite to Group</Text>
-         </TouchableOpacity>
-        
-         <Picker
-            selectedValue={selectedGroup}
-            onValueChange={(itemValue) => setSelectedGroup(itemValue)}
-          >
-          {groupsOfUser?.map((group) => {
-  return (
-    <Picker.Item 
-      key={group?.id} 
-      label={group?.groupName} 
-      value={group?.id} 
-    />
-  );
-})}
+      <View style={{ width:"100%"}}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={{ color: 'black', fontSize: 40 ,textAlign:"center"}}>Shareable Group QR Code</Text>
+        </TouchableOpacity>
 
-          </Picker>
+        <Picker
+          selectedValue={selectedGroup}
+          onValueChange={(itemValue) => setSelectedGroup(itemValue)}
+        >
+          {groupsOfUser?.map((group) => (
+            <Picker.Item
+              key={group?.id}
+              label={group?.groupName}
+              value={group?.id}
+            />
+          ))}
+        </Picker>
 
-        <View style={{height:100,backgroundColor:"green",width:"100%"}}></View>
-  
-        <Text style={styles.modalTitle}>Enter Group Name</Text>
+        <View style={{ height: 100, backgroundColor: 'green', width: '100%' }}></View>
+
+<View style={{ width:"100%"}}> 
+
+        <Text style={styles.modalTitle}>Enter New Group Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Group Name"
           value={groupName}
           onChangeText={setGroupName}
         />
-        
-        <Button title="Create Group" onPress={()=>handleCreateGroup( groupName,setModalVisible)} />
+
+        <Button
+          title="Create Group"
+          color={'white'}
+          onPress={() => handleCreateGroup(groupName,groupsOfUser)}
+        />
+</View>
+
       </View>
     )}
   </View>
@@ -109,6 +120,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    width:"100%"
   },
   title: {
     fontFamily: 'Kal',

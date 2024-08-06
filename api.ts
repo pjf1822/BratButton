@@ -1,6 +1,5 @@
 import {
   collection,
-  addDoc,
   getDocs,
   query,
   where,
@@ -8,9 +7,9 @@ import {
   setDoc,
   getDoc,
   updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
-import { db } from "./firebaseConfig";
+  arrayUnion
+} from 'firebase/firestore';
+import { db } from './firebaseConfig';
 
 export interface Group {
   id: string;
@@ -32,32 +31,32 @@ export const createUser = async (
 ): Promise<string> => {
   try {
     const docRef = id
-      ? doc(collection(db, "users"), id)
-      : doc(collection(db, "users"));
+      ? doc(collection(db, 'users'), id)
+      : doc(collection(db, 'users'));
 
     await setDoc(docRef, params);
     const createdDoc = await getDoc(docRef);
 
     return docRef.id;
   } catch (error) {
-    console.error("Error creating user:", error);
-    throw new Error("Failed to create user");
+    console.error('Error creating user:', error);
+    throw new Error('Failed to create user');
   }
 };
 export const userGroups = async (userId: string) => {
   try {
-    const groupsRef = collection(db, "groups");
-    const q = query(groupsRef, where("members", "array-contains", userId));
+    const groupsRef = collection(db, 'groups');
+    const q = query(groupsRef, where('members', 'array-contains', userId));
 
     const querySnapshot = await getDocs(q);
 
     const groups = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data(),
+      ...doc.data()
     }));
     return groups;
   } catch (error) {
-    console.error("Error fetching user groups:", error);
+    console.error('Error fetching user groups:', error);
   }
 };
 
@@ -66,14 +65,14 @@ export const createGroup = async (params: {
   groupName: string;
 }): Promise<string> => {
   try {
-    const docRef = doc(collection(db, "groups"));
+    const docRef = doc(collection(db, 'groups'));
 
     await setDoc(docRef, params);
     const createdDoc = await getDoc(docRef);
     return docRef.id;
   } catch (error) {
-    console.error("Error creating group:", error);
-    throw new Error("Failed to create group");
+    console.error('Error creating group:', error);
+    throw new Error('Failed to create group');
   }
 };
 
@@ -82,15 +81,15 @@ export const joinGroup = async (
   userId: string
 ): Promise<void> => {
   try {
-    const groupRef = doc(db, "groups", groupId);
+    const groupRef = doc(db, 'groups', groupId);
 
     await updateDoc(groupRef, {
-      members: arrayUnion(userId),
+      members: arrayUnion(userId)
     });
 
     console.log(`User ${userId} joined group ${groupId}`);
   } catch (error) {
-    console.error("Error joining group:", error);
-    throw new Error("Failed to join group");
+    console.error('Error joining group:', error);
+    throw new Error('Failed to join group');
   }
 };

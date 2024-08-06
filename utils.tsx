@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createGroup, joinGroup } from "./api";
+import { Group, createGroup, joinGroup } from "./api";
+import { useGroupStore } from "./zustandStore";
 
-export const handleCreateGroup = async (groupName: string, setModalVisible: (visible: boolean) => void) => {
+export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] ) => {
     try {
      
     if (!groupName.trim()) {
@@ -14,7 +15,14 @@ export const handleCreateGroup = async (groupName: string, setModalVisible: (vis
       }
       
       const groupId = await createGroup({ members: [userId],groupName});
-      setModalVisible(false);
+      
+      const newGroup: Group = {
+        id: groupId,
+        groupName,
+        members: [userId],
+      };
+      // Update the groups in the store
+      useGroupStore.getState().setGroupsOfUser([...groupsOfUser, newGroup]);
     } catch (error) {
       console.error("Failed to create group:", error);
     }

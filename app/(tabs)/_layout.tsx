@@ -4,7 +4,6 @@ import { Link, Tabs } from 'expo-router';
 import {  Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUser, userGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
@@ -50,8 +49,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: false,
+        tabBarStyle:{backgroundColor:'purple'}
       }}>
+
       <Tabs.Screen
         name="index"
         options={{
