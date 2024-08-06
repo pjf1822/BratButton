@@ -8,6 +8,8 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -41,23 +43,16 @@ export const getData = async (collectionName: string) => {
 
 export const userGroups = async (userId: string) => {
   try {
-    // Query to find groups where the userId is a member
     const groupsRef = collection(db, "groups");
-    // console.log(groupsRef, "the groups ref");
     const q = query(groupsRef, where("members", "array-contains", userId));
 
-    // console.log(q, "the q");
-    // Fetch the documents
     const querySnapshot = await getDocs(q);
-    // console.log(querySnapshot, "the query snapshot");
 
-    // Extract data
     const groups = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
-    console.log(groups, "Groups containing userId");
     return groups;
   } catch (error) {
     console.error("Error fetching user groups:", error);
@@ -100,5 +95,25 @@ export const createGroup = async (
   } catch (error) {
     console.error("Error creating group:", error);
     throw new Error("Failed to create group");
+  }
+};
+
+export const joinGroup = async (
+  groupId: string,
+  userId: string
+): Promise<void> => {
+  try {
+    // Reference to the group document
+    const groupRef = doc(db, "groups", groupId);
+
+    // Update the group's members array to include the new userId
+    await updateDoc(groupRef, {
+      members: arrayUnion(userId), // Add userId to the members array, avoiding duplicates
+    });
+
+    console.log(`User ${userId} joined group ${groupId}`);
+  } catch (error) {
+    console.error("Error joining group:", error);
+    throw new Error("Failed to join group");
   }
 };
