@@ -61,19 +61,15 @@ export const userGroups = async (userId: string) => {
   }
 };
 
-export const createGroup = async (
-  params: CreateGroupParams,
-  id?: string
-): Promise<string> => {
+export const createGroup = async (params: {
+  members: string[];
+  groupName: string;
+}): Promise<string> => {
   try {
-    const docRef = id
-      ? doc(collection(db, "groups"), id)
-      : doc(collection(db, "groups"));
+    const docRef = doc(collection(db, "groups"));
 
     await setDoc(docRef, params);
     const createdDoc = await getDoc(docRef);
-    console.log("Created group:", { id: createdDoc.id, ...createdDoc.data() });
-
     return docRef.id;
   } catch (error) {
     console.error("Error creating group:", error);

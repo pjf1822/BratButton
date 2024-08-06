@@ -8,8 +8,6 @@ export default function TabOneScreen() {
     await AsyncStorage.removeItem('userId');
   };
 
-  
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>IS SHE BEING A</Text>
