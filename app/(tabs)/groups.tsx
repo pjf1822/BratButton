@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button} from 'react-native';
+import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, TouchableWithoutFeedback} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking'; 
@@ -34,6 +34,8 @@ export default function TabGroupScreen() {
 
   return (
     <View style={styles.container}>
+
+            
     <Modal
       animationType="slide"
       transparent={true}
@@ -42,6 +44,7 @@ export default function TabGroupScreen() {
         setModalVisible(false);
       }}
     >
+        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalContainer}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <QRCode
@@ -49,12 +52,13 @@ export default function TabGroupScreen() {
             size={350}
             enableLinearGradient
            
-          />
+            />
           <Text> hey join {groupsOfUser.find(group => group.id === selectedGroup)?.groupName || 'Unknown'} Group</Text>
         </View>
       </View>
+            </TouchableOpacity>
     </Modal>
-  
+
   
     {invited === 'true' ? (
       <View>
