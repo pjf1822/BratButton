@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { createUser, getData, userGroups } from '@/api';
+import { useGroupStore } from '@/zustandStore';
 
 
 
@@ -24,17 +25,12 @@ function TabBarIcon(props: {
 }
 
 
-interface Group {
-  id: string;
-  // Add other fields if needed
-}
-
-
 
 
 export default function TabLayout() {
-  const [groupsOfUser, setGroupsOfUser] = useState<Group[]>([]);
   const colorScheme = useColorScheme();
+  const groupsOfUser = useGroupStore((state) => state.groupsOfUser);
+  const setGroupsOfUser = useGroupStore((state) => state.setGroupsOfUser);
 
   useEffect(() => {
     const checkUserId = async () => {
@@ -51,8 +47,6 @@ export default function TabLayout() {
           const groups = await userGroups(userId);
           setGroupsOfUser(groups ?? []);
 
-
-          console.log('Existing User ID found:', userId, "they are in these groyups ", groups);
         }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
@@ -94,12 +88,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="groups"
         options={{
-          title: 'You',
+          title: 'Groups',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
-        initialParams={{userGroups:groupsOfUser}}
      
       />
     </Tabs>
