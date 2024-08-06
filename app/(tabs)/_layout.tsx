@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import {  Pressable } from 'react-native';
-import * as Linking from 'expo-linking';
-
-
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '@/firebaseConfig';
-import { createUser, getData, userGroups } from '@/api';
+import { createUser, userGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 
 
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
@@ -29,7 +23,6 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const groupsOfUser = useGroupStore((state) => state.groupsOfUser);
   const setGroupsOfUser = useGroupStore((state) => state.setGroupsOfUser);
 
   useEffect(() => {
@@ -38,32 +31,25 @@ export default function TabLayout() {
         const userId = await AsyncStorage.getItem('userId');
         if (!userId) {
           const newUserId = Math.floor(Math.random() * 1000000).toString();
-
           await AsyncStorage.setItem('userId', newUserId);
-         
-           await createUser({ userId : newUserId }, newUserId);
+          await createUser({ userId : newUserId }, newUserId);
 
         } else {
           const groups = await userGroups(userId);
           setGroupsOfUser(groups ?? []);
-
         }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
       }
     };
-
- 
-
     checkUserId();
   }, []);
+
+
   return (
     <Tabs
-
- 
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-      
         headerShown: useClientOnlyValue(false, true),
       }}>
       <Tabs.Screen
