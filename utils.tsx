@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Group, createGroup, joinGroup } from "./api";
-import { useGroupStore } from "./zustandStore";
+import {  createGroup, joinGroup } from "./api";
+import { Group, useGroupStore } from "./zustandStore";
 
 export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] ) => {
     try {
@@ -21,7 +21,6 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
         groupName,
         members: [userId],
       };
-      // Update the groups in the store
       useGroupStore.getState().setGroupsOfUser([...groupsOfUser, newGroup]);
     } catch (error) {
       console.error("Failed to create group:", error);
@@ -37,8 +36,21 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
       }
       
 
-      await joinGroup(groupId, userId);
-      console.log(`User ${userId} joined group ${groupId}`);
+  const updatedGroup =   await joinGroup(groupId, userId);
+  console.log(updatedGroup)
+  if (updatedGroup) {
+    // Get the current groups from the store
+    const currentGroups = useGroupStore.getState().groupsOfUser;
+
+    // Replace the old group with the updated one
+    const updatedGroups = currentGroups.map(group =>
+      group.id === updatedGroup.id ? updatedGroup : group
+    );
+
+    // Update the groups in the store
+    useGroupStore.getState().setGroupsOfUser(updatedGroups);
+  }
+  console.log("waths up")
     } catch (error) {
       console.error('Failed to join group:', error);
     }

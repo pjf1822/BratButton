@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking'; 
@@ -16,18 +16,20 @@ export default function TabGroupScreen() {
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>(groupsOfUser[0]?.id)
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: {groupId: groupsOfUser[0]?.id, invited:"true"}
+    queryParams: {groupId: selectedGroup, invited:"true"}
   });
+
   const { groupId,invited } = useLocalSearchParams<{ groupId?: string, invited?:string }>();
 
    useEffect(() => {
-    if (groupsOfUser.length > 0) {
-      setSelectedGroup(groupsOfUser[0]?.id);
-    } else {
-      setSelectedGroup(undefined);
-    }
-  }, [groupsOfUser])
-  
+     if (groupsOfUser.length > 0) {
+       setSelectedGroup(groupsOfUser[0]?.id);
+      } else {
+        setSelectedGroup(undefined);
+      }
+    }, [groupsOfUser])
+    
+    console.log(selectedGroup,"the seleetec droup", groupsOfUser)
 
   
 
@@ -79,6 +81,7 @@ export default function TabGroupScreen() {
         <Picker
           selectedValue={selectedGroup}
           onValueChange={(itemValue) => setSelectedGroup(itemValue)}
+          style={{display:selectedGroup === undefined ? "none" : "flex",backgroundColor:"yellow"}}
         >
           {groupsOfUser?.map((group) => (
             <Picker.Item
