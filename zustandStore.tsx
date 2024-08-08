@@ -1,7 +1,9 @@
 import {create }from 'zustand';
 
-interface Group {
+export interface Group {
   id: string;
+  groupName: string
+  members:string[]
 }
 
 interface StoreState {

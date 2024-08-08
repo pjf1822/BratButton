@@ -1,60 +1,37 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button} from 'react-native';
+import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { useState } from 'react';
-import { createGroup, joinGroup } from '@/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking'; 
 import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
+import { Picker } from '@react-native-picker/picker'; 
+import { handleCreateGroup, handleJoinGroup } from '@/utils';
+
 
 
 export default function TabGroupScreen() {
   const groupsOfUser = useGroupStore((state) => state.groupsOfUser);
-const logo  = "https://scontent.xx.fbcdn.net/v/t1.15752-9/453427519_447748768253915_3909984510166363846_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=0024fc&_nc_ohc=LA9jN1Km0HMQ7kNvgEZFkfs&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_Q7cD1QFR0mQdMXIHfCZIX1LtCaghlnPl2aNembm-PMAByrp2qw&oe=66D8C60F"
-
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(groupsOfUser[0]?.id)
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: {groupId: groupsOfUser[0]?.id, invited:"true"}
+    queryParams: {groupId: selectedGroup, invited:"true"}
   });
-  
 
   const { groupId,invited } = useLocalSearchParams<{ groupId?: string, invited?:string }>();
 
+   useEffect(() => {
+     if (groupsOfUser.length > 0) {
+       setSelectedGroup(groupsOfUser[0]?.id);
+      } else {
+        setSelectedGroup(undefined);
+      }
+    }, [groupsOfUser])
+    
+    console.log(selectedGroup,"the seleetec droup", groupsOfUser)
+
   
-  const [modalVisible, setModalVisible] = useState(false);
-  const [groupName, setGroupName] = useState('');
-
-  const handleCreateGroup = async () => {
-    try {
-      const userId = await AsyncStorage.getItem('userId');
-      
-      if (!userId) {
-        throw new Error('User ID not found in AsyncStorage');
-      }
-      
-      const groupId = await createGroup({ members: [userId] }, groupName);
-      setModalVisible(false);
-    } catch (error) {
-      console.error("Failed to create group:", error);
-    }
-  };
-
-  const handleJoinGroup = async () => {
-    try {
-      const userId = await AsyncStorage.getItem('userId');
-
-      if (!userId || !groupId) {
-        throw new Error('User ID or Group ID is missing');
-      }
-      
-
-      await joinGroup(groupId, userId);
-      console.log(`User ${userId} joined group ${groupId}`);
-    } catch (error) {
-      console.error('Failed to join group:', error);
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -66,38 +43,74 @@ const logo  = "https://scontent.xx.fbcdn.net/v/t1.15752-9/453427519_447748768253
         setModalVisible(false);
       }}
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <QRCode
-            value={redirectUrl}
-            size={350}
-            enableLinearGradient
-            logoSize={30}
-            logo={{ uri: logo }}
-          />
+      <TouchableOpacity
+        onPress={() => setModalVisible(false)}
+        style={styles.modalContainer}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <QRCode
+              value={redirectUrl}
+              size={350}
+              enableLinearGradient
+            />
+            <Text>
+              hey join{' '}
+              {groupsOfUser.find((group) => group.id === selectedGroup)
+                ?.groupName || 'Unknown'}{' '}
+              Group
+            </Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </Modal>
-  
-  
+
     {invited === 'true' ? (
       <View>
-        <Button title="Join Group" onPress={handleJoinGroup} />
+        <Button
+          title="Join Group"
+          onPress={() => handleJoinGroup(groupId || '')}
+        />
       </View>
     ) : (
-      <View>
-         <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Text style={{ color: 'black', fontSize: 40 }}>Invite to Group</Text>
-      </TouchableOpacity>
-        <Text style={styles.modalTitle}>Enter Group Name</Text>
+      <View style={{ width:"100%"}}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={{ color: 'black', fontSize: 40 ,textAlign:"center"}}>Shareable Group QR Code</Text>
+        </TouchableOpacity>
+
+        <Picker
+          selectedValue={selectedGroup}
+          onValueChange={(itemValue) => setSelectedGroup(itemValue)}
+          style={{display:selectedGroup === undefined ? "none" : "flex",backgroundColor:"yellow"}}
+        >
+          {groupsOfUser?.map((group) => (
+            <Picker.Item
+              key={group?.id}
+              label={group?.groupName}
+              value={group?.id}
+            />
+          ))}
+        </Picker>
+
+        <View style={{ height: 100, backgroundColor: 'green', width: '100%' }}></View>
+
+<View style={{ width:"100%"}}> 
+
+        <Text style={styles.modalTitle}>Enter New Group Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Group Name"
           value={groupName}
           onChangeText={setGroupName}
         />
-        <Button title="Create Group" onPress={handleCreateGroup} />
-        <Button title="Cancel" onPress={() => setModalVisible(false)} color="red" />
+
+        <Button
+          title="Create Group"
+          color={'white'}
+          onPress={() => handleCreateGroup(groupName,groupsOfUser)}
+        />
+</View>
+
       </View>
     )}
   </View>
@@ -110,6 +123,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    width:"100%"
   },
   title: {
     fontFamily: 'Kal',
