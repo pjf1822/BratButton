@@ -10,12 +10,7 @@ import {
   arrayUnion
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-
-export interface Group {
-  id: string;
-  name: string;
-  members: string[];
-}
+import { Group } from './zustandStore';
 
 export interface CreateGroupParams {
   members: string[];
@@ -66,7 +61,6 @@ export const createGroup = async (params: {
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
-
     await setDoc(docRef, params);
     const createdDoc = await getDoc(docRef);
     return docRef.id;
@@ -79,7 +73,7 @@ export const createGroup = async (params: {
 export const joinGroup = async (
   groupId: string,
   userId: string
-): Promise<void> => {
+): Promise<Group | null> => {
   try {
     const groupRef = doc(db, 'groups', groupId);
 
@@ -87,9 +81,22 @@ export const joinGroup = async (
       members: arrayUnion(userId)
     });
 
-    console.log(`User ${userId} joined group ${groupId}`);
+    const updatedGroupDoc = await getDoc(groupRef);
+
+    const newGroup: Group = {
+      id: groupId,
+      groupName:
+        updatedGroupDoc?._document?.data?.value?.mapValue?.fields?.groupName
+          ?.stringValue,
+      members:
+        updatedGroupDoc?._document?.data?.value?.mapValue?.fields?.members?.arrayValue?.values.map(
+          (member: object) => member?.stringValue
+        )
+    };
+
+    return newGroup;
   } catch (error) {
     console.error('Error joining group:', error);
-    throw new Error('Failed to join group');
+    return null;
   }
 };
