@@ -1,11 +1,13 @@
 import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as Linking from 'expo-linking'; 
 import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker'; 
-import { handleCreateGroup, handleJoinGroup } from '@/utils';
+import { handleCreateGroup } from '@/utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { joinGroup } from '@/api';
 
 
 
@@ -15,23 +17,52 @@ export default function TabGroupScreen() {
   const [groupName, setGroupName] = useState('');
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>(groupsOfUser[0]?.id)
 
+
+  const [invited, setInvited] = useState<Boolean >(false); 
+
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: {groupId: selectedGroup, invited:"true"}
+    queryParams: { groupId: selectedGroup, invitedParam: "true" }
   });
 
-  const { groupId,invited } = useLocalSearchParams<{ groupId?: string, invited?:string }>();
+  const { groupId, invitedParam } = useLocalSearchParams<{ groupId?: string, invitedParam: string }>();
 
-   useEffect(() => {
-     if (groupsOfUser.length > 0) {
-       setSelectedGroup(groupsOfUser[0]?.id);
-      } else {
-        setSelectedGroup(undefined);
+  useEffect(() => {
+    if (groupsOfUser.length > 0) {
+      setSelectedGroup(groupsOfUser[0]?.id);
+    } else {
+      setSelectedGroup(undefined);
+    }
+  }, [groupsOfUser]);
+
+  useEffect(() => {
+    if (invitedParam === "true") {
+      setInvited(true);
+    }
+  }, [invitedParam]);
+
+  const handleJoinGroup = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      
+
+      if (!userId || !groupId) {
+        throw new Error('User ID or Group ID is missing');
       }
-    }, [groupsOfUser])
-    
-    console.log(selectedGroup,"the seleetec droup", groupsOfUser)
 
-  
+      const updatedGroup = await joinGroup(groupId, userId);
+
+      if (updatedGroup) {
+        const currentGroups = useGroupStore.getState().groupsOfUser;
+        const updatedGroups = [...currentGroups, updatedGroup];
+        useGroupStore.getState().setGroupsOfUser(updatedGroups);
+      }
+
+      setInvited(false);
+    } catch (error) {
+      console.error('Failed to join group:', error);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -65,11 +96,11 @@ export default function TabGroupScreen() {
       </TouchableOpacity>
     </Modal>
 
-    {invited === 'true' ? (
+    {invited === true ? (
       <View>
         <Button
           title="Join Group"
-          onPress={() => handleJoinGroup(groupId || '')}
+          onPress={() => handleJoinGroup()}
         />
       </View>
     ) : (

@@ -13,5 +13,7 @@ interface StoreState {
 
 export const useGroupStore = create<StoreState>((set) => ({
   groupsOfUser: [],
-  setGroupsOfUser: (groups: Group[]) => set({ groupsOfUser: groups }),
-}));
+  setGroupsOfUser: (groups: Group[]) => {
+    set({ groupsOfUser: groups });
+    console.log('Updated groupsOfUser:', groups); 
+  },}));
