@@ -27,31 +27,4 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
     }
   };
 
-  export const handleJoinGroup = async (groupId:string) => {
-    try {
-      const userId = await AsyncStorage.getItem('userId');
-
-      if (!userId || !groupId) {
-        throw new Error('User ID or Group ID is missing');
-      }
-      
-
-  const updatedGroup =   await joinGroup(groupId, userId);
-  console.log(updatedGroup)
-  if (updatedGroup) {
-    // Get the current groups from the store
-    const currentGroups = useGroupStore.getState().groupsOfUser;
-
-    // Replace the old group with the updated one
-    const updatedGroups = currentGroups.map(group =>
-      group.id === updatedGroup.id ? updatedGroup : group
-    );
-
-    // Update the groups in the store
-    useGroupStore.getState().setGroupsOfUser(updatedGroups);
-  }
-  console.log("waths up")
-    } catch (error) {
-      console.error('Failed to join group:', error);
-    }
-  };
+ 
