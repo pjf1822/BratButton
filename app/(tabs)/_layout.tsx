@@ -1,6 +1,6 @@
 import React, { useEffect, } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
+import { Link, Tabs,router } from 'expo-router';
 import {  Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -27,23 +27,24 @@ export default function TabLayout() {
   useEffect(() => {
     const checkUserId = async () => {
       try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (!userId) {
-          const newUserId = Math.floor(Math.random() * 1000000).toString();
-          await AsyncStorage.setItem('userId', newUserId);
-          await createUser({ userId : newUserId }, newUserId);
-
+        const userString = await AsyncStorage.getItem('user');
+  
+        if (!userString) {
+          router.replace('/firstLaunch');
         } else {
-          const groups = await userGroups(userId);
+          const user = JSON.parse(userString); // Convert the string back to an object
+  
+          // Assuming user object has a userId property
+          const groups = await userGroups(user.userId);
           setGroupsOfUser(groups ?? []);
         }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
       }
     };
+  
     checkUserId();
   }, []);
-
 
   return (
     <Tabs
@@ -53,7 +54,7 @@ export default function TabLayout() {
         tabBarStyle:{backgroundColor:'purple'}
       }}>
 
-      <Tabs.Screen
+<Tabs.Screen
         name="index"
         options={{
           title: 'Home',
@@ -80,8 +81,7 @@ export default function TabLayout() {
           title: 'Groups',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
-     
       />
-    </Tabs>
+</Tabs>
   );
 }

@@ -8,18 +8,21 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
     if (!groupName.trim()) {
         throw new Error('Group name is required');
       }
-      const userId = await AsyncStorage.getItem('userId');
-      
-      if (!userId) {
+      const userString = await AsyncStorage.getItem('user');
+      const user = JSON.parse(userString); 
+   
+
+
+      if (!user.userId) {
         throw new Error('User ID not found in AsyncStorage');
       }
       
-      const groupId = await createGroup({ members: [userId],groupName});
+      const groupId = await createGroup({ members: [user.userId],groupName});
       
       const newGroup: Group = {
         id: groupId,
         groupName,
-        members: [userId],
+        members: [user.userId],
       };
       useGroupStore.getState().setGroupsOfUser([...groupsOfUser, newGroup]);
     } catch (error) {
