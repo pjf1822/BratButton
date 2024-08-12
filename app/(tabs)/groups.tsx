@@ -112,10 +112,18 @@ export default function TabGroupScreen() {
 
     {invited === true ? (
       <View>
-        <Button
-          title={groupName}
+       <TouchableOpacity
           onPress={() => handleJoinGroup()}
-        />
+          style={{ 
+            padding: 10, 
+            backgroundColor: 'blue', 
+            borderRadius: 5 
+          }}
+        >
+    <Text style={{ color: 'white', textAlign: 'center' }}>
+     Join {groupName}
+    </Text>
+  </TouchableOpacity>
       </View>
     ) : (
       <View style={{ width:"100%"}}>
