@@ -18,6 +18,7 @@ export interface CreateGroupParams {
 
 export interface CreateUserParams {
   userId: string;
+  username: string;
 }
 
 export const createUser = async (

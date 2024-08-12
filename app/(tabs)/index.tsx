@@ -1,11 +1,26 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button} from 'react-native';
+import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 
 export default function TabOneScreen() {
 
   const deleteUserId = async () => {
-    await AsyncStorage.removeItem('userId');
+    await AsyncStorage.removeItem('user');
+  };
+
+
+  const viewUserData = async () => {
+    try {
+      const user = await AsyncStorage.getItem('user'); // Retrieve user object from AsyncStorage
+      if (user !== null) {
+        Alert.alert('User Data', user);
+      } else {
+        Alert.alert('No User Data Found');
+      }
+    } catch (error) {
+      console.error('Failed to retrieve user data:', error);
+      Alert.alert('Error', 'Failed to retrieve user data');
+    }
   };
 
   return (
@@ -13,10 +28,11 @@ export default function TabOneScreen() {
       <Text style={styles.title}>IS SHE BEING A</Text>
       <Text style={styles.mainText}>BITCH</Text>
       <Text style={styles.subtitle}>TODAY</Text>
-
       <BitchButton />
 
       <Button color={"white"} onPress={deleteUserId} title="delete some shit"></Button>
+      <Button color="white" onPress={viewUserData} title="View stored data" />
+
      
     </View>
   );

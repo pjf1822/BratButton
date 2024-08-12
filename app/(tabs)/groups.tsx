@@ -1,6 +1,6 @@
 import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking'; 
 import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
@@ -14,23 +14,28 @@ import { joinGroup } from '@/api';
 export default function TabGroupScreen() {
   const groupsOfUser = useGroupStore((state) => state.groupsOfUser);
   const [modalVisible, setModalVisible] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(groupsOfUser[0]?.id)
+  const [newGroupName, setNewGroupName] = useState('');
+  const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupsOfUser[0]?.id)
+  const [selectedGroupName, setSelectedGroupName] = useState<string | undefined>(groupsOfUser[0]?.groupName)
 
 
   const [invited, setInvited] = useState<Boolean >(false); 
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroup, invitedParam: "true" }
+    queryParams: { groupId: selectedGroupId, invitedParam: "true" , groupName: selectedGroupName }
   });
 
-  const { groupId, invitedParam } = useLocalSearchParams<{ groupId?: string, invitedParam: string }>();
+
+  const { groupId, invitedParam, groupName } = useLocalSearchParams<{ groupId?: string, invitedParam: string,groupName:string }>();
+
 
   useEffect(() => {
     if (groupsOfUser.length > 0) {
-      setSelectedGroup(groupsOfUser[0]?.id);
+      setSelectedGroupId(groupsOfUser[0]?.id);
+      setSelectedGroupName(groupsOfUser[0]?.groupName);
     } else {
-      setSelectedGroup(undefined);
+      setSelectedGroupId(undefined);
+      setSelectedGroupName(undefined);
     }
   }, [groupsOfUser]);
 
@@ -64,6 +69,15 @@ export default function TabGroupScreen() {
   };
 
 
+
+  const handlePickerChange = (itemValue: string) => {
+    const selectedGroup = groupsOfUser.find(group => group.id === itemValue);
+    if (selectedGroup) {
+      setSelectedGroupId(selectedGroup.id);
+      setSelectedGroupName(selectedGroup.groupName);
+    }
+  };
+
   return (
     <View style={styles.container}>
     <Modal
@@ -87,7 +101,7 @@ export default function TabGroupScreen() {
             />
             <Text>
               hey join{' '}
-              {groupsOfUser.find((group) => group.id === selectedGroup)
+              {groupsOfUser.find((group) => group.id === selectedGroupId)
                 ?.groupName || 'Unknown'}{' '}
               Group
             </Text>
@@ -99,7 +113,7 @@ export default function TabGroupScreen() {
     {invited === true ? (
       <View>
         <Button
-          title="Join Group"
+          title={groupName}
           onPress={() => handleJoinGroup()}
         />
       </View>
@@ -110,9 +124,9 @@ export default function TabGroupScreen() {
         </TouchableOpacity>
 
         <Picker
-          selectedValue={selectedGroup}
-          onValueChange={(itemValue) => setSelectedGroup(itemValue)}
-          style={{display:selectedGroup === undefined ? "none" : "flex",backgroundColor:"yellow"}}
+          selectedValue={selectedGroupId}
+          onValueChange={handlePickerChange}
+          style={{display:selectedGroupId === undefined ? "none" : "flex"}}
         >
           {groupsOfUser?.map((group) => (
             <Picker.Item
@@ -123,22 +137,22 @@ export default function TabGroupScreen() {
           ))}
         </Picker>
 
-        <View style={{ height: 100, backgroundColor: 'green', width: '100%' }}></View>
+        <View style={{ height: 100, width: '100%' }}></View>
 
-<View style={{ width:"100%"}}> 
+          <View style={{ width:"100%"}}> 
 
         <Text style={styles.modalTitle}>Enter New Group Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Group Name"
-          value={groupName}
-          onChangeText={setGroupName}
+          value={newGroupName}
+          onChangeText={setNewGroupName}
         />
 
         <Button
           title="Create Group"
           color={'white'}
-          onPress={() => handleCreateGroup(groupName,groupsOfUser)}
+          onPress={() => handleCreateGroup(newGroupName,groupsOfUser)}
         />
 </View>
 
