@@ -32,9 +32,8 @@ export default function TabLayout() {
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
-          const user = JSON.parse(userString); // Convert the string back to an object
+            const user = JSON.parse(userString);
   
-          // Assuming user object has a userId property
           const groups = await userGroups(user.userId);
           setGroupsOfUser(groups ?? []);
         }

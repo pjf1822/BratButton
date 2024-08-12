@@ -1,17 +1,22 @@
 import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
+import { useGroupStore } from '@/zustandStore';
 
 export default function TabOneScreen() {
-
+  const {  selectedGroupId,  groupsOfUser } = useGroupStore((state) => ({
+    selectedGroupId: state.selectedGroupId,
+    groupsOfUser:state.groupsOfUser
+  })); 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
+  
 
 
   const viewUserData = async () => {
     try {
-      const user = await AsyncStorage.getItem('user'); // Retrieve user object from AsyncStorage
+      const user = await AsyncStorage.getItem('user'); 
       if (user !== null) {
         Alert.alert('User Data', user);
       } else {

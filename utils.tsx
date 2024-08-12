@@ -17,7 +17,8 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
         throw new Error('User ID not found in AsyncStorage');
       }
       
-      const groupId = await createGroup({ members: [user.userId],groupName});
+      
+      const groupId = await createGroup({ members: [{id:user.userId, username:user.username}],groupName});
       
       const newGroup: Group = {
         id: groupId,

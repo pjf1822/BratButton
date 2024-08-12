@@ -12,10 +12,13 @@ import { joinGroup } from '@/api';
 
 
 export default function TabGroupScreen() {
-  const groupsOfUser = useGroupStore((state) => state.groupsOfUser);
+  const { groupsOfUser, selectedGroupId,  setSelectedGroupId } = useGroupStore((state) => ({
+    groupsOfUser: state.groupsOfUser,
+    selectedGroupId: state.selectedGroupId,
+    setSelectedGroupId: state.setSelectedGroupId,
+  }));  
   const [modalVisible, setModalVisible] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
-  const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupsOfUser[0]?.id)
   const [selectedGroupName, setSelectedGroupName] = useState<string | undefined>(groupsOfUser[0]?.groupName)
 
 
@@ -47,14 +50,16 @@ export default function TabGroupScreen() {
 
   const handleJoinGroup = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId');
+      const userString = await AsyncStorage.getItem('user');
+      const user = JSON.parse(userString); 
+   
       
 
-      if (!userId || !groupId) {
+      if (!user || !groupId) {
         throw new Error('User ID or Group ID is missing');
       }
 
-      const updatedGroup = await joinGroup(groupId, userId);
+      const updatedGroup = await joinGroup(groupId, user.userId, user.username);
 
       if (updatedGroup) {
         const currentGroups = useGroupStore.getState().groupsOfUser;
@@ -131,6 +136,7 @@ export default function TabGroupScreen() {
           <Text style={{ color: 'black', fontSize: 40 ,textAlign:"center"}}>Shareable Group QR Code</Text>
         </TouchableOpacity>
 
+<Text style={{ color: 'white', textAlign: 'center' }}> your groups</Text>
         <Picker
           selectedValue={selectedGroupId}
           onValueChange={handlePickerChange}
