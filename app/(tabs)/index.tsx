@@ -1,17 +1,37 @@
 import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
+import { useGroupStore } from '@/zustandStore';
+import { useEffect, useState } from 'react';
 
 export default function TabOneScreen() {
+  const {  selectedGroup,  groupsOfUser } = useGroupStore((state) => ({
+    selectedGroup: state.selectedGroup,
+    groupsOfUser:state.groupsOfUser
+  })); 
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
 
 
+  useEffect(() => {
+    if (selectedGroup) {
+      if (selectedGroup.dailyIndex !== undefined) {
+        const member = selectedGroup.members[selectedGroup.dailyIndex];
+        setSelectedMember(member?.username || 'No member selected');
+      } else {
+        setSelectedMember('No member selected');
+      }
+    } else {
+      setSelectedMember('No member selected');
+    }
+  }, [selectedGroup]);
+
   const viewUserData = async () => {
     try {
-      const user = await AsyncStorage.getItem('user'); // Retrieve user object from AsyncStorage
+      const user = await AsyncStorage.getItem('user'); 
       if (user !== null) {
         Alert.alert('User Data', user);
       } else {
@@ -25,7 +45,8 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>IS SHE BEING A</Text>
+      <Text>{selectedGroup?.groupName}</Text>
+      <Text style={styles.title}>IS {selectedMember} BEING A</Text>
       <Text style={styles.mainText}>BITCH</Text>
       <Text style={styles.subtitle}>TODAY</Text>
       <BitchButton />
@@ -33,7 +54,6 @@ export default function TabOneScreen() {
       <Button color={"white"} onPress={deleteUserId} title="delete some shit"></Button>
       <Button color="white" onPress={viewUserData} title="View stored data" />
 
-     
     </View>
   );
 }

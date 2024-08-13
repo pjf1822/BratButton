@@ -1,11 +1,11 @@
-import React, { useEffect, } from 'react';
+import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs,router } from 'expo-router';
 import {  Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createUser, userGroups } from '@/api';
+import {  userGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 
 
@@ -16,6 +16,8 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
+const setSelectedGroup = useGroupStore.getState().setSelectedGroup;
+
 
 
 
@@ -32,10 +34,8 @@ export default function TabLayout() {
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
-          const user = JSON.parse(userString); // Convert the string back to an object
-  
-          // Assuming user object has a userId property
-          const groups = await userGroups(user.userId);
+          const user = JSON.parse(userString);
+          const groups = await userGroups(user.userId,setSelectedGroup);
           setGroupsOfUser(groups ?? []);
         }
       } catch (error) {

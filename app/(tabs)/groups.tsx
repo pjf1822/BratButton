@@ -12,17 +12,20 @@ import { joinGroup } from '@/api';
 
 
 export default function TabGroupScreen() {
-  const groupsOfUser = useGroupStore((state) => state.groupsOfUser);
+  const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore((state) => ({
+    groupsOfUser: state.groupsOfUser,
+    selectedGroup: state.selectedGroup,
+    setSelectedGroup: state.setSelectedGroup,
+  }));  
   const [modalVisible, setModalVisible] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
-  const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(groupsOfUser[0]?.id)
   const [selectedGroupName, setSelectedGroupName] = useState<string | undefined>(groupsOfUser[0]?.groupName)
 
 
   const [invited, setInvited] = useState<Boolean >(false); 
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroupId, invitedParam: "true" , groupName: selectedGroupName }
+    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroupName }
   });
 
 
@@ -31,10 +34,8 @@ export default function TabGroupScreen() {
 
   useEffect(() => {
     if (groupsOfUser.length > 0) {
-      setSelectedGroupId(groupsOfUser[0]?.id);
       setSelectedGroupName(groupsOfUser[0]?.groupName);
     } else {
-      setSelectedGroupId(undefined);
       setSelectedGroupName(undefined);
     }
   }, [groupsOfUser]);
@@ -47,14 +48,16 @@ export default function TabGroupScreen() {
 
   const handleJoinGroup = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId');
+      const userString = await AsyncStorage.getItem('user');
+      const user = JSON.parse(userString); 
+   
       
 
-      if (!userId || !groupId) {
+      if (!user || !groupId) {
         throw new Error('User ID or Group ID is missing');
       }
 
-      const updatedGroup = await joinGroup(groupId, userId);
+      const updatedGroup = await joinGroup(groupId, user.userId, user.username);
 
       if (updatedGroup) {
         const currentGroups = useGroupStore.getState().groupsOfUser;
@@ -73,10 +76,11 @@ export default function TabGroupScreen() {
   const handlePickerChange = (itemValue: string) => {
     const selectedGroup = groupsOfUser.find(group => group.id === itemValue);
     if (selectedGroup) {
-      setSelectedGroupId(selectedGroup.id);
+      setSelectedGroup(selectedGroup);
       setSelectedGroupName(selectedGroup.groupName);
     }
   };
+
 
   return (
     <View style={styles.container}>
@@ -101,8 +105,8 @@ export default function TabGroupScreen() {
             />
             <Text>
               hey join{' '}
-              {groupsOfUser.find((group) => group.id === selectedGroupId)
-                ?.groupName || 'Unknown'}{' '}
+              {selectedGroup?.groupName || 'Unknown'}{' '}
+
               Group
             </Text>
           </View>
@@ -131,11 +135,12 @@ export default function TabGroupScreen() {
           <Text style={{ color: 'black', fontSize: 40 ,textAlign:"center"}}>Shareable Group QR Code</Text>
         </TouchableOpacity>
 
-        <Picker
-          selectedValue={selectedGroupId}
-          onValueChange={handlePickerChange}
-          style={{display:selectedGroupId === undefined ? "none" : "flex"}}
-        >
+<Text style={{ color: 'white', textAlign: 'center' }}> your groups</Text>
+<Picker
+            selectedValue={selectedGroup?.id}
+            onValueChange={handlePickerChange}
+            style={{ display: selectedGroup ? "flex" : "none" }}
+          >
           {groupsOfUser?.map((group) => (
             <Picker.Item
               key={group?.id}
