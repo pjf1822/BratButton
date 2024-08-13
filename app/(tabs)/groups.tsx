@@ -18,25 +18,16 @@ export default function TabGroupScreen() {
     setSelectedGroup: state.setSelectedGroup,
   }));  
 
-  const [selectedGroupName, setSelectedGroupName] = useState<string | undefined>(groupsOfUser[0]?.groupName)
   const [invited, setInvited] = useState<Boolean>(false); 
   const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroupName }
+    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroup?.groupName }
   });
 
 
   const { groupId, invitedParam, groupName } = useLocalSearchParams<{ groupId?: string, invitedParam: string,groupName:string }>();
 
-
-  useEffect(() => {
-    if (groupsOfUser.length > 0) {
-      setSelectedGroupName(groupsOfUser[0]?.groupName);
-    } else {
-      setSelectedGroupName(undefined);
-    }
-  }, [groupsOfUser]);
 
   useEffect(() => {
     if (invitedParam === "true") {
@@ -75,7 +66,6 @@ export default function TabGroupScreen() {
     const selectedGroup = groupsOfUser.find(group => group.id === itemValue);
     if (selectedGroup) {
       setSelectedGroup(selectedGroup);
-      setSelectedGroupName(selectedGroup.groupName);
     }
   };
 
