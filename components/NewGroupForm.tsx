@@ -17,11 +17,12 @@ import { NewGroupFormProps } from '@/zustandStore';
           placeholder="Group Name"
           value={newGroupName}
           onChangeText={setNewGroupName}
+          placeholderTextColor={"red"}
         />
 
         <Button
           title="Create Group"
-          color={'white'}
+          color={'red'}
           onPress={() => handleCreateGroup(newGroupName,groupsOfUser)}
         />
 </View>
@@ -37,10 +38,15 @@ const styles = StyleSheet.create({
     modalTitle: {
       fontSize: 20,
       marginBottom: 10,
+      fontFamily: 'Kal',
+      color: 'red',
+      fontWeight: '100',
+      textAlign:"center"
     },
     input: {
       height: 40,
-      borderColor: 'gray',
+      borderColor: 'red',
+      borderRadius:10,
       borderWidth: 1,
       marginBottom: 20,
       width: '100%',

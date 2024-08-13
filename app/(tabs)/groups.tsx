@@ -19,6 +19,8 @@ export default function TabGroupScreen() {
     setSelectedGroup: state.setSelectedGroup,
   }));  
 
+
+
   const [invited, setInvited] = useState<Boolean>(false); 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -67,16 +69,21 @@ export default function TabGroupScreen() {
       </View>
     ) : (
       <View style={{ width: "100%" }}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Text style={{ color: 'black', fontSize: 40, textAlign: "center" }}>
-          Shareable Group QR Code
+     {groupsOfUser.length > 0 && (
+      <View>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={{ color: 'black', fontSize: 40, textAlign: 'center' }}>
+            Shareable Group QR Code
+          </Text>
+        </TouchableOpacity>
+        <Text style={{ color: 'white', textAlign: 'center' }}>
+          Your Groups
         </Text>
-      </TouchableOpacity>
-
-      <Text style={{ color: 'white', textAlign: 'center' }}>
-        Your Groups
-      </Text>
-
+      </View>
+      )}
+    
+   
+      
       {selectedGroup && (
         <Picker
           selectedValue={selectedGroup.id}
@@ -148,6 +155,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     marginBottom: 10,
+    
   },
   input: {
     height: 40,
