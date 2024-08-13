@@ -24,13 +24,9 @@ export const createUser = async (
   id?: string
 ): Promise<string> => {
   try {
-    const docRef = id
-      ? doc(collection(db, 'users'), id)
-      : doc(collection(db, 'users'));
+    const docRef = doc(collection(db, 'users'), id); // Directly use the provided ID
 
     await setDoc(docRef, params);
-    const createdDoc = await getDoc(docRef);
-
     return docRef.id;
   } catch (error) {
     console.error('Error creating user:', error);

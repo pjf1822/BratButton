@@ -16,7 +16,6 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
-const setSelectedGroup = useGroupStore.getState().setSelectedGroup;
 
 
 
@@ -24,7 +23,10 @@ const setSelectedGroup = useGroupStore.getState().setSelectedGroup;
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const setGroupsOfUser = useGroupStore((state) => state.setGroupsOfUser);
+  const {  setGroupsOfUser, setSelectedGroup } = useGroupStore((state) => ({
+    setGroupsOfUser: state.setGroupsOfUser,
+    setSelectedGroup: state.setSelectedGroup,
+  }));
 
   useEffect(() => {
     const checkUserId = async () => {

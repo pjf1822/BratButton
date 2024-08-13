@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {  createGroup, } from "./api";
+import {  createGroup, joinGroup, } from "./api";
 import { Group, useGroupStore } from "./zustandStore";
 
 export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] ) => {
@@ -65,5 +65,34 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
       console.log(`Selected member for today: ${selectedGroup.members[randomIndex].username}`);
     } else {
       console.log(`Today's member was previously selected: ${selectedGroup.members[previousIndex].username}`);
+    }
+  };
+
+  type HandleJoinGroupFunction = (
+    groupId: string | undefined,
+    setInvited: (invited: boolean) => void
+  ) => Promise<void>;
+  export const handleJoinGroup: HandleJoinGroupFunction = async (groupId, setInvited) => {
+    try {
+      const userString = await AsyncStorage.getItem('user');
+      const user = JSON.parse(userString); 
+   
+      
+
+      if (!user || !groupId) {
+        throw new Error('User ID or Group ID is missing');
+      }
+
+      const updatedGroup = await joinGroup(groupId, user.userId, user.username);
+
+      if (updatedGroup) {
+        const currentGroups = useGroupStore.getState().groupsOfUser;
+        const updatedGroups = [...currentGroups, updatedGroup];
+        useGroupStore.getState().setGroupsOfUser(updatedGroups);
+      }
+
+      setInvited(false);
+    } catch (error) {
+      console.error('Failed to join group:', error);
     }
   };
