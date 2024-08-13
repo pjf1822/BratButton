@@ -1,8 +1,6 @@
 import {
   collection,
   getDocs,
-  query,
-  where,
   doc,
   setDoc,
   getDoc,
@@ -39,9 +37,10 @@ export const createUser = async (
     throw new Error('Failed to create user');
   }
 };
+
 export const userGroups = async (
   userId: string,
-  setSelectedGroupId: (id: string | undefined) => void
+  setSelectedGroup: (group: Group | undefined) => void
 ) => {
   try {
     const groupsRef = collection(db, 'groups');
@@ -60,6 +59,7 @@ export const userGroups = async (
 
         if (data.lastUpdated !== today || data.dailyIndex === undefined) {
           const newIndex = Math.floor(Math.random() * members.length);
+          console.log('we are assigning a new index todya');
           updateDoc(doc.ref, {
             dailyIndex: newIndex,
             lastUpdated: today
@@ -74,9 +74,9 @@ export const userGroups = async (
       .filter((group) => group.members.some((member) => member.id === userId));
 
     if (groups.length > 0) {
-      setSelectedGroupId(groups[0].id);
+      setSelectedGroup(groups[0]);
     } else {
-      setSelectedGroupId(undefined);
+      setSelectedGroup(undefined);
     }
 
     return groups;

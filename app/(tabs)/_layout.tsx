@@ -16,6 +16,8 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
+const setSelectedGroup = useGroupStore.getState().setSelectedGroup;
+
 
 
 
@@ -33,7 +35,7 @@ export default function TabLayout() {
           router.replace('/firstLaunch');
         } else {
           const user = JSON.parse(userString);
-          const groups = await userGroups(user.userId);
+          const groups = await userGroups(user.userId,setSelectedGroup);
           setGroupsOfUser(groups ?? []);
         }
       } catch (error) {

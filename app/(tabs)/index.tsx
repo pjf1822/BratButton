@@ -5,8 +5,8 @@ import { useGroupStore } from '@/zustandStore';
 import { useEffect, useState } from 'react';
 
 export default function TabOneScreen() {
-  const {  selectedGroupId,  groupsOfUser } = useGroupStore((state) => ({
-    selectedGroupId: state.selectedGroupId,
+  const {  selectedGroup,  groupsOfUser } = useGroupStore((state) => ({
+    selectedGroup: state.selectedGroup,
     groupsOfUser:state.groupsOfUser
   })); 
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
@@ -17,18 +17,17 @@ export default function TabOneScreen() {
 
 
   useEffect(() => {
-    console.log("so we dont have the selected Group id")
-    if (selectedGroupId) {
-      const group = groupsOfUser.find((group) => group.id === selectedGroupId);
-
-      if (group && group.dailyIndex !== undefined) {
-        const member = group.members[group.dailyIndex];
+    if (selectedGroup) {
+      if (selectedGroup.dailyIndex !== undefined) {
+        const member = selectedGroup.members[selectedGroup.dailyIndex];
         setSelectedMember(member?.username || 'No member selected');
       } else {
         setSelectedMember('No member selected');
       }
+    } else {
+      setSelectedMember('No member selected');
     }
-  }, [selectedGroupId, groupsOfUser]);
+  }, [selectedGroup]);
 
   const viewUserData = async () => {
     try {
@@ -46,6 +45,7 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
+      <Text>{selectedGroup?.groupName}</Text>
       <Text style={styles.title}>IS {selectedMember} BEING A</Text>
       <Text style={styles.mainText}>BITCH</Text>
       <Text style={styles.subtitle}>TODAY</Text>
@@ -54,7 +54,6 @@ export default function TabOneScreen() {
       <Button color={"white"} onPress={deleteUserId} title="delete some shit"></Button>
       <Button color="white" onPress={viewUserData} title="View stored data" />
 
-     
     </View>
   );
 }

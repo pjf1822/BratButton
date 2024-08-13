@@ -34,19 +34,14 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
  
 
   export const updateDailyIndexForGroup = () => {
-    const { selectedGroupId, groupsOfUser, setGroupsOfUser } = useGroupStore.getState();
+    const { selectedGroup, groupsOfUser, setGroupsOfUser } = useGroupStore.getState();
   
-    if (!selectedGroupId) {
+    if (!selectedGroup) {
       console.error('No group selected');
       return;
     }
   
-    const selectedGroup = groupsOfUser.find(group => group.id === selectedGroupId);
-  
-    if (!selectedGroup) {
-      console.error('Selected group not found');
-      return;
-    }
+   
   
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
   
@@ -63,7 +58,7 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
   
       // Update the group in the state
       const updatedGroups = groupsOfUser.map(group =>
-        group.id === selectedGroupId ? updatedGroup : group
+        group.id === selectedGroup.id ? updatedGroup : group
       );
       setGroupsOfUser(updatedGroups);
   
