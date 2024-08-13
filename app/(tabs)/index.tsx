@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, Alert} from 'react-native';
+import { StyleSheet,  Text, View ,  Button, Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { useGroupStore } from '@/zustandStore';
@@ -9,6 +9,7 @@ export default function TabOneScreen() {
     selectedGroup: state.selectedGroup,
     groupsOfUser:state.groupsOfUser
   })); 
+
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
   const deleteUserId = async () => {
@@ -20,14 +21,15 @@ export default function TabOneScreen() {
     if (selectedGroup) {
       if (selectedGroup.dailyIndex !== undefined) {
         const member = selectedGroup.members[selectedGroup.dailyIndex];
-        setSelectedMember(member?.username || 'No member selected');
+        setSelectedMember(member?.username || '');
       } else {
-        setSelectedMember('No member selected');
+        setSelectedMember('');
       }
     } else {
-      setSelectedMember('No member selected');
+      setSelectedMember('');
     }
   }, [selectedGroup]);
+
 
   const viewUserData = async () => {
     try {

@@ -17,12 +17,11 @@ export default function TabGroupScreen() {
     selectedGroup: state.selectedGroup,
     setSelectedGroup: state.setSelectedGroup,
   }));  
-  const [modalVisible, setModalVisible] = useState(false);
+
   const [newGroupName, setNewGroupName] = useState('');
   const [selectedGroupName, setSelectedGroupName] = useState<string | undefined>(groupsOfUser[0]?.groupName)
-
-
   const [invited, setInvited] = useState<Boolean >(false); 
+  const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/groups', {
     queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroupName }
