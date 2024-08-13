@@ -11,6 +11,9 @@ export interface Group {
   dailyIndex?: number; 
   lastUpdated?: string; 
 }
+export interface NewGroupFormProps {
+  groupsOfUser: Group[];
+}
 
 interface StoreState {
   groupsOfUser: Group[];

@@ -1,13 +1,13 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
+import { StyleSheet,  Text, View , TouchableOpacity} from 'react-native';
 import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking'; 
 import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker'; 
-import { handleCreateGroup } from '@/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { joinGroup } from '@/api';
+import NewGroupForm from '@/components/NewGroupForm';
+import QRCodeModal from '@/components/QRCodeModal';
 
 
 
@@ -18,9 +18,8 @@ export default function TabGroupScreen() {
     setSelectedGroup: state.setSelectedGroup,
   }));  
 
-  const [newGroupName, setNewGroupName] = useState('');
   const [selectedGroupName, setSelectedGroupName] = useState<string | undefined>(groupsOfUser[0]?.groupName)
-  const [invited, setInvited] = useState<Boolean >(false); 
+  const [invited, setInvited] = useState<Boolean>(false); 
   const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/groups', {
@@ -83,35 +82,7 @@ export default function TabGroupScreen() {
 
   return (
     <View style={styles.container}>
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(false);
-      }}
-    >
-      <TouchableOpacity
-        onPress={() => setModalVisible(false)}
-        style={styles.modalContainer}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <QRCode
-              value={redirectUrl}
-              size={350}
-              enableLinearGradient
-            />
-            <Text>
-              hey join{' '}
-              {selectedGroup?.groupName || 'Unknown'}{' '}
-
-              Group
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </Modal>
+    <QRCodeModal selectedGroup={selectedGroup} redirectUrl={redirectUrl} modalVisible={modalVisible}setModalVisible={setModalVisible} />
 
     {invited === true ? (
       <View>
@@ -123,52 +94,43 @@ export default function TabGroupScreen() {
             borderRadius: 5 
           }}
         >
-    <Text style={{ color: 'white', textAlign: 'center' }}>
-     Join {groupName}
-    </Text>
-  </TouchableOpacity>
+          <Text style={{ color: 'white', textAlign: 'center' }}>
+          Join {groupName}
+          </Text>
+        </TouchableOpacity>
       </View>
     ) : (
-      <View style={{ width:"100%"}}>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Text style={{ color: 'black', fontSize: 40 ,textAlign:"center"}}>Shareable Group QR Code</Text>
-        </TouchableOpacity>
+      <View style={{ width: "100%" }}>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Text style={{ color: 'black', fontSize: 40, textAlign: "center" }}>
+          Shareable Group QR Code
+        </Text>
+      </TouchableOpacity>
 
-<Text style={{ color: 'white', textAlign: 'center' }}> your groups</Text>
-<Picker
-            selectedValue={selectedGroup?.id}
-            onValueChange={handlePickerChange}
-            style={{ display: selectedGroup ? "flex" : "none" }}
-          >
-          {groupsOfUser?.map((group) => (
+      <Text style={{ color: 'white', textAlign: 'center' }}>
+        Your Groups
+      </Text>
+
+      {selectedGroup && (
+        <Picker
+          selectedValue={selectedGroup.id}
+          onValueChange={handlePickerChange}
+          style={{ display: selectedGroup ? "flex" : "none" }}
+        >
+          {groupsOfUser.map((group) => (
             <Picker.Item
-              key={group?.id}
-              label={group?.groupName}
-              value={group?.id}
+              key={group.id}
+              label={group.groupName}
+              value={group.id}
             />
           ))}
         </Picker>
+      )}
 
-        <View style={{ height: 100, width: '100%' }}></View>
+      <View style={{ height: 100, width: '100%' }} />
 
-          <View style={{ width:"100%"}}> 
-
-        <Text style={styles.modalTitle}>Enter New Group Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Group Name"
-          value={newGroupName}
-          onChangeText={setNewGroupName}
-        />
-
-        <Button
-          title="Create Group"
-          color={'white'}
-          onPress={() => handleCreateGroup(newGroupName,groupsOfUser)}
-        />
-</View>
-
-      </View>
+      <NewGroupForm groupsOfUser={groupsOfUser} />
+    </View>
     )}
   </View>
   );
