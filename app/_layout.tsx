@@ -3,9 +3,8 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect} from 'react';
 import 'react-native-reanimated';
-import * as Linking from 'expo-linking';  // Import Linking from expo-linking
 
 
 import { QueryClient, QueryClientProvider } from "react-query";

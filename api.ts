@@ -1,8 +1,6 @@
 import {
   collection,
   getDocs,
-  query,
-  where,
   doc,
   setDoc,
   getDoc,
@@ -39,23 +37,47 @@ export const createUser = async (
     throw new Error('Failed to create user');
   }
 };
-export const userGroups = async (userId: string) => {
+
+export const userGroups = async (
+  userId: string,
+  setSelectedGroup: (group: Group | undefined) => void
+) => {
   try {
     const groupsRef = collection(db, 'groups');
     const querySnapshot = await getDocs(groupsRef);
+    const today = new Date().toLocaleDateString(); // Get the current date as a string
 
-    // Filter groups based on userId
     const groups: Group[] = querySnapshot.docs
       .map((doc) => {
         const data = doc.data();
         const members: Member[] = data.members || [];
-        return {
+        const group: Group = {
           id: doc.id,
           groupName: data.groupName,
           members
         };
+
+        if (data.lastUpdated !== today || data.dailyIndex === undefined) {
+          const newIndex = Math.floor(Math.random() * members.length);
+          console.log('we are assigning a new index todya');
+          updateDoc(doc.ref, {
+            dailyIndex: newIndex,
+            lastUpdated: today
+          });
+          group.dailyIndex = newIndex;
+        } else {
+          group.dailyIndex = data.dailyIndex;
+        }
+
+        return group;
       })
       .filter((group) => group.members.some((member) => member.id === userId));
+
+    if (groups.length > 0) {
+      setSelectedGroup(groups[0]);
+    } else {
+      setSelectedGroup(undefined);
+    }
 
     return groups;
   } catch (error) {

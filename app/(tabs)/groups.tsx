@@ -12,10 +12,10 @@ import { joinGroup } from '@/api';
 
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroupId,  setSelectedGroupId } = useGroupStore((state) => ({
+  const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore((state) => ({
     groupsOfUser: state.groupsOfUser,
-    selectedGroupId: state.selectedGroupId,
-    setSelectedGroupId: state.setSelectedGroupId,
+    selectedGroup: state.selectedGroup,
+    setSelectedGroup: state.setSelectedGroup,
   }));  
   const [modalVisible, setModalVisible] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -25,7 +25,7 @@ export default function TabGroupScreen() {
   const [invited, setInvited] = useState<Boolean >(false); 
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroupId, invitedParam: "true" , groupName: selectedGroupName }
+    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroupName }
   });
 
 
@@ -34,10 +34,8 @@ export default function TabGroupScreen() {
 
   useEffect(() => {
     if (groupsOfUser.length > 0) {
-      setSelectedGroupId(groupsOfUser[0]?.id);
       setSelectedGroupName(groupsOfUser[0]?.groupName);
     } else {
-      setSelectedGroupId(undefined);
       setSelectedGroupName(undefined);
     }
   }, [groupsOfUser]);
@@ -78,10 +76,11 @@ export default function TabGroupScreen() {
   const handlePickerChange = (itemValue: string) => {
     const selectedGroup = groupsOfUser.find(group => group.id === itemValue);
     if (selectedGroup) {
-      setSelectedGroupId(selectedGroup.id);
+      setSelectedGroup(selectedGroup);
       setSelectedGroupName(selectedGroup.groupName);
     }
   };
+
 
   return (
     <View style={styles.container}>
@@ -106,8 +105,8 @@ export default function TabGroupScreen() {
             />
             <Text>
               hey join{' '}
-              {groupsOfUser.find((group) => group.id === selectedGroupId)
-                ?.groupName || 'Unknown'}{' '}
+              {selectedGroup?.groupName || 'Unknown'}{' '}
+
               Group
             </Text>
           </View>
@@ -137,11 +136,11 @@ export default function TabGroupScreen() {
         </TouchableOpacity>
 
 <Text style={{ color: 'white', textAlign: 'center' }}> your groups</Text>
-        <Picker
-          selectedValue={selectedGroupId}
-          onValueChange={handlePickerChange}
-          style={{display:selectedGroupId === undefined ? "none" : "flex"}}
-        >
+<Picker
+            selectedValue={selectedGroup?.id}
+            onValueChange={handlePickerChange}
+            style={{ display: selectedGroup ? "flex" : "none" }}
+          >
           {groupsOfUser?.map((group) => (
             <Picker.Item
               key={group?.id}
