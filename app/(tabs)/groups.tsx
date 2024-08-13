@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { joinGroup } from '@/api';
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
+import { handleJoinGroup } from '@/utils';
 
 
 
@@ -35,31 +36,6 @@ export default function TabGroupScreen() {
     }
   }, [invitedParam]);
 
-  const handleJoinGroup = async () => {
-    try {
-      const userString = await AsyncStorage.getItem('user');
-      const user = JSON.parse(userString); 
-   
-      
-
-      if (!user || !groupId) {
-        throw new Error('User ID or Group ID is missing');
-      }
-
-      const updatedGroup = await joinGroup(groupId, user.userId, user.username);
-
-      if (updatedGroup) {
-        const currentGroups = useGroupStore.getState().groupsOfUser;
-        const updatedGroups = [...currentGroups, updatedGroup];
-        useGroupStore.getState().setGroupsOfUser(updatedGroups);
-      }
-
-      setInvited(false);
-    } catch (error) {
-      console.error('Failed to join group:', error);
-    }
-  };
-
 
 
   const handlePickerChange = (itemValue: string) => {
@@ -77,7 +53,7 @@ export default function TabGroupScreen() {
     {invited === true ? (
       <View>
        <TouchableOpacity
-          onPress={() => handleJoinGroup()}
+          onPress={() => handleJoinGroup(groupId,setInvited)}
           style={{ 
             padding: 10, 
             backgroundColor: 'blue', 
