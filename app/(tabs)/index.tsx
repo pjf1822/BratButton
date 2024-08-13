@@ -1,16 +1,18 @@
-import { StyleSheet,  Text, View ,  Button, Alert} from 'react-native';
+import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { useGroupStore } from '@/zustandStore';
 import { useEffect, useState } from 'react';
 
 export default function TabOneScreen() {
-  const {  selectedGroup,  groupsOfUser } = useGroupStore((state) => ({
+  const {  selectedGroup, groupsOfUser } = useGroupStore((state) => ({
     selectedGroup: state.selectedGroup,
-    groupsOfUser:state.groupsOfUser
+    groupsOfUser: state.groupsOfUser,
   })); 
 
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
@@ -28,6 +30,8 @@ export default function TabOneScreen() {
     } else {
       setSelectedMember('');
     }
+    setLoading(false); 
+
   }, [selectedGroup]);
 
 
@@ -47,16 +51,32 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>{selectedGroup?.groupName}</Text>
-      <Text style={styles.title}>IS {selectedMember} BEING A</Text>
-      <Text style={styles.mainText}>BITCH</Text>
-      <Text style={styles.subtitle}>TODAY</Text>
-      <BitchButton />
-
-      <Button color={"white"} onPress={deleteUserId} title="delete some shit"></Button>
-      <Button color="white" onPress={viewUserData} title="View stored data" />
-
-    </View>
+    {loading ? (
+      <ActivityIndicator size="large" color="white" />
+    ) : (
+      <>
+        {groupsOfUser.length === 0 ? (
+          <Text style={styles.noGroupsText}>Hey,create or  join a group!</Text>
+        ) : selectedGroup && selectedMember ? (
+          <>
+            <Text>{selectedGroup.groupName}</Text>
+            <Text style={styles.title}>IS {selectedMember} BEING A</Text>
+            <Text style={styles.mainText}>BITCH</Text>
+            <Text style={styles.subtitle}>TODAY</Text>
+          </>
+        ) : (
+          <ActivityIndicator size="large" color="white" />
+        )}
+  
+        {/* Render BitchButton regardless of groupsOfUser */}
+        <BitchButton />
+  
+        {/* Additional buttons */}
+        <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+        <Button color="white" onPress={viewUserData} title="View stored data" />
+      </>
+    )}
+  </View>
   );
 }
 
@@ -114,4 +134,12 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
   },
+  noGroupsText:{
+    fontFamily: 'Kal',
+    color: 'red',
+    fontSize: 40,
+    fontWeight: '100',
+    textAlign:"center"
+  }
 });
+
