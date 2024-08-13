@@ -34,10 +34,8 @@ export default function TabGroupScreen() {
 
   useEffect(() => {
     if (groupsOfUser.length > 0) {
-      setSelectedGroupId(groupsOfUser[0]?.id);
       setSelectedGroupName(groupsOfUser[0]?.groupName);
     } else {
-      setSelectedGroupId(undefined);
       setSelectedGroupName(undefined);
     }
   }, [groupsOfUser]);

@@ -8,6 +8,8 @@ export interface Group {
   id: string;
   groupName: string
   members: Member[];
+  dailyIndex?: number; 
+  lastUpdated?: string; 
 }
 
 interface StoreState {
@@ -19,11 +21,13 @@ interface StoreState {
 
 export const useGroupStore = create<StoreState>((set) => ({
   groupsOfUser: [],
-    selectedGroupId: undefined,
+  selectedGroupId: undefined,
 
   setGroupsOfUser: (groups: Group[]) => {
     set({ groupsOfUser: groups });
   },
-  setSelectedGroupId: (id: string | undefined) => set({ selectedGroupId: id }),
-  }
-  ));
+
+  setSelectedGroupId: (id: string | undefined) => {
+    set({ selectedGroupId: id });
+  },
+}));

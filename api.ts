@@ -39,23 +39,45 @@ export const createUser = async (
     throw new Error('Failed to create user');
   }
 };
-export const userGroups = async (userId: string) => {
+export const userGroups = async (
+  userId: string,
+  setSelectedGroupId: (id: string | undefined) => void
+) => {
   try {
     const groupsRef = collection(db, 'groups');
     const querySnapshot = await getDocs(groupsRef);
+    const today = new Date().toLocaleDateString(); // Get the current date as a string
 
-    // Filter groups based on userId
     const groups: Group[] = querySnapshot.docs
       .map((doc) => {
         const data = doc.data();
         const members: Member[] = data.members || [];
-        return {
+        const group: Group = {
           id: doc.id,
           groupName: data.groupName,
           members
         };
+
+        if (data.lastUpdated !== today || data.dailyIndex === undefined) {
+          const newIndex = Math.floor(Math.random() * members.length);
+          updateDoc(doc.ref, {
+            dailyIndex: newIndex,
+            lastUpdated: today
+          });
+          group.dailyIndex = newIndex;
+        } else {
+          group.dailyIndex = data.dailyIndex;
+        }
+
+        return group;
       })
       .filter((group) => group.members.some((member) => member.id === userId));
+
+    if (groups.length > 0) {
+      setSelectedGroupId(groups[0].id);
+    } else {
+      setSelectedGroupId(undefined);
+    }
 
     return groups;
   } catch (error) {

@@ -1,11 +1,11 @@
-import React, { useEffect, } from 'react';
+import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs,router } from 'expo-router';
 import {  Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createUser, userGroups } from '@/api';
+import {  userGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 
 
@@ -32,8 +32,7 @@ export default function TabLayout() {
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
-            const user = JSON.parse(userString);
-  
+          const user = JSON.parse(userString);
           const groups = await userGroups(user.userId);
           setGroupsOfUser(groups ?? []);
         }

@@ -2,17 +2,33 @@ import { StyleSheet,  Text, View , TouchableOpacity, Modal,TextInput, Button, Al
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { useGroupStore } from '@/zustandStore';
+import { useEffect, useState } from 'react';
 
 export default function TabOneScreen() {
   const {  selectedGroupId,  groupsOfUser } = useGroupStore((state) => ({
     selectedGroupId: state.selectedGroupId,
     groupsOfUser:state.groupsOfUser
   })); 
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
+
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
-  
 
+
+  useEffect(() => {
+    console.log("so we dont have the selected Group id")
+    if (selectedGroupId) {
+      const group = groupsOfUser.find((group) => group.id === selectedGroupId);
+
+      if (group && group.dailyIndex !== undefined) {
+        const member = group.members[group.dailyIndex];
+        setSelectedMember(member?.username || 'No member selected');
+      } else {
+        setSelectedMember('No member selected');
+      }
+    }
+  }, [selectedGroupId, groupsOfUser]);
 
   const viewUserData = async () => {
     try {
@@ -30,7 +46,7 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>IS SHE BEING A</Text>
+      <Text style={styles.title}>IS {selectedMember} BEING A</Text>
       <Text style={styles.mainText}>BITCH</Text>
       <Text style={styles.subtitle}>TODAY</Text>
       <BitchButton />
