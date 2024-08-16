@@ -84,6 +84,8 @@ export const userGroups = async (
 export const createGroup = async (params: {
   members: Member[];
   groupName: string;
+  dailyIndex?: number;
+  lastUpdated?: string;
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));

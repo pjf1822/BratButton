@@ -22,11 +22,16 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       const groupId = await createGroup({
         members: [{ id: userId, username }],
         groupName,
+        dailyIndex: 0,
+        lastUpdated: new Date().toLocaleDateString() 
       });
+
       const newGroup: Group = {
         id: groupId,
         groupName,
         members: [{ id: userId, username }],
+        dailyIndex: 0,
+        lastUpdated: new Date().toLocaleDateString() 
       };
       setGroupsOfUser([...groupsOfUser, newGroup]);   
       if (groupsOfUser.length === 0) {
@@ -80,10 +85,8 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
   ) => Promise<void>;
   export const handleJoinGroup: HandleJoinGroupFunction = async (groupId, setInvited) => {
     try {
-      // const userString = await AsyncStorage.getItem('user');
-      // const user = JSON.parse(userString); 
-   
-      const userData = useGroupStore.getState().userData;
+    
+      const { userData, setGroupsOfUser, setSelectedGroup, groupsOfUser } = useGroupStore.getState();
 
       
 
@@ -94,9 +97,13 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       const updatedGroup = await joinGroup(groupId, userData.userId, userData.username);
 
       if (updatedGroup) {
-        const currentGroups = useGroupStore.getState().groupsOfUser;
-        const updatedGroups = [...currentGroups, updatedGroup];
-        useGroupStore.getState().setGroupsOfUser(updatedGroups);
+        const updatedGroups = [...groupsOfUser, updatedGroup];
+        setGroupsOfUser(updatedGroups);
+  
+  
+        if (groupsOfUser.length === 0) {
+          setSelectedGroup(updatedGroup);
+        }
       }
 
       setInvited(false);
