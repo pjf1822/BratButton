@@ -28,7 +28,13 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Kal: require('../assets/KalniaGlaze-VariableFont_wdth,wght.ttf'),
+    KalThin: require('../assets/fonts/KalniaGlaze-Thin.ttf'),
+    KalSemiBold: require('../assets/fonts/KalniaGlaze-SemiBold.ttf'),
+    KalLight: require('../assets/fonts/KalniaGlaze-Light.ttf'),
+    KalMedium: require('../assets/fonts/KalniaGlaze-Medium.ttf'),
+    KalRegular: require('../assets/fonts/KalniaGlaze-Regular.ttf'),
+    KalExtraLight: require('../assets/fonts/KalniaGlaze-ExtraLight.ttf'),
+    KalBold: require('../assets/fonts/KalniaGlaze-Bold.ttf'),
     ...FontAwesome.font,
   });
 

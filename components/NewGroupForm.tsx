@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     modalTitle: {
       fontSize: 20,
       marginBottom: 10,
-      fontFamily: 'Kal',
+      fontFamily: 'KalThin',
       color: 'red',
       fontWeight: '100',
       textAlign:"center"
