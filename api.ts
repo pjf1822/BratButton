@@ -41,7 +41,7 @@ export const userGroups = async (
   try {
     const groupsRef = collection(db, 'groups');
     const querySnapshot = await getDocs(groupsRef);
-    const today = new Date().toLocaleDateString(); // Get the current date as a string
+    const today = new Date().toLocaleDateString();
 
     const groups: Group[] = querySnapshot.docs
       .map((doc) => {

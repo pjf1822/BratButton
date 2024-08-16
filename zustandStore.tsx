@@ -15,14 +15,23 @@ export interface NewGroupFormProps {
   groupsOfUser: Group[];
 }
 
+interface UserData {
+  userId: string;
+  username: string;
+}
+
+
 interface StoreState {
   groupsOfUser: Group[];
   setGroupsOfUser: (groups: Group[]) => void;
   selectedGroup: Group | undefined;
   setSelectedGroup: (group: Group | undefined) => void;
+  userData: UserData | null;
+  setUserData: (data: UserData) => void;
 }
 
 export const useGroupStore = create<StoreState>((set) => ({
+  userData: null,
   groupsOfUser: [],
   selectedGroup: undefined,
 
@@ -32,5 +41,8 @@ export const useGroupStore = create<StoreState>((set) => ({
 
   setSelectedGroup: (group: Group | undefined) => {
     set({ selectedGroup: group });
+  },
+  setUserData: (data: UserData) => {
+    set({ userData: data });
   },
 }));

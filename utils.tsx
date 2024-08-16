@@ -1,32 +1,38 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {  createGroup, joinGroup, } from "./api";
 import { Group, useGroupStore } from "./zustandStore";
 
-export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] ) => {
+export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]) => {
     try {
      
     if (!groupName.trim()) {
         throw new Error('Group name is required');
       }
-      const userString = await AsyncStorage.getItem('user');
-      const user = JSON.parse(userString); 
-   
+
+      const { userData , setGroupsOfUser, setSelectedGroup  } = useGroupStore.getState();
 
 
-      if (!user.userId) {
+
+      if (!userData?.userId) {
         throw new Error('User ID not found in AsyncStorage');
       }
       
+      const { userId, username } = userData;
+
       
-      const groupId = await createGroup({ members: [{id:user.userId, username:user.username}],groupName});
-      
+      const groupId = await createGroup({
+        members: [{ id: userId, username }],
+        groupName,
+      });
       const newGroup: Group = {
         id: groupId,
         groupName,
-        members: [user.userId],
+        members: [{ id: userId, username }],
       };
-      useGroupStore.getState().setGroupsOfUser([...groupsOfUser, newGroup]);
-    } catch (error) {
+      setGroupsOfUser([...groupsOfUser, newGroup]);   
+      if (groupsOfUser.length === 0) {
+        setSelectedGroup(newGroup);
+      }
+     } catch (error) {
       console.error("Failed to create group:", error);
     }
   };
@@ -74,16 +80,18 @@ export const handleCreateGroup = async (groupName: string, groupsOfUser:Group[] 
   ) => Promise<void>;
   export const handleJoinGroup: HandleJoinGroupFunction = async (groupId, setInvited) => {
     try {
-      const userString = await AsyncStorage.getItem('user');
-      const user = JSON.parse(userString); 
+      // const userString = await AsyncStorage.getItem('user');
+      // const user = JSON.parse(userString); 
    
+      const userData = useGroupStore.getState().userData;
+
       
 
-      if (!user || !groupId) {
+      if (!userData || !groupId) {
         throw new Error('User ID or Group ID is missing');
       }
 
-      const updatedGroup = await joinGroup(groupId, user.userId, user.username);
+      const updatedGroup = await joinGroup(groupId, userData.userId, userData.username);
 
       if (updatedGroup) {
         const currentGroups = useGroupStore.getState().groupsOfUser;

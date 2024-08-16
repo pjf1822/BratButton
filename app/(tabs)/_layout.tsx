@@ -23,9 +23,10 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const {  setGroupsOfUser, setSelectedGroup } = useGroupStore((state) => ({
+  const {  setGroupsOfUser, setSelectedGroup ,setUserData} = useGroupStore((state) => ({
     setGroupsOfUser: state.setGroupsOfUser,
     setSelectedGroup: state.setSelectedGroup,
+    setUserData: state.setUserData, 
   }));
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function TabLayout() {
           router.replace('/firstLaunch');
         } else {
           const user = JSON.parse(userString);
+          setUserData({ userId: user.userId, username: user.username });
           const groups = await userGroups(user.userId,setSelectedGroup);
           setGroupsOfUser(groups ?? []);
         }
