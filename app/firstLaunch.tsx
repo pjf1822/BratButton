@@ -34,7 +34,6 @@ const firstLaunch = () => {
           value={username}
           placeholderTextColor={"red"}
           onChangeText={setUsername}
-
         />
         <TouchableOpacity onPress={addUserName}>
           <Text style={styles.label}>Add user name</Text>
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
      
     },
     mainText: {
-      fontFamily: 'Kal',
+      fontFamily: 'KalBold',
       color: 'red',
       fontSize: 100,
       fontWeight: '100',
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
       textAlign:"center"
     },
     label: {
-      fontFamily: 'Kal',
+      fontFamily: 'KalRegular',
       color: 'red',
       fontSize: 30,
       fontWeight: '200',
@@ -76,6 +75,7 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       marginBottom: 20,
       paddingHorizontal: 10,
-      
+            fontFamily: 'KalRegular',
+
     },
   });

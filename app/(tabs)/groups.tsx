@@ -118,19 +118,19 @@ const styles = StyleSheet.create({
     width:"100%"
   },
   title: {
-    fontFamily: 'Kal',
+    fontFamily: 'Thin',
     color: 'red',
     fontSize: 30,
     fontWeight: '100',
   },
   mainText: {
-    fontFamily: 'Kal',
+    fontFamily: 'KalThin',
     color: 'red',
     fontSize: 100,
     fontWeight: '100',
   },
   subtitle: {
-    fontFamily: 'Kal',
+    fontFamily: 'KalThin',
     color: 'red',
     fontSize: 30,
     fontWeight: '100',

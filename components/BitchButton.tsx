@@ -58,19 +58,19 @@ const styles = StyleSheet.create({
       flex: 1,
     },
     title: {
-      fontFamily: 'Kal',
+      fontFamily: 'Kalthin',
       color: 'red',
       fontSize: 30,
       fontWeight: '100',
     },
     mainText: {
-      fontFamily: 'Kal',
+      fontFamily: 'Kalthin',
       color: 'red',
       fontSize: 100,
       fontWeight: '100',
     },
     subtitle: {
-      fontFamily: 'Kal',
+      fontFamily: 'Kalthin',
       color: 'red',
       fontSize: 30,
       fontWeight: '100',
