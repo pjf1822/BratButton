@@ -3,15 +3,19 @@ import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUser } from '@/api';
 import { router,Stack } from 'expo-router';
+import { useGroupStore } from '@/zustandStore';
 
 const firstLaunch = () => {
     const [username, setUsername] = useState('');
+    const { setUserData } = useGroupStore(); 
+
 
     const addUserName= async() => {
         const newUserId = Math.floor(Math.random() * 1000000).toString();
         const userData = { userId: newUserId, username };
 
         await AsyncStorage.setItem('user', JSON.stringify(userData));
+        setUserData(userData);
         await createUser(userData, newUserId);
         router.replace('/(tabs)');
 

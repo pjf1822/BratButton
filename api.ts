@@ -41,7 +41,7 @@ export const userGroups = async (
   try {
     const groupsRef = collection(db, 'groups');
     const querySnapshot = await getDocs(groupsRef);
-    const today = new Date().toLocaleDateString(); // Get the current date as a string
+    const today = new Date().toLocaleDateString();
 
     const groups: Group[] = querySnapshot.docs
       .map((doc) => {
@@ -84,6 +84,8 @@ export const userGroups = async (
 export const createGroup = async (params: {
   members: Member[];
   groupName: string;
+  dailyIndex?: number;
+  lastUpdated?: string;
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
