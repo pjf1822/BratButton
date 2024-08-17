@@ -12,11 +12,11 @@ const firstLaunch = () => {
 
     const addUserName= async() => {
         const newUserId = Math.floor(Math.random() * 1000000).toString();
-        const userData = { userId: newUserId, username };
+        const userData = { id: newUserId, username };
 
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         setUserData(userData);
-        await createUser(userData, newUserId);
+        await createUser(userData);
         router.replace('/(tabs)');
 
     }

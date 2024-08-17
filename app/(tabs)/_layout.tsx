@@ -33,13 +33,13 @@ export default function TabLayout() {
     const checkUserId = async () => {
       try {
         const userString = await AsyncStorage.getItem('user');
-  
+
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
           const user = JSON.parse(userString);
-          setUserData({ userId: user.userId, username: user.username });
-          const groups = await userGroups(user.userId,setSelectedGroup);
+          setUserData(user);
+          const groups = await userGroups(user.id, setSelectedGroup);
           setGroupsOfUser(groups ?? []);
         }
       } catch (error) {

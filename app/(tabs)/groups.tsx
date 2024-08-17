@@ -4,7 +4,6 @@ import * as Linking from 'expo-linking';
 import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker'; 
-
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
 import { handleJoinGroup } from '@/utils';
@@ -18,7 +17,7 @@ export default function TabGroupScreen() {
     setSelectedGroup: state.setSelectedGroup,
   }));  
 
-  console.log(groupsOfUser ,"the gruops of the user")
+
 
 
   const [invited, setInvited] = useState<Boolean>(false); 
