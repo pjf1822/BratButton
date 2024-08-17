@@ -5,34 +5,18 @@ import { useGroupStore } from '@/zustandStore';
 import { useEffect, useState } from 'react';
 
 export default function TabOneScreen() {
-  const {  selectedGroup, groupsOfUser } = useGroupStore((state) => ({
+  const {  selectedGroup, groupsOfUser ,userData} = useGroupStore((state) => ({
     selectedGroup: state.selectedGroup,
     groupsOfUser: state.groupsOfUser,
+    userData: state.userData
   })); 
 
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
 
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
 
-
-  useEffect(() => {
-    if (selectedGroup) {
-      if (selectedGroup.dailyIndex !== undefined) {
-        const member = selectedGroup.members[selectedGroup.dailyIndex];
-        setSelectedMember(member?.username || '');
-      } else {
-        setSelectedMember('');
-      }
-    } else {
-      setSelectedMember('');
-    }
-    setLoading(false); 
-
-  }, [selectedGroup]);
 
 
   const viewUserData = async () => {
@@ -51,16 +35,14 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-    {loading ? (
-      <ActivityIndicator size="large" color="white" />
-    ) : (
-      <>
+    
+ 
         {groupsOfUser.length === 0 ? (
           <Text style={styles.noGroupsText}>Hey,create or  join a group!</Text>
-        ) : selectedGroup && selectedMember ? (
+        ) : selectedGroup && selectedGroup.selectedMember.username ? (
           <>
             <Text>{selectedGroup.groupName}</Text>
-            <Text style={styles.title}>IS {selectedMember} BEING A</Text>
+            <Text style={styles.title}>IS {selectedGroup.selectedMember.username} BEING A</Text>
             <Text style={styles.mainText}>BITCH</Text>
             <Text style={styles.subtitle}>TODAY</Text>
           </>
@@ -68,14 +50,13 @@ export default function TabOneScreen() {
           <ActivityIndicator size="large" color="white" />
         )}
   
-        {/* Render BitchButton regardless of groupsOfUser */}
-        <BitchButton />
+        {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
+       
   
-        {/* Additional buttons */}
+        {/* delete these */}
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
         <Button color="white" onPress={viewUserData} title="View stored data" />
-      </>
-    )}
+
   </View>
   );
 }

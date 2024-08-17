@@ -12,26 +12,30 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
 
 
 
-      if (!userData?.userId) {
+      if (!userData) {
         throw new Error('User ID not found in AsyncStorage');
       }
       
-      const { userId, username } = userData;
+     
 
       
       const groupId = await createGroup({
-        members: [{ id: userId, username }],
         groupName,
+        members: [userData],
         dailyIndex: 0,
-        lastUpdated: new Date().toLocaleDateString() 
+        lastUpdated: new Date().toLocaleDateString() ,
+        votesYes: [],
+        selectedMember: userData
       });
 
       const newGroup: Group = {
         id: groupId,
         groupName,
-        members: [{ id: userId, username }],
+        members: [userData],
         dailyIndex: 0,
-        lastUpdated: new Date().toLocaleDateString() 
+        lastUpdated: new Date().toLocaleDateString() ,
+        votesYes: [],
+        selectedMember: userData
       };
       setGroupsOfUser([...groupsOfUser, newGroup]);   
       if (groupsOfUser.length === 0) {
@@ -56,7 +60,6 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
   
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
   
-    // Check if dailyIndex is already set for today
     const previousIndex = selectedGroup.dailyIndex;
     const shouldUpdateIndex = !previousIndex || new Date().toISOString().split('T')[0] !== today;
   
@@ -83,6 +86,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
     groupId: string | undefined,
     setInvited: (invited: boolean) => void
   ) => Promise<void>;
+
   export const handleJoinGroup: HandleJoinGroupFunction = async (groupId, setInvited) => {
     try {
     
@@ -94,7 +98,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
         throw new Error('User ID or Group ID is missing');
       }
 
-      const updatedGroup = await joinGroup(groupId, userData.userId, userData.username);
+      const updatedGroup = await joinGroup(groupId, userData);
 
       if (updatedGroup) {
         const updatedGroups = [...groupsOfUser, updatedGroup];
