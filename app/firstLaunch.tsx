@@ -26,7 +26,6 @@ const firstLaunch = () => {
 
   return (
     <>
-      <Stack.Screen options={{headerShown:false }} />
       <View style={{backgroundColor:"purple",flex:1,justifyContent:"center",alignContent:"center"}}>
         <Text style={styles.label}>Enter Your Username</Text>
       <Text style={styles.mainText}>BITCH</Text>
