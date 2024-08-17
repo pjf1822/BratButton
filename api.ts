@@ -8,7 +8,7 @@ import {
   arrayUnion
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { Group, User } from './zustandStore';
+import { Group, User, useGroupStore } from './zustandStore';
 
 export interface CreateGroupParams {
   members: string[];
@@ -25,8 +25,8 @@ export const createUser = async (userData: User): Promise<string> => {
   }
 };
 
-export const userGroups = async (
-  userId: string,
+export const populateGroups = async (
+  id: string,
   setSelectedGroup: (group: Group | undefined) => void
 ): Promise<Group[]> => {
   try {
@@ -53,7 +53,8 @@ export const userGroups = async (
           console.log('Assigning a new index today');
           await updateDoc(doc.ref, {
             dailyIndex,
-            lastUpdated: today
+            lastUpdated: today,
+            votesYes: []
           });
         }
 
@@ -84,7 +85,7 @@ export const userGroups = async (
 
     // Filter groups to include only those where the user is a member
     const userGroups = groups.filter((group) =>
-      group.members.some((member) => member.id === userId)
+      group.members.some((member) => member.id === id)
     );
 
     // Set the first group as the selected group if any exist
@@ -146,5 +147,16 @@ export const joinGroup = async (
   } catch (error) {
     console.error('Error joining group:', error);
     return null;
+  }
+};
+
+export const voteYes = async (groupId: string, user: User) => {
+  try {
+    const groupRef = doc(db, 'groups', groupId);
+    await updateDoc(groupRef, {
+      votesYes: arrayUnion(user)
+    });
+  } catch (error) {
+    console.error('Error adding vote:', error);
   }
 };

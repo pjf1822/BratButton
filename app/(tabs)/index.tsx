@@ -1,15 +1,16 @@
-import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator} from 'react-native';
+import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
-import { useGroupStore } from '@/zustandStore';
-import { useEffect, useState } from 'react';
+import { User, useGroupStore } from '@/zustandStore';
 
 export default function TabOneScreen() {
+
   const {  selectedGroup, groupsOfUser ,userData} = useGroupStore((state) => ({
     selectedGroup: state.selectedGroup,
     groupsOfUser: state.groupsOfUser,
     userData: state.userData
   })); 
+
 
 
 
@@ -32,6 +33,9 @@ export default function TabOneScreen() {
       Alert.alert('Error', 'Failed to retrieve user data');
     }
   };
+  const renderItem = ({ item }: { item: User }) => (
+    <Text  style={{color:"white"}}>{item.username}</Text>
+  );
 
   return (
     <View style={styles.container}>
@@ -41,7 +45,18 @@ export default function TabOneScreen() {
           <Text style={styles.noGroupsText}>Hey,create or  join a group!</Text>
         ) : selectedGroup && selectedGroup.selectedMember.username ? (
           <>
-            <Text>{selectedGroup.groupName}</Text>
+         {selectedGroup && (
+          <FlatList
+            data={selectedGroup?.votesYes}
+            renderItem={renderItem}
+            keyExtractor={(item) =>{
+              console.log(item)
+              return(item?.id)}
+              }
+          />
+        )}
+             
+                <Text>{selectedGroup.groupName}</Text>
             <Text style={styles.title}>IS {selectedGroup.selectedMember.username} BEING A</Text>
             <Text style={styles.mainText}>BITCH</Text>
             <Text style={styles.subtitle}>TODAY</Text>
@@ -67,6 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    paddingTop:300
   },
   title: {
     fontFamily: 'Kalthin',
@@ -121,6 +137,12 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '100',
     textAlign:"center"
-  }
+  },
+  voteText: {
+    fontFamily: 'Kalthin',
+    color: 'white',
+    fontSize: 20,
+    marginVertical: 5,
+  },
 });
 

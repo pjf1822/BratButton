@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import React, { useRef, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useGroupStore } from '@/zustandStore';
+import { voteYes } from '@/api';
 
 interface BitchButtonProps {
   userData: {
@@ -16,10 +17,10 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
 
       const animation = useRef<LottieView>(null);
 
+      const addVoteYes = useGroupStore((state) => state.addVoteYes);
 
-       const { addVoteYes } = useGroupStore((state) => ({
-    addVoteYes: state.addVoteYes,
-  }));
+
+    
   async function playSound() {
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/bitch-101soundboards2.mp3')
@@ -37,21 +38,16 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
   }, [sound]);
 
 
-  const voteYes = () => {
-    if (selectedGroupId) {
-      addVoteYes(selectedGroupId, userData);
-    } else {
-      console.error('Selected group ID is undefined');
-    }
-  };
+
     return (
         <TouchableOpacity
         onPress={() => {
           animation.current?.reset();
           animation.current?.play();
           playSound();
-          voteYes()
-        }}
+          if (selectedGroupId && userData) {
+            addVoteYes(selectedGroupId, userData);
+          }        }}
         style={styles.button}
       >
         <LottieView
