@@ -18,7 +18,7 @@ export default function TabGroupScreen() {
     invited: state.invited,
     setInvited: state.setInvited,
     setInviteParams: state.setInviteParams,
-inviteParams: state.inviteParams
+    inviteParams: state.inviteParams
   }));  
 
 
@@ -27,34 +27,23 @@ inviteParams: state.inviteParams
   const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroup?.groupName  }
+    queryParams: { groupInviteId: selectedGroup?.id, invitedBool: "true" , groupInviteName: selectedGroup?.groupName  }
   });
 
 
-  const { groupId, invitedParam, groupName } = useLocalSearchParams<{ groupId?: string, invitedParam: string,groupName:string }>();
+  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{ groupInviteId?: string, invitedBool: string,groupInviteName:string }>();
 
 
 
   useEffect(() => {
-    if (groupId || invitedParam || groupName) {
-      setInviteParams(groupId, invitedParam, groupName);
-      if (invitedParam === "true") {
+    if (groupInviteId || invitedBool || groupInviteName) {
+      setInviteParams(groupInviteId, invitedBool, groupInviteName);
+      if (invitedBool === "true") {
+        
         setInvited(true);
       }
     }
-  }, [groupId, invitedParam, groupName]);
-
-
-
-
-
-  
-
-  // useEffect(() => {
-  //   if (invitedParam === "true") {
-  //     setInvited(true);
-  //   }
-  // }, [invitedParam]);
+  }, [groupInviteId, invitedBool, groupInviteName]);
 
 
 
@@ -73,7 +62,7 @@ inviteParams: state.inviteParams
     {invited === true ? (
       <View>
        <TouchableOpacity
-          onPress={() => handleJoinGroup(inviteParams?.groupId,setInvited)}
+          onPress={() => handleJoinGroup(inviteParams?.groupInviteId,setInvited)}
           style={{ 
             padding: 10, 
             backgroundColor: 'blue', 
@@ -81,7 +70,7 @@ inviteParams: state.inviteParams
           }}
         >
           <Text style={{ color: 'white', textAlign: 'center' }}>
-          Join {inviteParams.groupName}
+          Join {inviteParams.groupInviteName}
           </Text>
         </TouchableOpacity>
       </View>

@@ -9,19 +9,16 @@ const firstLaunch = () => {
     const [username, setUsername] = useState('');
     const { setUserData,inviteParams,invited } = useGroupStore(); 
 
-    console.log(inviteParams, "does this fucking work")
 
     const addUserName= async() => {
         const newUserId = Math.floor(Math.random() * 1000000).toString();
         const userData = { id: newUserId, username };
-
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         setUserData(userData);
         await createUser(userData);
         if(invited){
           router.replace('/groups');
         } else{
-
           router.replace('/(tabs)');
         }
 
