@@ -1,38 +1,23 @@
-import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator} from 'react-native';
+import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
-import { useGroupStore } from '@/zustandStore';
-import { useEffect, useState } from 'react';
+import { User, useGroupStore } from '@/zustandStore';
 
 export default function TabOneScreen() {
-  const {  selectedGroup, groupsOfUser } = useGroupStore((state) => ({
+
+  const {  selectedGroup, groupsOfUser ,userData} = useGroupStore((state) => ({
     selectedGroup: state.selectedGroup,
     groupsOfUser: state.groupsOfUser,
+    userData: state.userData
   })); 
 
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+
 
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
 
-
-  useEffect(() => {
-    if (selectedGroup) {
-      if (selectedGroup.dailyIndex !== undefined) {
-        const member = selectedGroup.members[selectedGroup.dailyIndex];
-        setSelectedMember(member?.username || '');
-      } else {
-        setSelectedMember('');
-      }
-    } else {
-      setSelectedMember('');
-    }
-    setLoading(false); 
-
-  }, [selectedGroup]);
 
 
   const viewUserData = async () => {
@@ -48,19 +33,31 @@ export default function TabOneScreen() {
       Alert.alert('Error', 'Failed to retrieve user data');
     }
   };
+  const renderItem = ({ item }: { item: User }) => (
+    <Text  style={{color:"white"}}>{item.username}</Text>
+  );
 
   return (
     <View style={styles.container}>
-    {loading ? (
-      <ActivityIndicator size="large" color="white" />
-    ) : (
-      <>
+    
+ 
         {groupsOfUser.length === 0 ? (
           <Text style={styles.noGroupsText}>Hey,create or  join a group!</Text>
-        ) : selectedGroup && selectedMember ? (
+        ) : selectedGroup && selectedGroup.selectedMember.username ? (
           <>
-            <Text>{selectedGroup.groupName}</Text>
-            <Text style={styles.title}>IS {selectedMember} BEING A</Text>
+         {selectedGroup && (
+          <FlatList
+            data={selectedGroup?.votesYes}
+            renderItem={renderItem}
+            keyExtractor={(item) =>{
+              console.log(item)
+              return(item?.id)}
+              }
+          />
+        )}
+             
+                <Text>{selectedGroup.groupName}</Text>
+            <Text style={styles.title}>IS {selectedGroup.selectedMember.username} BEING A</Text>
             <Text style={styles.mainText}>BITCH</Text>
             <Text style={styles.subtitle}>TODAY</Text>
           </>
@@ -68,14 +65,13 @@ export default function TabOneScreen() {
           <ActivityIndicator size="large" color="white" />
         )}
   
-        {/* Render BitchButton regardless of groupsOfUser */}
-        <BitchButton />
+        {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
+       
   
-        {/* Additional buttons */}
+        {/* delete these */}
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
         <Button color="white" onPress={viewUserData} title="View stored data" />
-      </>
-    )}
+
   </View>
   );
 }
@@ -86,6 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    paddingTop:300
   },
   title: {
     fontFamily: 'Kalthin',
@@ -140,6 +137,12 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '100',
     textAlign:"center"
-  }
+  },
+  voteText: {
+    fontFamily: 'Kalthin',
+    color: 'white',
+    fontSize: 20,
+    marginVertical: 5,
+  },
 });
 

@@ -4,7 +4,6 @@ import * as Linking from 'expo-linking';
 import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker'; 
-
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
 import { handleJoinGroup } from '@/utils';
@@ -12,31 +11,39 @@ import { handleJoinGroup } from '@/utils';
 
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore((state) => ({
+  const { groupsOfUser, selectedGroup, setSelectedGroup,invited,setInvited,setInviteParams,inviteParams } = useGroupStore((state) => ({
     groupsOfUser: state.groupsOfUser,
     selectedGroup: state.selectedGroup,
     setSelectedGroup: state.setSelectedGroup,
+    invited: state.invited,
+    setInvited: state.setInvited,
+    setInviteParams: state.setInviteParams,
+    inviteParams: state.inviteParams
   }));  
 
-  console.log(groupsOfUser ,"the gruops of the user")
 
 
-  const [invited, setInvited] = useState<Boolean>(false); 
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroup?.groupName }
+    queryParams: { groupInviteId: selectedGroup?.id, invitedBool: "true" , groupInviteName: selectedGroup?.groupName  }
   });
 
 
-  const { groupId, invitedParam, groupName } = useLocalSearchParams<{ groupId?: string, invitedParam: string,groupName:string }>();
+  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{ groupInviteId?: string, invitedBool: string,groupInviteName:string }>();
+
 
 
   useEffect(() => {
-    if (invitedParam === "true") {
-      setInvited(true);
+    if (groupInviteId || invitedBool || groupInviteName) {
+      setInviteParams(groupInviteId, invitedBool, groupInviteName);
+      if (invitedBool === "true") {
+        
+        setInvited(true);
+      }
     }
-  }, [invitedParam]);
+  }, [groupInviteId, invitedBool, groupInviteName]);
 
 
 
@@ -55,7 +62,7 @@ export default function TabGroupScreen() {
     {invited === true ? (
       <View>
        <TouchableOpacity
-          onPress={() => handleJoinGroup(groupId,setInvited)}
+          onPress={() => handleJoinGroup(inviteParams?.groupInviteId,setInvited)}
           style={{ 
             padding: 10, 
             backgroundColor: 'blue', 
@@ -63,7 +70,7 @@ export default function TabGroupScreen() {
           }}
         >
           <Text style={{ color: 'white', textAlign: 'center' }}>
-          Join {groupName}
+          Join {inviteParams.groupInviteName}
           </Text>
         </TouchableOpacity>
       </View>

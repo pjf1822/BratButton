@@ -5,7 +5,7 @@ import {  Pressable } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {  userGroups } from '@/api';
+import {  populateGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 
 
@@ -23,23 +23,24 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const {  setGroupsOfUser, setSelectedGroup ,setUserData} = useGroupStore((state) => ({
+  const {  setGroupsOfUser, setSelectedGroup ,setUserData,invited} = useGroupStore((state) => ({
     setGroupsOfUser: state.setGroupsOfUser,
     setSelectedGroup: state.setSelectedGroup,
     setUserData: state.setUserData, 
+    invited: state.invited
   }));
 
   useEffect(() => {
     const checkUserId = async () => {
       try {
         const userString = await AsyncStorage.getItem('user');
-  
+
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
           const user = JSON.parse(userString);
-          setUserData({ userId: user.userId, username: user.username });
-          const groups = await userGroups(user.userId,setSelectedGroup);
+          setUserData(user);
+          const groups = await populateGroups(user.id, setSelectedGroup);
           setGroupsOfUser(groups ?? []);
         }
       } catch (error) {

@@ -7,17 +7,20 @@ import { useGroupStore } from '@/zustandStore';
 
 const firstLaunch = () => {
     const [username, setUsername] = useState('');
-    const { setUserData } = useGroupStore(); 
+    const { setUserData,inviteParams,invited } = useGroupStore(); 
 
 
     const addUserName= async() => {
         const newUserId = Math.floor(Math.random() * 1000000).toString();
-        const userData = { userId: newUserId, username };
-
+        const userData = { id: newUserId, username };
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         setUserData(userData);
-        await createUser(userData, newUserId);
-        router.replace('/(tabs)');
+        await createUser(userData);
+        if(invited){
+          router.replace('/groups');
+        } else{
+          router.replace('/(tabs)');
+        }
 
     }
 
