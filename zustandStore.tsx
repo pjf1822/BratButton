@@ -1,4 +1,5 @@
 import {create }from 'zustand';
+import { voteYes } from './api';
 
 export interface User {
   id: string; 
@@ -26,7 +27,14 @@ interface StoreState {
   userData: User | null;
   setUserData: (data: User) => void;
   addVoteYes: (groupId: string, member: User) => void;  
-
+  invited: boolean;  // Add this line
+  setInvited: (invited: boolean) => void;  // Add this line
+  inviteParams: {
+    groupId?: string;
+    invitedParam?: string;
+    groupName?: string;
+  };
+  setInviteParams: (groupId?: string, invitedParam?: string, groupName?: string) => void;
 }
 
 export const useGroupStore = create<StoreState>((set) => ({
@@ -34,6 +42,8 @@ export const useGroupStore = create<StoreState>((set) => ({
   groupsOfUser: [],
   selectedGroup: undefined,
 
+  invited: false,  
+  setInvited: (invited) => set({ invited }),
   setGroupsOfUser: (groups: Group[]) => {
     set({ groupsOfUser: groups });
   },
@@ -44,21 +54,31 @@ export const useGroupStore = create<StoreState>((set) => ({
   setUserData: (data: User) => {
     set({ userData: data });
   },
-  addVoteYes: (groupId: string, member: User) => {
-    set((state) => {
-      const updatedGroups = state.groupsOfUser.map((group) => {
-        if (group.id === groupId) {
-          // Check if member is already in votesYes
-          if (!group.votesYes.find(vote => vote.id === member.id)) {
-            return {
-              ...group,
-              votesYes: [...group.votesYes, member],
-            };
+  addVoteYes: async (groupId: string, member: User) => {
+    try {
+      await voteYes(groupId, member);
+      
+      // Update local state
+      set((state) => {
+        const updatedGroups = state.groupsOfUser.map((group) => {
+          if (group.id === groupId) {
+            if (!group.votesYes.find(vote => vote.id === member.id)) {
+              return {
+                ...group,
+                votesYes: [...group.votesYes, member],
+              };
+            }
           }
-        }
-        return group;
+          return group;
+        });
+        return { groupsOfUser: updatedGroups };
       });
-      return { groupsOfUser: updatedGroups };
-    });
+    } catch (error) {
+      console.error('Error adding vote:', error);
+    }
   },
+  inviteParams: {},
+  setInviteParams: (groupId, invitedParam, groupName) => set({
+    inviteParams: { groupId, invitedParam, groupName }
+  }),
 }));

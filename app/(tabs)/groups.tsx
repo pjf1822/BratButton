@@ -11,31 +11,50 @@ import { handleJoinGroup } from '@/utils';
 
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore((state) => ({
+  const { groupsOfUser, selectedGroup, setSelectedGroup,invited,setInvited,setInviteParams,inviteParams } = useGroupStore((state) => ({
     groupsOfUser: state.groupsOfUser,
     selectedGroup: state.selectedGroup,
     setSelectedGroup: state.setSelectedGroup,
+    invited: state.invited,
+    setInvited: state.setInvited,
+    setInviteParams: state.setInviteParams,
+inviteParams: state.inviteParams
   }));  
 
 
 
 
-  const [invited, setInvited] = useState<Boolean>(false); 
   const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/groups', {
-    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroup?.groupName }
+    queryParams: { groupId: selectedGroup?.id, invitedParam: "true" , groupName: selectedGroup?.groupName  }
   });
 
 
   const { groupId, invitedParam, groupName } = useLocalSearchParams<{ groupId?: string, invitedParam: string,groupName:string }>();
 
 
+
   useEffect(() => {
-    if (invitedParam === "true") {
-      setInvited(true);
+    if (groupId || invitedParam || groupName) {
+      setInviteParams(groupId, invitedParam, groupName);
+      if (invitedParam === "true") {
+        setInvited(true);
+      }
     }
-  }, [invitedParam]);
+  }, [groupId, invitedParam, groupName]);
+
+
+
+
+
+  
+
+  // useEffect(() => {
+  //   if (invitedParam === "true") {
+  //     setInvited(true);
+  //   }
+  // }, [invitedParam]);
 
 
 
@@ -54,7 +73,7 @@ export default function TabGroupScreen() {
     {invited === true ? (
       <View>
        <TouchableOpacity
-          onPress={() => handleJoinGroup(groupId,setInvited)}
+          onPress={() => handleJoinGroup(inviteParams?.groupId,setInvited)}
           style={{ 
             padding: 10, 
             backgroundColor: 'blue', 
@@ -62,7 +81,7 @@ export default function TabGroupScreen() {
           }}
         >
           <Text style={{ color: 'white', textAlign: 'center' }}>
-          Join {groupName}
+          Join {inviteParams.groupName}
           </Text>
         </TouchableOpacity>
       </View>
