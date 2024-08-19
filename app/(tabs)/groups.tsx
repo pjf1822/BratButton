@@ -76,42 +76,43 @@ export default function TabGroupScreen() {
         </TouchableOpacity>
       </View>
     ) : (
-      <View style={{ width: "100%",position:"relative" ,flex:1,justifyContent:"space-around"}}>
-          
+      <View style={{ width: "100%",position:"relative" ,flex:1,justifyContent:"space-evenly"}}>
+              <NewGroupForm groupsOfUser={groupsOfUser} />
+
      {groupsOfUser.length > 0 && (
-      <View>
+      <View style={{width:"80%",alignSelf:"center"}}>
+        
+        <Text style={{ color: myColors.four, textAlign: 'center',fontFamily:"KalMedium",fontSize:33 }}>
+          Your Groups
+        </Text>
+        <Picker
+          selectedValue={selectedGroup?.id}
+          onValueChange={handlePickerChange}
+          itemStyle={{ textAlign: 'center',fontFamily:"KalMedium",fontSize:25}}
+          style={{ display: selectedGroup ? "flex" : "none" ,maxHeight:115,justifyContent:"center",overflow:"hidden"}}
+
+          >
+          {groupsOfUser.map((group) => (
+            <Picker.Item
+            key={group.id}
+            color={myColors.three}
+            label={group.groupName}
+            value={group.id}
+            />
+
+          ))}
+        </Picker>
         <TouchableOpacity onPress={() => setModalVisible(true)} 
-        style={{backgroundColor:myColors.four, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five, shadowColor: '#000',  width:"100%",
+        style={{backgroundColor:myColors.four, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five, shadowColor: '#000',  width:"100%",marginTop:30,
         shadowOffset: { width: 0, height: 4 }, 
         shadowOpacity: 0.4, 
         shadowRadius: 6, 
-        
         }}
         >
           <Text style={{ color: myColors.three, fontSize: 22,fontFamily:'KalRegular',width:"100%",textAlign:"center" }}>
             Invite someone to  {selectedGroup?.groupName}
           </Text>
         </TouchableOpacity>
-        <Text style={{ color: myColors.three, textAlign: 'center',fontFamily:"KalRegular",fontSize:20 }}>
-          Your Groups
-        </Text>
-        <Picker
-          selectedValue={selectedGroup?.id}
-          onValueChange={handlePickerChange}
-          itemStyle={{color: myColors.one, textAlign: 'center',fontFamily:"KalRegular"}}
-          style={{ display: selectedGroup ? "flex" : "none" ,maxHeight:100,justifyContent:"center"}}
-          >
-          {groupsOfUser.map((group) => (
-            <Picker.Item
-            key={group.id}
-            fontFamily='KalRegular'
-            color={myColors.three}
-            label={group.groupName}
-              value={group.id}
-            />
-
-          ))}
-        </Picker>
       </View>
       )}
     
@@ -119,7 +120,6 @@ export default function TabGroupScreen() {
       
 
 
-      <NewGroupForm groupsOfUser={groupsOfUser} />
     </View>
     )}
   </KeyboardAvoidingView>
@@ -128,7 +128,7 @@ export default function TabGroupScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: myColors.one,
+    backgroundColor:myColors.one,
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,

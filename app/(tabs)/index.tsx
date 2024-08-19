@@ -47,19 +47,11 @@ export default function TabOneScreen() {
           <Text style={styles.noGroupsText}>Hey,create or  join a group first!</Text>
         ) : selectedGroup && selectedGroup.selectedMember.username ? (
           <>
-          <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100,backgroundColor:"red"}}>
+          <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100}}>
             
            <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
-         {selectedGroup && (
-          <FlatList
-            data={selectedGroup?.votesYes}
-            renderItem={renderItem}
-            keyExtractor={(item) =>{
-              return(item?.id)}
-              }
-              contentContainerStyle={{display:"flex",backgroundColor:"white",flexDirection:"row",justifyContent:"flex-start",alignItems:"center"}}
-          />
-        )}
+           <Text style={styles.subtitle}>Todays Tally:</Text>
+        
                   </View>
 
              
@@ -96,7 +88,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'KalBold',
-    color: myColors.five,
+    color: myColors.four,
     fontSize: 30,
     fontWeight: '100',
   },

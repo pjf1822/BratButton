@@ -22,7 +22,7 @@ import { myColors } from '@/theme';
         />
 
 <TouchableOpacity
-  onPress={() => handleCreateGroup(newGroupName, groupsOfUser,Keyboard)}
+  onPress={() => handleCreateGroup(newGroupName, groupsOfUser,setNewGroupName)}
   style={{backgroundColor:myColors.four, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five, shadowColor: '#000',  width:"100%",
   shadowOffset: { width: 0, height: 4 }, 
   shadowOpacity: 0.4, 
