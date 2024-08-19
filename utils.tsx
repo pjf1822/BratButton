@@ -1,7 +1,10 @@
 import {  createGroup, joinGroup, } from "./api";
 import { Group, useGroupStore } from "./zustandStore";
+import {Keyboard} from "react-native"
+import { Dispatch, SetStateAction } from 'react';
 
-export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]) => {
+
+export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[],setNewGroupName: Dispatch<SetStateAction<string>>) => {
     try {
      
     if (!groupName.trim()) {
@@ -41,6 +44,8 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       if (groupsOfUser.length === 0) {
         setSelectedGroup(newGroup);
       }
+      setNewGroupName("")
+      Keyboard.dismiss();
      } catch (error) {
       console.error("Failed to create group:", error);
     }

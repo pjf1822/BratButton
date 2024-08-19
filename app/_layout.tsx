@@ -12,6 +12,9 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { View } from '@/components/Themed';
+import { myColors } from '@/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -28,13 +31,13 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    KalThin: require('../assets/fonts/KalniaGlaze-Thin.ttf'),
-    KalSemiBold: require('../assets/fonts/KalniaGlaze-SemiBold.ttf'),
-    KalLight: require('../assets/fonts/KalniaGlaze-Light.ttf'),
-    KalMedium: require('../assets/fonts/KalniaGlaze-Medium.ttf'),
-    KalRegular: require('../assets/fonts/KalniaGlaze-Regular.ttf'),
-    KalExtraLight: require('../assets/fonts/KalniaGlaze-ExtraLight.ttf'),
-    KalBold: require('../assets/fonts/KalniaGlaze-Bold.ttf'),
+    KalThin: require('../assets/fonts/Kalnia-Thin.ttf'),
+    KalSemiBold: require('../assets/fonts/Kalnia-SemiBold.ttf'),
+    KalLight: require('../assets/fonts/Kalnia-Light.ttf'),
+    KalMedium: require('../assets/fonts/Kalnia-Medium.ttf'),
+    KalRegular: require('../assets/fonts/Kalnia-Regular.ttf'),
+    KalExtraLight: require('../assets/fonts/Kalnia-ExtraLight.ttf'),
+    KalBold: require('../assets/fonts/Kalnia-Bold.ttf'),
     ...FontAwesome.font,
   });
 
@@ -57,25 +60,25 @@ export default function RootLayout() {
 
 
 
-  return <RootLayoutNav />;
-}
+  return (
+    <RootLayoutNav />
+  );}
 
 
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
   const queryClient = new QueryClient();
 
 
 
   return (
     <QueryClientProvider client={queryClient}>
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+
       <Stack >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="firstLaunch" options={{ headerShown: false }} />
       </Stack>
-    </ThemeProvider>
+
     </QueryClientProvider>
 
   );

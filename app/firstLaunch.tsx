@@ -1,13 +1,14 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUser } from '@/api';
 import { router,Stack } from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
+import { myColors } from '@/theme';
 
 const firstLaunch = () => {
     const [username, setUsername] = useState('');
-    const { setUserData,inviteParams,invited } = useGroupStore(); 
+    const { setUserData,invited } = useGroupStore(); 
 
 
     const addUserName= async() => {
@@ -25,23 +26,34 @@ const firstLaunch = () => {
     }
 
   return (
-    <>
-      <View style={{backgroundColor:"purple",flex:1,justifyContent:"center",alignContent:"center"}}>
+
+<KeyboardAvoidingView style={{backgroundColor:myColors.one,flex:1,justifyContent:"center",alignContent:"center"}} behavior='height'>
+         
         <Text style={styles.label}>Enter Your Username</Text>
       <Text style={styles.mainText}>BITCH</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="username"
+          placeholder="Username"
           value={username}
-          placeholderTextColor={"red"}
+          placeholderTextColor={"rgba(255,255,255,0.5)"}
           onChangeText={setUsername}
+          
         />
-        <TouchableOpacity onPress={addUserName}>
-          <Text style={styles.label}>Add user name</Text>
+              <TouchableOpacity onPress={addUserName} style={{backgroundColor:myColors.four,maxWidth:"70%", alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five,marginTop:50, shadowColor: '#000',  
+          shadowOffset: { width: 0, height: 4 }, 
+          shadowOpacity: 0.4, 
+          shadowRadius: 6, 
+          
+      }}>
+          <Text style={{ fontFamily: 'KalRegular',
+      color: myColors.three,
+      fontSize: 26,
+      fontWeight: '200',
+      textAlign:"center"}}>Add user name</Text>
         </TouchableOpacity>
-      </View>
-    </>
+      </KeyboardAvoidingView>
+  
   )
 }
 
@@ -53,31 +65,32 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       padding: 20,
-     
     },
     mainText: {
       fontFamily: 'KalBold',
-      color: 'red',
+      color: myColors.five,
       fontSize: 100,
       fontWeight: '100',
       alignItems:"center",
-      textAlign:"center"
+      textAlign:"center",
+      paddingBottom:20
     },
     label: {
       fontFamily: 'KalRegular',
-      color: 'red',
-      fontSize: 30,
-      fontWeight: '200',
+      color: myColors.four,
+      fontSize: 33,
       textAlign:"center"
-      
     },
     input: {
-      height: 40,
-      borderColor: 'red',
-      borderWidth: 1,
+      borderColor: myColors.four,
+      borderWidth: 3,
       marginBottom: 20,
-      paddingHorizontal: 10,
-            fontFamily: 'KalRegular',
-
+      padding:8,
+      fontFamily: 'KalMedium',
+      width:"80%",
+      alignSelf:"center",
+      borderRadius:10,
+      color:myColors.four,
+      fontSize:25
     },
   });
