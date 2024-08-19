@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs,router } from 'expo-router';
-import {  Pressable } from 'react-native';
+import { Tabs,router } from 'expo-router';
+import { Text} from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  populateGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
+import { myColors } from '@/theme';
 
 
 
@@ -56,36 +57,31 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarStyle:{backgroundColor:'purple'}
+        tabBarStyle:{backgroundColor:myColors.one, paddingBottom:14,borderTopColor:myColors.one,borderTopWidth:2}
       }}>
 
-<Tabs.Screen
+          <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          tabBarIcon: ({ focused, color }) => <TabBarIcon name="code" color={focused ?  myColors.five : myColors.three} />,
+          tabBarLabel: ({ focused, color }) => (
+            <Text style={{ color: focused ?  myColors.five : myColors.three, fontSize: 14,fontFamily:"KalMedium"}}>
+            Home
+            </Text>
+          ),       
         }}
       />
       <Tabs.Screen
         name="groups"
         options={{
           title: 'Groups',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
+          tabBarIcon: ({ focused,color }) => <TabBarIcon name="code" color={focused ?  myColors.five : myColors.three} />,
+          tabBarLabel: ({ focused, color }) => (
+            <Text style={{ color: focused ? myColors.five : myColors.three, fontSize: 14 ,fontFamily:"KalMedium"}}>
+           Groups
+            </Text>
+          ),        }}
       />
 </Tabs>
   );

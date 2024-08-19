@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import React, { useRef, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useGroupStore } from '@/zustandStore';
-import { voteYes } from '@/api';
 
 interface BitchButtonProps {
   userData: {
@@ -89,12 +88,13 @@ const styles = StyleSheet.create({
       fontWeight: '100',
     },
     button: {
-      width: 200,
-      height: 200,
+      width: 290,
+      height: 290,
+      
     },
     lottieView: {
-      width: 200,
-      height: 200,
+      width: 290,
+      height: 290,
     },
   });
   

@@ -2,6 +2,7 @@ import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator, FlatList} 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
+import { myColors } from '@/theme';
 
 export default function TabOneScreen() {
 
@@ -11,6 +12,7 @@ export default function TabOneScreen() {
     userData: state.userData
   })); 
 
+  console.log(selectedGroup,"the seelcted group")
 
 
 
@@ -34,7 +36,7 @@ export default function TabOneScreen() {
     }
   };
   const renderItem = ({ item }: { item: User }) => (
-    <Text  style={{color:"white"}}>{item.username}</Text>
+    <Text  style={{color:"black"}}>{item?.username}</Text>
   );
 
   return (
@@ -42,24 +44,31 @@ export default function TabOneScreen() {
     
  
         {groupsOfUser.length === 0 ? (
-          <Text style={styles.noGroupsText}>Hey,create or  join a group!</Text>
+          <Text style={styles.noGroupsText}>Hey,create or  join a group first!</Text>
         ) : selectedGroup && selectedGroup.selectedMember.username ? (
           <>
+          <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100,backgroundColor:"red"}}>
+            
+           <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
          {selectedGroup && (
           <FlatList
             data={selectedGroup?.votesYes}
             renderItem={renderItem}
             keyExtractor={(item) =>{
-              console.log(item)
               return(item?.id)}
               }
+              contentContainerStyle={{display:"flex",backgroundColor:"white",flexDirection:"row",justifyContent:"flex-start",alignItems:"center"}}
           />
         )}
+                  </View>
+
              
-                <Text>{selectedGroup.groupName}</Text>
+             <View style={{ justifyContent:"center", alignItems:"center"}}>
+              
             <Text style={styles.title}>IS {selectedGroup.selectedMember.username} BEING A</Text>
             <Text style={styles.mainText}>BITCH</Text>
-            <Text style={styles.subtitle}>TODAY</Text>
+            <Text style={styles.title}>TODAY</Text>
+             </View>
           </>
         ) : (
           <ActivityIndicator size="large" color="white" />
@@ -69,8 +78,8 @@ export default function TabOneScreen() {
        
   
         {/* delete these */}
-        <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button color="white" onPress={viewUserData} title="View stored data" />
+        {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+        <Button color="white" onPress={viewUserData} title="View stored data" /> */}
 
   </View>
   );
@@ -78,32 +87,33 @@ export default function TabOneScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'purple',
-    alignItems: 'center',
+    backgroundColor: myColors.one,
+    display:"flex",
     justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
-    paddingTop:300
+    // paddingTop:300
   },
   title: {
-    fontFamily: 'Kalthin',
-    color: 'red',
+    fontFamily: 'KalBold',
+    color: myColors.five,
     fontSize: 30,
     fontWeight: '100',
   },
   mainText: {
-    fontFamily: 'Kalthin',
-    color: 'red',
+    fontFamily: 'KalRegular',
+    color: myColors.four,
     fontSize: 100,
     fontWeight: '100',
   },
   subtitle: {
-    fontFamily: 'Kalthin',
-    color: 'red',
-    fontSize: 30,
+    fontFamily: 'KalRegular',
+    color: myColors.four,
+    fontSize: 20,
     fontWeight: '100',
   },
   createGroupText: {
-    color: 'black',
+    color: myColors.five,
     fontSize: 40,
   },
   modalContainer: {
@@ -122,6 +132,8 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     marginBottom: 10,
+    color: myColors.five,
+
   },
   input: {
     height: 40,
@@ -132,15 +144,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   noGroupsText:{
-    fontFamily: 'Kal',
-    color: 'red',
-    fontSize: 40,
-    fontWeight: '100',
-    textAlign:"center"
+    fontFamily: 'KalMedium',
+    color: myColors.five,
+    fontSize: 33,
+    textAlign:"center",
+    width:"80%"
   },
   voteText: {
-    fontFamily: 'Kalthin',
-    color: 'white',
+    fontFamily: 'KalBold',
+    color: myColors.five,
     fontSize: 20,
     marginVertical: 5,
   },

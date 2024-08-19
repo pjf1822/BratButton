@@ -1,7 +1,8 @@
 import {  createGroup, joinGroup, } from "./api";
 import { Group, useGroupStore } from "./zustandStore";
 
-export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]) => {
+
+export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[], Keyboard) => {
     try {
      
     if (!groupName.trim()) {
@@ -41,6 +42,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       if (groupsOfUser.length === 0) {
         setSelectedGroup(newGroup);
       }
+      Keyboard.dismiss();
      } catch (error) {
       console.error("Failed to create group:", error);
     }
