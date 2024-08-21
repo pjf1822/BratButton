@@ -48,12 +48,14 @@ export default function TabGroupScreen() {
 
 
 
+
   const handlePickerChange = (itemValue: string) => {
     const selectedGroup = groupsOfUser.find(group => group.id === itemValue);
     if (selectedGroup) {
       setSelectedGroup(selectedGroup);
     }
   };
+  
 
 
   return (
@@ -64,13 +66,14 @@ export default function TabGroupScreen() {
       <View>
        <TouchableOpacity
           onPress={() => handleJoinGroup(inviteParams?.groupInviteId,setInvited)}
-          style={{ 
-            padding: 10, 
-            backgroundColor: 'blue', 
-            borderRadius: 5 
+          style={{backgroundColor:myColors.four, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five, shadowColor: '#000',  width:"100%",
+          shadowOffset: { width: 0, height: 4 }, 
+          shadowOpacity: 0.4, 
+          shadowRadius: 6, 
+          
           }}
         >
-          <Text style={{ color: 'white', textAlign: 'center' }}>
+          <Text style={{ color: myColors.three, fontSize: 22,fontFamily:'KalRegular',width:"100%",textAlign:"center" }}>
           Join {inviteParams.groupInviteName}
           </Text>
         </TouchableOpacity>

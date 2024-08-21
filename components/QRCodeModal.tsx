@@ -1,6 +1,7 @@
 import { StyleSheet,  Text, View , TouchableOpacity, Modal } from 'react-native';
 import React, { useState } from 'react'
 import QRCode from 'react-native-qrcode-svg';
+import { myColors } from '@/theme';
 
 
 interface QRCodeModalProps {
@@ -35,9 +36,10 @@ interface QRCodeModalProps {
             value={redirectUrl}
             size={350}
             enableLinearGradient
+
           />
-          <Text>
-            hey join{' '}
+        <Text style={{ color: myColors.three, fontSize: 25,fontFamily:'KalRegular',width:"100%",textAlign:"center" ,marginTop:20}}>
+            Join The {''}
             {selectedGroup?.groupName || 'Unknown'}{' '}
 
             Group
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
       backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
-      backgroundColor: 'white',
+      backgroundColor: myColors.four,
       padding: 20,
       borderRadius: 10,
       width: '80%',

@@ -12,7 +12,6 @@ export default function TabOneScreen() {
     userData: state.userData
   })); 
 
-  console.log(selectedGroup,"the seelcted group")
 
 
 
@@ -62,12 +61,12 @@ export default function TabOneScreen() {
   
         {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
        
-        <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100}}>
+        {/* <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100}}>
             
             <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
             <Text style={styles.subtitle}>Todays Tally:</Text>
          
-                   </View>
+        </View> */}
  
   
         {/* delete these */}

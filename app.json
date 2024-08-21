@@ -8,9 +8,9 @@
     "scheme": "bitchButton",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/logo-2.jpg",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#A1C3D1"
+      "backgroundColor": "#E64398"
     },
     "ios": {
       "supportsTablet": true,
