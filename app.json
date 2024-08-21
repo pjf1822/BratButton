@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "BitchButton",
+    "name": "Bitch Button",
     "slug": "BitchButton",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/logo-2.jpg",
     "scheme": "bitchButton",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/logo-2.jpg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#A1C3D1"
     },
     "ios": {
       "supportsTablet": true,
@@ -24,7 +24,8 @@
               "bitchButton"
             ]
           }
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.pjf1822.BitchButton"
     },
@@ -37,7 +38,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/logo-2.jpg"
     },
     "plugins": [
       "expo-router"

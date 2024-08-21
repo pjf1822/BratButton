@@ -47,13 +47,7 @@ export default function TabOneScreen() {
           <Text style={styles.noGroupsText}>Hey,create or  join a group first!</Text>
         ) : selectedGroup && selectedGroup.selectedMember.username ? (
           <>
-          <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100}}>
-            
-           <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
-           <Text style={styles.subtitle}>Todays Tally:</Text>
         
-                  </View>
-
              
              <View style={{ justifyContent:"center", alignItems:"center"}}>
               
@@ -68,6 +62,13 @@ export default function TabOneScreen() {
   
         {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
        
+        <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100}}>
+            
+            <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
+            <Text style={styles.subtitle}>Todays Tally:</Text>
+         
+                   </View>
+ 
   
         {/* delete these */}
         {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
