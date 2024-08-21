@@ -5,7 +5,7 @@ import { myColors } from '@/theme';
 
 
 interface QRCodeModalProps {
-    selectedGroup?: { groupName?: string }; // Define the type based on your actual data structure
+    selectedGroup?: { groupName?: string }; 
     redirectUrl: string;
     modalVisible: boolean;
     setModalVisible: (visible: boolean) => void;
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
       backgroundColor: myColors.four,
       padding: 20,
       borderRadius: 10,
-      width: '80%',
+      width: '100%',
       alignItems: 'center',
     },
     modalTitle: {
