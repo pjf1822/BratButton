@@ -30,12 +30,13 @@ interface QRCodeModalProps {
       onPress={() => setModalVisible(false)}
       style={styles.modalContainer}
     >
-      <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <QRCode
             value={redirectUrl}
             size={350}
             enableLinearGradient
+            linearGradient={[myColors.two,myColors.five]}
+
 
           />
         <Text style={{ color: myColors.three, fontSize: 25,fontFamily:'KalRegular',width:"100%",textAlign:"center" ,marginTop:20}}>
@@ -45,7 +46,6 @@ interface QRCodeModalProps {
             Group
           </Text>
         </View>
-      </View>
     </TouchableOpacity>
   </Modal>
 
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
+      backgroundColor: 'rgba(0,0,0,0.6)',
     },
     modalContent: {
       backgroundColor: myColors.four,

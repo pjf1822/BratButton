@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect} from 'react';
 import 'react-native-reanimated';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -55,7 +56,10 @@ export default function RootLayout() {
 
 
   return (
-    <RootLayoutNav />
+    <RootSiblingParent>
+
+      <RootLayoutNav />
+    </RootSiblingParent>
   );}
 
 
@@ -70,6 +74,7 @@ function RootLayoutNav() {
       <Stack >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="firstLaunch" options={{ headerShown: false }} />
+        <Stack.Screen name="inviteLandingPage" options={{ headerShown: false }} />
       </Stack>
 
     </QueryClientProvider>

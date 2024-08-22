@@ -18,7 +18,7 @@ const firstLaunch = () => {
         setUserData(userData);
         await createUser(userData);
         if(invited){
-          router.replace('/groups');
+          router.replace('/inviteLandingPage');
         } else{
           router.replace('/(tabs)');
         }
