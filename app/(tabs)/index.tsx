@@ -61,17 +61,17 @@ export default function TabOneScreen() {
   
         {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
        
-        {/* <View style={{flex:1,display:"flex",justifyContent:"center",alignItems:"center",paddingTop:100}}>
+        <View style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
             
             <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
             <Text style={styles.subtitle}>Todays Tally:</Text>
          
-        </View> */}
+        </View>
  
   
         {/* delete these */}
-        {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button color="white" onPress={viewUserData} title="View stored data" /> */}
+        <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+        <Button color="white" onPress={viewUserData} title="View stored data" />
 
   </View>
   );
@@ -99,9 +99,9 @@ const styles = StyleSheet.create({
     fontWeight: '100',
   },
   subtitle: {
-    fontFamily: 'KalRegular',
+    fontFamily: 'KalMedium',
     color: myColors.four,
-    fontSize: 20,
+    fontSize: 29,
     fontWeight: '100',
   },
   createGroupText: {
