@@ -6,8 +6,10 @@ import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker'; 
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
-import { handleJoinGroup } from '@/utils';
+import { handleJoinGroup, showToast } from '@/utils';
 import { myColors } from '@/theme';
+import Toast from "react-native-root-toast";
+
 
 
 
@@ -24,27 +26,49 @@ export default function TabGroupScreen() {
 
 
 
+  const [checkIfAlreadyInGroupLoading,setCheckIfAlreadyInGroupLoading] = useState(false)
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const redirectUrl = Linking.createURL('/groups', {
+  const redirectUrl = Linking.createURL('/inviteLandingPage', {
     queryParams: { groupInviteId: selectedGroup?.id, invitedBool: "true" , groupInviteName: selectedGroup?.groupName  }
   });
-
-
   const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{ groupInviteId?: string, invitedBool: string,groupInviteName:string }>();
 
 
 
   useEffect(() => {
+    setCheckIfAlreadyInGroupLoading(true)
     if (groupInviteId || invitedBool || groupInviteName) {
       setInviteParams(groupInviteId, invitedBool, groupInviteName);
-      if (invitedBool === "true") {
+      if (invitedBool === "true"  && invited === false) {
         
         setInvited(true);
       }
+      if (groupsOfUser.length > 0 && groupInviteId) {
+        const foundGroup = groupsOfUser.find(group => group.id === groupInviteId);
+        if (foundGroup) {
+          setInvited(false)
+          console.log("jhey youre already  int eh group")
+          let toast = Toast.show("godood asdf", {
+            duration: Toast.durations.LONG,
+            position:  Toast.positions.TOP ,
+            backgroundColor: "red",
+            textColor: "blue",
+            opacity: 1,
+            zIndex: 999,
+      
+            textStyle: { fontFamily: "KalRegular" },
+          });       
+             setCheckIfAlreadyInGroupLoading(false)
+        } else {
+          setCheckIfAlreadyInGroupLoading(false)
+
+        }
+      }
     }
-  }, [groupInviteId, invitedBool, groupInviteName]);
+  }, [groupInviteId,groupsOfUser]);
+
 
 
 
@@ -58,11 +82,12 @@ export default function TabGroupScreen() {
   
 
 
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior='padding'>
     <QRCodeModal selectedGroup={selectedGroup} redirectUrl={redirectUrl} modalVisible={modalVisible}setModalVisible={setModalVisible} />
 
-    {invited === true ? (
+    {invited && !checkIfAlreadyInGroupLoading ? (
       <View>
        <TouchableOpacity
           onPress={() => handleJoinGroup(inviteParams?.groupInviteId,setInvited)}
@@ -73,9 +98,10 @@ export default function TabGroupScreen() {
           
           }}
         >
-          <Text style={{ color: myColors.three, fontSize: 22,fontFamily:'KalRegular',width:"100%",textAlign:"center" }}>
-          Join {inviteParams.groupInviteName}
-          </Text>
+        <Text style={{ color: myColors.three, fontSize: 22, fontFamily: 'KalRegular', width: '100%', textAlign: 'center' }}>
+       
+            Join {groupInviteName}
+        </Text>
         </TouchableOpacity>
       </View>
     ) : (

@@ -1,7 +1,10 @@
 import {  createGroup, joinGroup, } from "./api";
 import { Group, useGroupStore } from "./zustandStore";
-import {Keyboard} from "react-native"
+import {Keyboard, Platform} from "react-native"
 import { Dispatch, SetStateAction } from 'react';
+import { myColors } from "./theme";
+import Toast from "react-native-root-toast";
+
 
 
 export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[],setNewGroupName: Dispatch<SetStateAction<string>>) => {
@@ -120,3 +123,30 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       console.error('Failed to join group:', error);
     }
   };
+
+
+  export const showToast = (toastMessage, success, position) => {
+    let backgroundColor;
+    let textColor;
+  
+    if (success === true) {
+      backgroundColor = myColors.two;
+      textColor = myColors.three;
+    } else if (success === false) {
+      backgroundColor = myColors.five;
+      textColor = myColors.three;
+    } else {
+      backgroundColor = myColors.two;
+    }
+    let toast = Toast.show(toastMessage, {
+      duration: Toast.durations.LONG,
+      position: position === "top" ? Toast.positions.TOP : Toast.positions.BOTTOM,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      opacity: 1,
+      zIndex: 999,
+
+      textStyle: { fontFamily: "KalRegular" },
+    });
+  };
+  
