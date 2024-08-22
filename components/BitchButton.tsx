@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import React, { useRef, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useGroupStore } from '@/zustandStore';
+import { myColors } from '@/theme';
 
 interface BitchButtonProps {
   userData: {
@@ -54,8 +55,9 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
           loop={false}
           ref={animation}
           style={styles.lottieView}
-          source={require('../assets/button.json')}
+          source={require('../assets/bitchbutt.json')}
         />
+
       </TouchableOpacity>
   )
 }
@@ -63,38 +65,16 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
 export default BitchButton
 
 const styles = StyleSheet.create({
-    container: {
-      backgroundColor: 'purple',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: 1,
-    },
-    title: {
-      fontFamily: 'Kalthin',
-      color: 'red',
-      fontSize: 30,
-      fontWeight: '100',
-    },
-    mainText: {
-      fontFamily: 'Kalthin',
-      color: 'red',
-      fontSize: 100,
-      fontWeight: '100',
-    },
-    subtitle: {
-      fontFamily: 'Kalthin',
-      color: 'red',
-      fontSize: 30,
-      fontWeight: '100',
-    },
+ 
     button: {
-      width: 290,
-      height: 290,
+     
+    
       
     },
     lottieView: {
       width: 290,
       height: 290,
+ 
     },
   });
   
