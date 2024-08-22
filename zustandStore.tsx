@@ -57,15 +57,22 @@ export const useGroupStore = create<StoreState>((set) => ({
   addVoteYes: async (groupId: string, member: User) => {
     try {
       await voteYes(groupId, member);
-      
+  
       set((state) => {
         const updatedGroups = state.groupsOfUser.map((group) => {
           if (group.id === groupId) {
             if (!group.votesYes.find(vote => vote.id === member.id)) {
-              return {
+              const updatedGroup = {
                 ...group,
                 votesYes: [...group.votesYes, member],
               };
+  
+              // Update selectedGroup if it's the same group
+              if (state.selectedGroup?.id === groupId) {
+                set({ selectedGroup: updatedGroup });
+              }
+  
+              return updatedGroup;
             }
           }
           return group;
