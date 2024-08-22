@@ -1,76 +1,28 @@
 import { StyleSheet,  Text, View , TouchableOpacity, KeyboardAvoidingView,} from 'react-native';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import * as Linking from 'expo-linking'; 
-import {useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker'; 
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
-import { handleJoinGroup, showToast } from '@/utils';
 import { myColors } from '@/theme';
-import Toast from "react-native-root-toast";
 
 
 
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroup, setSelectedGroup,invited,setInvited,setInviteParams,inviteParams } = useGroupStore((state) => ({
+  const { groupsOfUser, selectedGroup, setSelectedGroup,invited } = useGroupStore((state) => ({
     groupsOfUser: state.groupsOfUser,
     selectedGroup: state.selectedGroup,
     setSelectedGroup: state.setSelectedGroup,
-    invited: state.invited,
-    setInvited: state.setInvited,
-    setInviteParams: state.setInviteParams,
-    inviteParams: state.inviteParams
+    invited:state.invited
   }));  
-
-
-
-  const [checkIfAlreadyInGroupLoading,setCheckIfAlreadyInGroupLoading] = useState(false)
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const redirectUrl = Linking.createURL('/inviteLandingPage', {
     queryParams: { groupInviteId: selectedGroup?.id, invitedBool: "true" , groupInviteName: selectedGroup?.groupName  }
   });
-  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{ groupInviteId?: string, invitedBool: string,groupInviteName:string }>();
-
-
-
-  useEffect(() => {
-    setCheckIfAlreadyInGroupLoading(true)
-    if (groupInviteId || invitedBool || groupInviteName) {
-      setInviteParams(groupInviteId, invitedBool, groupInviteName);
-      if (invitedBool === "true"  && invited === false) {
-        
-        setInvited(true);
-      }
-      if (groupsOfUser.length > 0 && groupInviteId) {
-        const foundGroup = groupsOfUser.find(group => group.id === groupInviteId);
-        if (foundGroup) {
-          setInvited(false)
-          console.log("jhey youre already  int eh group")
-          let toast = Toast.show("godood asdf", {
-            duration: Toast.durations.LONG,
-            position:  Toast.positions.TOP ,
-            backgroundColor: "red",
-            textColor: "blue",
-            opacity: 1,
-            zIndex: 999,
-      
-            textStyle: { fontFamily: "KalRegular" },
-          });       
-             setCheckIfAlreadyInGroupLoading(false)
-        } else {
-          setCheckIfAlreadyInGroupLoading(false)
-
-        }
-      }
-    }
-  }, [groupInviteId,groupsOfUser]);
-
-
-
 
 
   const handlePickerChange = (itemValue: string) => {
@@ -83,28 +35,11 @@ export default function TabGroupScreen() {
 
 
 
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior='padding'>
     <QRCodeModal selectedGroup={selectedGroup} redirectUrl={redirectUrl} modalVisible={modalVisible}setModalVisible={setModalVisible} />
 
-    {invited && !checkIfAlreadyInGroupLoading ? (
-      <View>
-       <TouchableOpacity
-          onPress={() => handleJoinGroup(inviteParams?.groupInviteId,setInvited)}
-          style={{backgroundColor:myColors.four, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five, shadowColor: '#000',  width:"100%",
-          shadowOffset: { width: 0, height: 4 }, 
-          shadowOpacity: 0.4, 
-          shadowRadius: 6, 
-          
-          }}
-        >
-        <Text style={{ color: myColors.three, fontSize: 22, fontFamily: 'KalRegular', width: '100%', textAlign: 'center' }}>
-       
-            Join {groupInviteName}
-        </Text>
-        </TouchableOpacity>
-      </View>
-    ) : (
       <View style={{ width: "100%",position:"relative" ,flex:1,justifyContent:"space-evenly"}}>
               <NewGroupForm groupsOfUser={groupsOfUser} />
 
@@ -150,7 +85,6 @@ export default function TabGroupScreen() {
 
 
     </View>
-    )}
   </KeyboardAvoidingView>
   );
 }

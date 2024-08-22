@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  populateGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
+import { showToast } from '@/utils';
 
 
 
@@ -24,15 +25,15 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const {  setGroupsOfUser, setSelectedGroup ,setUserData,invited} = useGroupStore((state) => ({
+  const {  setGroupsOfUser, setSelectedGroup ,setUserData} = useGroupStore((state) => ({
     setGroupsOfUser: state.setGroupsOfUser,
     setSelectedGroup: state.setSelectedGroup,
     setUserData: state.setUserData, 
-    invited: state.invited
   }));
 
   useEffect(() => {
     const checkUserId = async () => {
+
       try {
         const userString = await AsyncStorage.getItem('user');
 
@@ -54,35 +55,64 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarStyle:{backgroundColor:myColors.one, paddingBottom:14,borderTopColor:myColors.one,borderTopWidth:2}
-      }}>
-
-          <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ focused, color }) => <TabBarIcon name="code" color={focused ?  myColors.five : myColors.three} />,
-          tabBarLabel: ({ focused, color }) => (
-            <Text style={{ color: focused ?  myColors.five : myColors.three, fontSize: 14,fontFamily:"KalMedium"}}>
+    screenOptions={{
+      tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: myColors.one,
+        paddingBottom: 14,
+        borderTopColor: myColors.one,
+        borderTopWidth: 2
+      }
+    }}
+  >
+    <Tabs.Screen
+      name="index"
+      options={{
+        title: 'Home',
+        tabBarIcon: ({ focused, color }) => (
+          <TabBarIcon
+            name="code"
+            color={focused ? myColors.five : myColors.three}
+          />
+        ),
+        tabBarLabel: ({ focused, color }) => (
+          <Text
+            style={{
+              color: focused ? myColors.five : myColors.three,
+              fontSize: 14,
+              fontFamily: 'KalMedium'
+            }}
+          >
             Home
-            </Text>
-          ),       
-        }}
-      />
-      <Tabs.Screen
-        name="groups"
-        options={{
-          title: 'Groups',
-          tabBarIcon: ({ focused,color }) => <TabBarIcon name="code" color={focused ?  myColors.five : myColors.three} />,
-          tabBarLabel: ({ focused, color }) => (
-            <Text style={{ color: focused ? myColors.five : myColors.three, fontSize: 14 ,fontFamily:"KalMedium"}}>
-           Groups
-            </Text>
-          ),        }}
-      />
-</Tabs>
+          </Text>
+        )
+      }}
+    />
+    
+    <Tabs.Screen
+      name="groups"
+      options={{
+        title: 'Groups',
+        tabBarIcon: ({ focused, color }) => (
+          <TabBarIcon
+            name="code"
+            color={focused ? myColors.five : myColors.three}
+          />
+        ),
+        tabBarLabel: ({ focused, color }) => (
+          <Text
+            style={{
+              color: focused ? myColors.five : myColors.three,
+              fontSize: 14,
+              fontFamily: 'KalMedium'
+            }}
+          >
+            Groups
+          </Text>
+        )
+      }}
+    />
+  </Tabs>
   );
 }

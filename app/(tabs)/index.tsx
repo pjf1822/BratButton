@@ -70,8 +70,8 @@ export default function TabOneScreen() {
  
   
         {/* delete these */}
-        {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button color="white" onPress={viewUserData} title="View stored data" /> */}
+        <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+        <Button color="white" onPress={viewUserData} title="View stored data" />
 
   </View>
   );

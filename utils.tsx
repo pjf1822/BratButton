@@ -4,6 +4,7 @@ import {Keyboard, Platform} from "react-native"
 import { Dispatch, SetStateAction } from 'react';
 import { myColors } from "./theme";
 import Toast from "react-native-root-toast";
+import { router } from "expo-router";
 
 
 
@@ -64,7 +65,6 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       return;
     }
   
-   
   
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
   
@@ -78,7 +78,6 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
         dailyIndex: randomIndex
       };
   
-      // Update the group in the state
       const updatedGroups = groupsOfUser.map(group =>
         group.id === selectedGroup.id ? updatedGroup : group
       );
@@ -93,9 +92,10 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
   type HandleJoinGroupFunction = (
     groupId: string | undefined,
     setInvited: (invited: boolean) => void
+
   ) => Promise<void>;
 
-  export const handleJoinGroup: HandleJoinGroupFunction = async (groupId, setInvited) => {
+  export const handleJoinGroup: HandleJoinGroupFunction = async (groupId,setInvited) => {
     try {
     
       const { userData, setGroupsOfUser, setSelectedGroup, groupsOfUser } = useGroupStore.getState();
@@ -117,15 +117,15 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
           setSelectedGroup(updatedGroup);
         }
       }
-
-      setInvited(false);
+      router.replace('/groups');
+      setInvited(false)
     } catch (error) {
       console.error('Failed to join group:', error);
     }
   };
 
 
-  export const showToast = (toastMessage, success, position) => {
+  export const showToast = (toastMessage:string, success:boolean, position: string) => {
     let backgroundColor;
     let textColor;
   
@@ -136,7 +136,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       backgroundColor = myColors.five;
       textColor = myColors.three;
     } else {
-      backgroundColor = myColors.two;
+      backgroundColor = myColors.four;
     }
     let toast = Toast.show(toastMessage, {
       duration: Toast.durations.LONG,
@@ -145,8 +145,8 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       textColor: textColor,
       opacity: 1,
       zIndex: 999,
-
-      textStyle: { fontFamily: "KalRegular" },
+      fontSize: Platform.OS === "ios" && Platform.isPad ? 30 : 23,
+      textStyle: { fontFamily:"KalRegular" },
     });
   };
   
