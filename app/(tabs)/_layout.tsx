@@ -8,7 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  populateGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
-import { showToast } from '@/utils';
 
 
 
@@ -33,7 +32,6 @@ export default function TabLayout() {
 
   useEffect(() => {
     const checkUserId = async () => {
-
       try {
         const userString = await AsyncStorage.getItem('user');
 
@@ -72,7 +70,7 @@ export default function TabLayout() {
         title: 'Home',
         tabBarIcon: ({ focused, color }) => (
           <TabBarIcon
-            name="code"
+            name="home"
             color={focused ? myColors.five : myColors.three}
           />
         ),
@@ -80,7 +78,7 @@ export default function TabLayout() {
           <Text
             style={{
               color: focused ? myColors.five : myColors.three,
-              fontSize: 14,
+              fontSize: 17,
               fontFamily: 'KalMedium'
             }}
           >
@@ -96,7 +94,7 @@ export default function TabLayout() {
         title: 'Groups',
         tabBarIcon: ({ focused, color }) => (
           <TabBarIcon
-            name="code"
+            name="users"
             color={focused ? myColors.five : myColors.three}
           />
         ),
@@ -104,7 +102,7 @@ export default function TabLayout() {
           <Text
             style={{
               color: focused ? myColors.five : myColors.three,
-              fontSize: 14,
+              fontSize: 17,
               fontFamily: 'KalMedium'
             }}
           >

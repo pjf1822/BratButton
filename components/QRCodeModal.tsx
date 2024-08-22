@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import QRCode from 'react-native-qrcode-svg';
 import { myColors } from '@/theme';
 
+import logo from '../assets/logo-2.jpg';
+
 
 interface QRCodeModalProps {
     selectedGroup?: { groupName?: string }; 
@@ -35,11 +37,13 @@ interface QRCodeModalProps {
             value={redirectUrl}
             size={350}
             enableLinearGradient
-            linearGradient={[myColors.two,myColors.five]}
+            linearGradient={[myColors.two,myColors.four]}
+            logo={logo}
+            logoSize={80}
 
 
           />
-        <Text style={{ color: myColors.three, fontSize: 25,fontFamily:'KalRegular',width:"100%",textAlign:"center" ,marginTop:20}}>
+        <Text style={{ color: myColors.three, fontSize: 25,fontFamily:'KalMedium',width:"100%",textAlign:"center" ,marginTop:15}}>
             Join The {''}
             {selectedGroup?.groupName || 'Unknown'}{' '}
 
@@ -63,11 +67,12 @@ const styles = StyleSheet.create({
       backgroundColor: 'rgba(0,0,0,0.6)',
     },
     modalContent: {
-      backgroundColor: myColors.four,
-      padding: 20,
+      backgroundColor: myColors.five,
+      padding: 25,
       borderRadius: 10,
       width: '100%',
       alignItems: 'center',
+      
     },
     modalTitle: {
       fontSize: 20,
