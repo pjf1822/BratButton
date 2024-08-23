@@ -1,21 +1,25 @@
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs,router } from 'expo-router';
-import { Text} from 'react-native';
+import { Text, Dimensions } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  populateGroups } from '@/api';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
+import { View } from '@/components/Themed';
 
+
+const { width } = Dimensions.get('window');
+const isTablet = width > 768;
 
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome size={isTablet ? 39 : 28} style={{ marginBottom: -3 }} {...props} />;
 }
 
 
@@ -69,12 +73,14 @@ export default function TabLayout() {
       options={{
         title: 'Home',
         tabBarIcon: ({ focused, color }) => (
-          <TabBarIcon
+         <View></View>
+        ),
+        tabBarLabel: ({ focused, color }) => (
+          <View style={{backgroundColor:myColors.one,alignItems:"center",  marginBottom:isTablet ? 10:0}}>
+ <TabBarIcon
             name="home"
             color={focused ? myColors.five : myColors.three}
           />
-        ),
-        tabBarLabel: ({ focused, color }) => (
           <Text
             style={{
               color: focused ? myColors.five : myColors.three,
@@ -84,6 +90,7 @@ export default function TabLayout() {
           >
             Home
           </Text>
+          </View>
         )
       }}
     />
@@ -92,22 +99,28 @@ export default function TabLayout() {
       name="groups"
       options={{
         title: 'Groups',
-        tabBarIcon: ({ focused, color }) => (
-          <TabBarIcon
+        tabBarIcon: (     ) => (
+          <View></View>
+
+        ),
+        tabBarLabel: ({ focused, color }) => (
+          <View style={{backgroundColor:myColors.one,alignItems:"center",              marginBottom:isTablet ? 10:0
+        }}>
+<TabBarIcon
             name="users"
             color={focused ? myColors.five : myColors.three}
           />
-        ),
-        tabBarLabel: ({ focused, color }) => (
           <Text
             style={{
               color: focused ? myColors.five : myColors.three,
               fontSize: 17,
-              fontFamily: 'KalMedium'
+              fontFamily: 'KalMedium',
             }}
           >
             Groups
           </Text>
+          </View>
+
         )
       }}
     />

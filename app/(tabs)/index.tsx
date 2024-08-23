@@ -22,7 +22,6 @@ export default function TabOneScreen() {
 
 
   useEffect(() => {
-    console.log("has this fucking been updated")
       getTallyGroups()
   },[selectedGroup])
 
@@ -102,8 +101,7 @@ export default function TabOneScreen() {
         )}
   
         {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
-       
-        <View style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
+       {selectedGroup && <View style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
             
             <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
             <Text style={styles.subtitle}>Todays Bitch Tally:</Text>
@@ -113,7 +111,8 @@ export default function TabOneScreen() {
             {renderTallyGroups()}
          </View>
 
-        </View>
+        </View>}
+        
  
   
         {/* delete these */}

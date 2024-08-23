@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo-2.jpg",
-    "scheme": "bitchButton",
+    "scheme": "bitchbutton",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/logo.png",
@@ -53,6 +53,12 @@
       "eas": {
         "projectId": "d60ee586-adbe-425a-898b-f4ff0e7ebd66"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d60ee586-adbe-425a-898b-f4ff0e7ebd66"
     }
   }
 }
