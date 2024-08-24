@@ -12,6 +12,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
     try {
      
     if (!groupName.trim()) {
+      showToast("You need to add a group name", false, "top")
         throw new Error('Group name is required');
       }
 
@@ -48,6 +49,8 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       if (groupsOfUser.length === 0) {
         setSelectedGroup(newGroup);
       }
+      showToast(`Created ${groupName}`, true, "top")
+
       setNewGroupName("")
       Keyboard.dismiss();
      } catch (error) {
