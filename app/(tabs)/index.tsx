@@ -57,14 +57,7 @@ export default function TabOneScreen() {
     return groups;
   };
 
-  const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
+
 
 
   const renderTallyGroups = () => {
@@ -81,59 +74,63 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-    
- 
-        {groupsOfUser.length === 0 ? (
-          <Text style={styles.noGroupsText}>Hey,create or  join a group first!</Text>
-        ) : selectedGroup && selectedGroup.selectedMember.username ? (
-          <>
-        
-             
-             <View style={{ justifyContent:"center", alignItems:"center"}}>
-              
-            <Text style={styles.title}>IS {selectedGroup.selectedMember.username} BEING A</Text>
-            <Text style={styles.mainText}>BITCH</Text>
-            <Text style={styles.title}>TODAY</Text>
-             </View>
-          </>
-        ) : (
-          <ActivityIndicator size="large" color="white" />
-        )}
+      <View style={{ display:"flex",
+    justifyContent: 'center',
+    alignItems: 'center',
   
-        {userData &&  <BitchButton  userData={userData} selectedGroupId={selectedGroup?.id}/>}
-       {selectedGroup && <View style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
-            
-            <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
-            <Text style={styles.subtitle}>Todays Bitch Tally:</Text>
-         
-         <View style={{display:"flex",flexDirection:"row", marginTop:20}}>
 
+    flex: 1,}}>
+
+      {groupsOfUser.length === 0 ? (
+                  <View style={{ justifyContent: "center", alignItems: "center" }}>
+
+        <Text style={styles.noGroupsText}>Hey, create or join a group first!</Text>
+        </View>
+
+      ) : selectedGroup && selectedGroup.selectedMember.username ? (
+        <>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Text style={styles.title}>Is <Text style={{fontFamily:"KalBold"}}>{selectedGroup.selectedMember.username}</Text> Being A</Text>
+          </View>
+        </>
+      ) : (
+        <ActivityIndicator size="large" color="white" />
+      )}
+  
+      {userData && <BitchButton userData={userData} selectedGroupId={selectedGroup?.id} />}
+      
+      {groupsOfUser.length > 0 && ( <Text style={styles.title}>Today</Text>)}
+     
+      </View>
+  
+      {selectedGroup && (
+        <View style={{ display: "flex", justifyContent: "center", alignItems: "center",marginBottom:60}}>
+          <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
+          <Text style={styles.subtitle}>Today's Bitch Tally:</Text>
+          <View style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
             {renderTallyGroups()}
-         </View>
-
-        </View>}
-        
- 
+          </View>
+        </View>
+      )}
   
-        {/* delete these */}
-        {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button color="white" onPress={viewUserData} title="View stored data" /> */}
-
-  </View>
+      {/* delete these */}
+      {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+      <Button color="white" onPress={viewUserData} title="View stored data" /> */}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: myColors.one,
+    backgroundColor: myColors.three,
     display:"flex",
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     flex: 1,
   },
   title: {
-    fontFamily: 'KalBold',
-    color: myColors.four,
+    fontFamily: 'KalMedium',
+    color: myColors.one,
     fontSize: 30,
     fontWeight: '100',
   },
@@ -158,19 +155,19 @@ const styles = StyleSheet.create({
   tallyMark: {
     height: 30,
     width: 4,
-    backgroundColor: myColors.five,
+    backgroundColor: myColors.one,
     borderRadius:100,
     marginLeft:5
   },
   mainText: {
     fontFamily: 'KalRegular',
-    color: myColors.four,
+    color: myColors.five,
     fontSize: 100,
     fontWeight: '100',
   },
   subtitle: {
     fontFamily: 'KalMedium',
-    color: myColors.four,
+    color: myColors.one,
     fontSize: 29,
     fontWeight: '100',
   },
@@ -207,10 +204,12 @@ const styles = StyleSheet.create({
   },
   noGroupsText:{
     fontFamily: 'KalMedium',
-    color: myColors.five,
+    color: myColors.one,
     fontSize: 33,
     textAlign:"center",
-    width:"80%"
+    paddingBottom:70,
+
+    
   },
   voteText: {
     fontFamily: 'KalBold',

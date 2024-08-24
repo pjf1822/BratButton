@@ -61,9 +61,9 @@ export default function TabLayout() {
       tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
       headerShown: false,
       tabBarStyle: {
-        backgroundColor: myColors.one,
+        backgroundColor: myColors.three,
         paddingBottom: 14,
-        borderTopColor: myColors.one,
+        borderTopColor: myColors.three,
         borderTopWidth: 2
       }
     }}
@@ -76,14 +76,14 @@ export default function TabLayout() {
          <View></View>
         ),
         tabBarLabel: ({ focused, color }) => (
-          <View style={{backgroundColor:myColors.one,alignItems:"center",  marginBottom:isTablet ? 10:0}}>
+          <View style={{backgroundColor:myColors.three,alignItems:"center",  marginBottom:isTablet ? 10:0}}>
  <TabBarIcon
             name="home"
-            color={focused ? myColors.five : myColors.three}
+            color={focused ? myColors.one : myColors.five}
           />
           <Text
             style={{
-              color: focused ? myColors.five : myColors.three,
+              color: focused ? myColors.one : myColors.five,
               fontSize: 17,
               fontFamily: 'KalMedium'
             }}
@@ -104,15 +104,15 @@ export default function TabLayout() {
 
         ),
         tabBarLabel: ({ focused, color }) => (
-          <View style={{backgroundColor:myColors.one,alignItems:"center",              marginBottom:isTablet ? 10:0
+          <View style={{backgroundColor:myColors.three,alignItems:"center",              marginBottom:isTablet ? 10:0
         }}>
 <TabBarIcon
             name="users"
-            color={focused ? myColors.five : myColors.three}
+            color={focused ? myColors.one : myColors.five}
           />
           <Text
             style={{
-              color: focused ? myColors.five : myColors.three,
+              color: focused ? myColors.one : myColors.five,
               fontSize: 17,
               fontFamily: 'KalMedium',
             }}

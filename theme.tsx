@@ -1,7 +1,7 @@
 export const myColors = {
-    one: "#A1C3D1",
-    two: "#B39BC8",
-    three: "#F0EBF4",
-    four: "#F172A1",
-    five: "#E64398",
+    one: "#3E3486",
+    two: "#6160B0",
+    three: "#E9B4DB",
+    four: "#eb77a6",
+    five: "#e23d80",
   };
