@@ -40,11 +40,15 @@ export default function TabGroupScreen() {
     <KeyboardAvoidingView style={styles.container} behavior='padding'>
     <QRCodeModal selectedGroup={selectedGroup} redirectUrl={redirectUrl} modalVisible={modalVisible}setModalVisible={setModalVisible} />
 
-      <View style={{ width: "100%",position:"relative" ,flex:1,justifyContent:"space-evenly"}}>
-              <NewGroupForm groupsOfUser={groupsOfUser} />
+      <View style={{
+    width: "100%",
+    position: "relative",
+    flex: 1,
+    justifyContent: groupsOfUser.length > 0 ? "space-between" : "center",
+  }}>
 
      {groupsOfUser.length > 0 && (
-      <View style={{width:"80%",alignSelf:"center"}}>
+      <View style={{width:"90%",alignSelf:"center",paddingTop:200}}>
         
         <Text style={{ color: myColors.four, textAlign: 'center',fontFamily:"KalMedium",fontSize:33 }}>
           Your Groups
@@ -53,7 +57,7 @@ export default function TabGroupScreen() {
           selectedValue={selectedGroup?.id}
           onValueChange={handlePickerChange}
           itemStyle={{ textAlign: 'center',fontFamily:"KalMedium",fontSize:25}}
-          style={{ display: selectedGroup ? "flex" : "none" ,maxHeight:115,justifyContent:"center",overflow:"hidden"}}
+          style={{ display: selectedGroup ? "flex" : "none" ,maxHeight:135,justifyContent:"center",overflow:"hidden",paddingBottom:20}}
 
           >
           {groupsOfUser.map((group) => (
@@ -67,10 +71,11 @@ export default function TabGroupScreen() {
           ))}
         </Picker>
         <TouchableOpacity onPress={() => setModalVisible(true)} 
-        style={{backgroundColor:myColors.four, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five, shadowColor: '#000',  width:"100%",marginTop:30,
+        style={{backgroundColor:myColors.five, alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.three, shadowColor: '#000',  width:"100%",
         shadowOffset: { width: 0, height: 4 }, 
         shadowOpacity: 0.4, 
         shadowRadius: 6, 
+        
         }}
         >
           <Text style={{ color: myColors.three, fontSize: 22,fontFamily:'KalRegular',width:"100%",textAlign:"center" }}>
@@ -80,8 +85,10 @@ export default function TabGroupScreen() {
       </View>
       )}
     
+    <NewGroupForm groupsOfUser={groupsOfUser} />
+
    
-      
+
 
 
     </View>
