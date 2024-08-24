@@ -91,11 +91,12 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
 
   type HandleJoinGroupFunction = (
     groupId: string | undefined,
-    setInvited: (invited: boolean) => void
+    setInvited: (invited: boolean) => void,
+    groupInviteName: string | undefined
 
   ) => Promise<void>;
 
-  export const handleJoinGroup: HandleJoinGroupFunction = async (groupId,setInvited) => {
+  export const handleJoinGroup: HandleJoinGroupFunction = async (groupId,setInvited,groupInviteName) => {
     try {
     
       const { userData, setGroupsOfUser, setSelectedGroup, groupsOfUser } = useGroupStore.getState();
@@ -117,6 +118,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
           setSelectedGroup(updatedGroup);
         }
       }
+      showToast(`You have joined ${groupInviteName}!`, true, "top")
       router.replace('/groups');
       setInvited(false)
     } catch (error) {
