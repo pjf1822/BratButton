@@ -1,27 +1,27 @@
 {
   "expo": {
-    "name": "Bitch Button",
+    "name": "Brat Button",
     "slug": "BitchButton",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo-2.jpg",
-    "scheme": "bitchbutton",
+    "icon": "./assets/brat.jpg",
+    "scheme": "bratbutton",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/brat-button.jpg",
       "resizeMode": "contain",
-      "backgroundColor": "#E64398"
+      "backgroundColor": "#E9B4DB"
     },
     "ios": {
       "supportsTablet": true,
       "associatedDomains": [
-        "com.pjf1822.BitchButton"
+        "com.pjf1822.BratButton"
       ],
       "infoPlist": {
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [
-              "bitchButton"
+              "bratButton"
             ]
           }
         ],
@@ -38,7 +38,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/logo-2.jpg"
+      "favicon": "./assets/brat.jpg"
     },
     "plugins": [
       "expo-router"

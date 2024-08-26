@@ -30,7 +30,7 @@ const firstLaunch = () => {
 <KeyboardAvoidingView style={{backgroundColor:myColors.one,flex:1,justifyContent:"center",alignContent:"center"}} behavior='height'>
          
         <Text style={styles.label}>Enter Your Username</Text>
-      <Text style={styles.mainText}>BITCH</Text>
+      <Text style={styles.mainText}>BRAT</Text>
 
         <TextInput
           style={styles.input}
@@ -40,14 +40,14 @@ const firstLaunch = () => {
           onChangeText={setUsername}
           
         />
-              <TouchableOpacity onPress={addUserName} style={{backgroundColor:myColors.four,maxWidth:"70%", alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.five,marginTop:50, shadowColor: '#000',  
+              <TouchableOpacity onPress={addUserName} style={{backgroundColor:myColors.four,maxWidth:"70%", alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.one,marginTop:50, shadowColor: '#000',  
           shadowOffset: { width: 0, height: 4 }, 
           shadowOpacity: 0.4, 
           shadowRadius: 6, 
           
       }}>
-          <Text style={{ fontFamily: 'KalRegular',
-      color: myColors.three,
+          <Text style={{ fontFamily: 'KalMedium',
+      color: myColors.one,
       fontSize: 26,
       fontWeight: '200',
       textAlign:"center"}}>Add user name</Text>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     },
     mainText: {
       fontFamily: 'KalBold',
-      color: myColors.five,
+      color: myColors.four,
       fontSize: 100,
       fontWeight: '100',
       alignItems:"center",
