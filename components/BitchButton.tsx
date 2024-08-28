@@ -23,7 +23,7 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
     
   async function playSound() {
     const { sound } = await Audio.Sound.createAsync(
-      require('../assets/bitch-101soundboards2.mp3')
+      require('../assets/bratt.wav')
     );
     setSound(sound);
     await sound.playAsync();
@@ -31,7 +31,6 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
    useEffect(() => {
     return sound
       ? () => {
-          console.log('Unloading Sound');
           sound.unloadAsync();
         }
       : undefined;
@@ -55,7 +54,7 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
           loop={false}
           ref={animation}
           style={styles.lottieView}
-          source={require('../assets/bitchbutt.json')}
+          source={require('../assets/slatt.json')}
         />
 
       </TouchableOpacity>

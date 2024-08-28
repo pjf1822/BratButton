@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator, FlatList} from 'react-native';
+import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator,Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
@@ -106,7 +106,7 @@ export default function TabOneScreen() {
       {selectedGroup && (
         <View style={{ display: "flex", justifyContent: "center", alignItems: "center",marginBottom:60}}>
           <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
-          <Text style={styles.subtitle}>Today's Bitch Tally:</Text>
+          <Text style={styles.subtitle}>Today's Brat Tally:</Text>
           <View style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
             {renderTallyGroups()}
           </View>
@@ -114,8 +114,8 @@ export default function TabOneScreen() {
       )}
   
       {/* delete these */}
-      {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-      <Button color="white" onPress={viewUserData} title="View stored data" /> */}
+      <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+      <Button color="white" onPress={viewUserData} title="View stored data" />
     </View>
   );
 }

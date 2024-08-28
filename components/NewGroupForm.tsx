@@ -10,7 +10,7 @@ import { myColors } from '@/theme';
     const [newGroupName, setNewGroupName] = useState('');
 
   return (
-    <View style={{ width:groupsOfUser.length > 0 ?"60%": "90%",alignSelf:"center",marginBottom:  groupsOfUser.length > 0 ? 40: 0}}> 
+    <View style={{ width: "90%",alignSelf:"center",marginTop:140}}> 
 
         <Text style={styles.modalTitle}>Enter New Group Name</Text>
         <TextInput
@@ -23,14 +23,13 @@ import { myColors } from '@/theme';
 
 <TouchableOpacity
   onPress={() => handleCreateGroup(newGroupName, groupsOfUser,setNewGroupName)}
-  style={{backgroundColor:myColors.five, alignSelf:"center", padding:5, borderRadius:14, borderWidth:3, borderColor:myColors.three, shadowColor: '#000',  width:"100%",
+  style={{backgroundColor:myColors.four,maxWidth:"100%",width:"100%", alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.one,marginTop:10, shadowColor: '#000',  
   shadowOffset: { width: 0, height: 4 }, 
   shadowOpacity: 0.4, 
   shadowRadius: 6, 
   
-  }}
->
-  <Text style={{ color: myColors.three, fontSize: 22,fontFamily:'KalRegular',width:"100%",textAlign:"center" }}>Create Group</Text>
+}}>
+  <Text style={{ color: myColors.one, fontSize: 26,fontFamily:'KalMedium',width:"100%",textAlign:"center" }}>Create Group</Text>
 </TouchableOpacity>
 </View>
   )
