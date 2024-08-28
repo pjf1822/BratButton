@@ -63,33 +63,12 @@ export default function TabOneScreen() {
   const renderTallyGroups = () => {
     const tallyGroups = getTallyGroups();
     return tallyGroups.map((group, index) => (
-      <View key={index} style={styles.tallyContainer}>
+      <View key={index} style={[styles.tallyContainer]}>
       {group.map((_, idx) => (
-        <View style={{height:20}} key={idx}>
-          <Image 
-            source={require('../../assets/purp-line.png')} 
-            style={{  transform: [{ rotate: '90deg' }],
-            width: 50, // Adjust this value to make the image smaller
-            height: 50, 
-           
-          }}
-          resizeMode='contain'
-          />
-          
-        </View>
-      ))}
-      {group.length === 5 && <View style={styles.diagonalTallyMark}> 
-       <Image 
-            source={require('../../assets/purp-line.png')} 
-            style={{  transform: [{ rotate: '90deg' }],
-            width: 50, // Adjust this value to make the image smaller
-            height: 150, 
-            backgroundColor:"red"
-           
-          }}
-          resizeMode='contain'
-          /></View>}
-    </View>
+          <View key={idx} style={styles.tallyMark}></View>
+        ))}
+        {group.length === 5 && <View style={styles.diagonalTallyMark}></View>}
+      </View>
     ));
   };
 
@@ -135,8 +114,8 @@ export default function TabOneScreen() {
       )}
   
       {/* delete these */}
-      {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-      <Button color="white" onPress={viewUserData} title="View stored data" /> */}
+      <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+      <Button color="white" onPress={viewUserData} title="View stored data" />
     </View>
   );
 }
@@ -165,6 +144,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 65,
     width: 4,
+    backgroundColor: myColors.five,
     transform: [{ rotate: '-70deg' }],
     left: 23,
     top: -18, 

@@ -2,9 +2,9 @@
   "expo": {
     "name": "Brat Button",
     "slug": "BitchButton",
-    "version": "1.0.0",
+    "version": "1.2.1",
     "orientation": "portrait",
-    "icon": "./assets/brat.jpg",
+    "icon": "./assets/brat-icon.jpg",
     "scheme": "bratbutton",
     "userInterfaceStyle": "automatic",
     "splash": {

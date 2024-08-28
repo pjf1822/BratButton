@@ -121,6 +121,18 @@ export const createGroup = async (params: {
   }
 };
 
+export const logDebugInfo = async (debugData: any) => {
+  try {
+    const debugDocRef = doc(collection(db, 'debugLogs')); // 'debugLogs' is the collection for storing logs
+    await setDoc(debugDocRef, {
+      timestamp: new Date().toISOString(),
+      data: JSON.stringify(debugData, null, 2) // Pretty print JSON
+    });
+  } catch (error) {
+    console.error('Failed to log debug info:', error);
+  }
+};
+
 export const joinGroup = async (
   groupId: string,
   user: User

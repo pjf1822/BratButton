@@ -1,4 +1,4 @@
-import {  createGroup, joinGroup, } from "./api";
+import {  createGroup, joinGroup, logDebugInfo, } from "./api";
 import { Group, useGroupStore } from "./zustandStore";
 import {Keyboard, Platform} from "react-native"
 import { Dispatch, SetStateAction } from 'react';
@@ -104,30 +104,41 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
     
       const { userData, setGroupsOfUser, setSelectedGroup, groupsOfUser } = useGroupStore.getState();
 
-      
+
+      await logDebugInfo({ message: 'UserData:', userData });
 
       if (!userData || !groupId) {
+        await logDebugInfo({ error: 'User ID or Group ID is missing', userData, groupId });
         throw new Error('User ID or Group ID is missing');
       }
 
+
       const updatedGroup = await joinGroup(groupId, userData);
+
+      await logDebugInfo({ message: 'UpdatedGroup:', updatedGroup });
 
       if (updatedGroup) {
         const updatedGroups = [...groupsOfUser, updatedGroup];
         setGroupsOfUser(updatedGroups);
-  
+        await logDebugInfo({ message: 'GroupsOfUser after update:', updatedGroups });
   
         if (groupsOfUser.length === 0) {
+          await logDebugInfo({ message: 'SelectedGroup set to:', updatedGroup });
+
           setSelectedGroup(updatedGroup);
         }
       }
+
       showToast(`You have joined ${groupInviteName}!`, true, "top")
       router.replace('/groups');
       setInvited(false)
-    } catch (error) {
+    } catch (error:any) {
+      await logDebugInfo({ error: 'Failed to join group:', details: error.message });
+
       console.error('Failed to join group:', error);
     }
   };
+
 
 
   export const showToast = (toastMessage:string, success:boolean, position: string) => {

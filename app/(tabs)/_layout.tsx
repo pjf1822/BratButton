@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs,router } from 'expo-router';
-import { Text, Dimensions } from 'react-native';
+import { Text, Dimensions, Platform } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -64,7 +64,8 @@ export default function TabLayout() {
         backgroundColor: myColors.three,
         paddingBottom: 14,
         borderTopColor: myColors.three,
-        borderTopWidth: 2
+        borderTopWidth: 2,
+        minHeight: Platform.isPad ? 100 : undefined,
       }
     }}
   >
@@ -85,7 +86,8 @@ export default function TabLayout() {
             style={{
               color: focused ? myColors.one : myColors.five,
               fontSize: 17,
-              fontFamily: 'KalMedium'
+              fontFamily: 'KalMedium',
+               // Set minHeight to 100 if on iPad, otherwise undefined
             }}
           >
             Home
@@ -104,7 +106,7 @@ export default function TabLayout() {
 
         ),
         tabBarLabel: ({ focused, color }) => (
-          <View style={{backgroundColor:myColors.three,alignItems:"center",              marginBottom:isTablet ? 10:0
+          <View style={{backgroundColor:myColors.three,alignItems:"center",        marginBottom:isTablet ? 10:0
         }}>
 <TabBarIcon
             name="users"

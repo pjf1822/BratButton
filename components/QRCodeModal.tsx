@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import QRCode from 'react-native-qrcode-svg';
 import { myColors } from '@/theme';
 
-import logo from '../assets/logo-2.jpg';
+import logo from '../assets/brat.jpg';
 
 
 interface QRCodeModalProps {
