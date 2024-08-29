@@ -18,12 +18,13 @@ const inviteLandingPage = () => {
     invited:state.invited
   })); 
   
- 
-  const trySomeDebug = async()  => {
-    await logDebugInfo({ message: 'arrival at group invite page', groupInviteId,invitedBool, groupInviteName , groupsOfUser});
-
-  }
-
+  const trySomeDebug = async () => {
+    try {
+      await logDebugInfo({ message: 'arrival at group invite page', groupInviteId, invitedBool, groupInviteName, groupsOfUser });
+    } catch (error) {
+      console.error('Failed to log debug info:', error);
+    }
+  };
   const firstRender = useRef(true);
 
   useEffect(() => {
@@ -33,7 +34,6 @@ const inviteLandingPage = () => {
       setInvited(true);
     }
 
-    console.log(firstRender, "the render status")
     if (firstRender.current) {
       firstRender.current = false;
 
