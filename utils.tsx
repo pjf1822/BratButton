@@ -162,8 +162,8 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       textColor: textColor,
       opacity: 1,
       zIndex: 999,
-      fontSize: Platform.OS === "ios" && Platform.isPad ? 30 : 23,
-      textStyle: { fontFamily:"KalRegular" },
+      textStyle: { fontFamily:"KalRegular",      fontSize: Platform.OS === "ios" && Platform.isPad ? 30 : 23,
+    },
     });
   };
   
