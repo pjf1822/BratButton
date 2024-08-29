@@ -105,7 +105,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
       const { userData, setGroupsOfUser, setSelectedGroup, groupsOfUser } = useGroupStore.getState();
 
 
-      await logDebugInfo({ message: 'UserData:', userData });
+      // await logDebugInfo({ message: 'UserData:', userData });
 
       if (!userData || !groupId) {
         await logDebugInfo({ error: 'User ID or Group ID is missing', userData, groupId });
@@ -115,19 +115,20 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
 
       const updatedGroup = await joinGroup(groupId, userData);
 
-      await logDebugInfo({ message: 'UpdatedGroup:', updatedGroup });
+      // await logDebugInfo({ message: 'UpdatedGroup:', updatedGroup });
 
       if (updatedGroup) {
         const updatedGroups = [...groupsOfUser, updatedGroup];
         setGroupsOfUser(updatedGroups);
-        await logDebugInfo({ message: 'GroupsOfUser after update:', updatedGroups });
+        // await logDebugInfo({ message: 'GroupsOfUser after update:', updatedGroups });
   
         if (groupsOfUser.length === 0) {
-          await logDebugInfo({ message: 'SelectedGroup set to:', updatedGroup });
+          // await logDebugInfo({ message: 'SelectedGroup set to:', updatedGroup });
 
           setSelectedGroup(updatedGroup);
         }
       }
+
 
       showToast(`You have joined ${groupInviteName}!`, true, "top")
       router.replace('/groups');
@@ -146,7 +147,7 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
     let textColor;
   
     if (success === true) {
-      backgroundColor = myColors.two;
+      backgroundColor = myColors.four;
       textColor = myColors.three;
     } else if (success === false) {
       backgroundColor = myColors.five;
