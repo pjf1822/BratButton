@@ -22,6 +22,7 @@ const firstLaunch = () => {
         } else{
           router.replace('/(tabs)');
         }
+        
 
     }
 

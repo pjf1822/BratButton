@@ -1,9 +1,10 @@
 import { View, Text, TouchableOpacity   } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { router, useLocalSearchParams } from 'expo-router';
 import { handleJoinGroup, showToast } from '@/utils';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
+import { logDebugInfo } from '@/api';
 
 
 const inviteLandingPage = () => {
@@ -18,21 +19,32 @@ const inviteLandingPage = () => {
   })); 
   
  
+  const trySomeDebug = async()  => {
+    await logDebugInfo({ message: 'arrival at group invite page', groupInviteId,invitedBool, groupInviteName , groupsOfUser});
+
+  }
+
+  const firstRender = useRef(true);
 
   useEffect(() => {
+    trySomeDebug()
     if (groupInviteId || invitedBool || groupInviteName) {
       setInviteParams(groupInviteId, invitedBool, groupInviteName);
       setInvited(true);
     }
-  
-    if (groupsOfUser.length > 0 && groupInviteId && invited === false) {
-      const foundGroup = groupsOfUser.find((group) => group.id === groupInviteId);
-      if (foundGroup) {
-        router.replace('/groups');
-        showToast(`Youre already in ${groupInviteName} `, true, "top");
-      } 
+
+    console.log(firstRender, "the render status")
+    if (firstRender.current) {
+      firstRender.current = false;
+
+      if (groupsOfUser.length > 0 && groupInviteId) {
+        const foundGroup = groupsOfUser.find((group) => group.id === groupInviteId);
+        if (foundGroup) {
+          router.replace('/groups');
+          showToast(`You're already in ${groupInviteName}`, true, 'top');
+        }
+      }
     }
-  
   }, [groupInviteId, groupsOfUser]);
 
 
@@ -72,7 +84,7 @@ const inviteLandingPage = () => {
               textAlign: 'center',
             }}
           >
-            Join {inviteParams?.groupInviteName}
+            Join {inviteParams.groupInviteName || groupInviteName}
           </Text>
         </TouchableOpacity>
       </View>
