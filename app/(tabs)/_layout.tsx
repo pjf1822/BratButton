@@ -62,10 +62,11 @@ export default function TabLayout() {
       headerShown: false,
       tabBarStyle: {
         backgroundColor: myColors.three,
-        paddingBottom: 14,
+        paddingBottom: Platform.isPad ?0: 14,
         borderTopColor: myColors.three,
         borderTopWidth: 2,
         minHeight: Platform.isPad ? 100 : undefined,
+        justifyContent:"center"
       }
     }}
   >

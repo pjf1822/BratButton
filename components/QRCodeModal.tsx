@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View , TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet,  Text, View , TouchableOpacity, Modal, Platform } from 'react-native';
 import React from 'react'
 import QRCode from 'react-native-qrcode-svg';
 import { myColors } from '@/theme';
@@ -35,11 +35,11 @@ interface QRCodeModalProps {
         <View style={styles.modalContent}>
           <QRCode
             value={redirectUrl}
-            size={350}
+            size={Platform.isPad ? 500: 350}
             enableLinearGradient
             linearGradient={[myColors.two,myColors.four]}
             logo={logo}
-            logoSize={80}
+            logoSize={Platform.isPad ? 120 :80}
 
 
           />
