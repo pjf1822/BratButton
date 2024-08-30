@@ -81,9 +81,6 @@ export default function TabGroupScreen() {
       )}
     
    
-      
-
-
     </View>
   </KeyboardAvoidingView>
   );

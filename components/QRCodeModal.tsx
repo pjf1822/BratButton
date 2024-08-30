@@ -1,5 +1,5 @@
 import { StyleSheet,  Text, View , TouchableOpacity, Modal } from 'react-native';
-import React, { useState } from 'react'
+import React from 'react'
 import QRCode from 'react-native-qrcode-svg';
 import { myColors } from '@/theme';
 
