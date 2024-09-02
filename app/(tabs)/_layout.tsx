@@ -60,7 +60,7 @@ export default function TabLayout() {
     return (  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: myColors.three }}>
     <Image
       source={require('../../assets/brat-button.jpg')} // Ensure this path is correct
-      style={{ objectFit:"cover",minHeight:"55%", minWidth:"90%" }} // Adjust the size as needed
+      style={{ objectFit:"contain",minHeight:Platform.isPad ? "55%": 10, minWidth:Platform.isPad  ? "90%" : 10,maxHeight:Platform.isPad ? 1000: 350 }} // Adjust the size as needed
     />
   </View>)}
 

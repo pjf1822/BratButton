@@ -14,7 +14,6 @@ export default function TabOneScreen() {
   })); 
 
 
-  console.log(selectedGroup, groupsOfUser)
 
 
   const deleteUserId = async () => {
