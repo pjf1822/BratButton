@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View , TextInput, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet,  Text, View , TextInput, TouchableOpacity, Keyboard, Platform } from 'react-native';
 import React, { useState } from 'react'
 import { handleCreateGroup } from '@/utils';
 import { NewGroupFormProps } from '@/zustandStore';
@@ -10,7 +10,7 @@ import { myColors } from '@/theme';
     const [newGroupName, setNewGroupName] = useState('');
 
   return (
-    <View style={{ width: "90%",alignSelf:"center",marginTop:140}}> 
+    <View style={{ width: "90%",alignSelf:"center",marginTop:Platform.isPad ? 200:140}}> 
 
         <Text style={styles.modalTitle}>Enter New Group Name</Text>
         <TextInput

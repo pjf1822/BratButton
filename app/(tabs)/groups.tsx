@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View , TouchableOpacity, KeyboardAvoidingView,} from 'react-native';
+import { StyleSheet,  Text, View , TouchableOpacity, KeyboardAvoidingView, Platform,} from 'react-native';
 import {  useState } from 'react';
 import * as Linking from 'expo-linking'; 
 import { useGroupStore } from '@/zustandStore';
@@ -44,7 +44,7 @@ export default function TabGroupScreen() {
               <NewGroupForm groupsOfUser={groupsOfUser} />
 
      {groupsOfUser.length > 0 && (
-      <View style={{width:"66%",alignSelf:"center",marginBottom:40}}>
+      <View style={{width: Platform.isPad ? "55%":"66%",alignSelf:"center",marginBottom:40}}>
         
         <Text style={{ color: myColors.four, textAlign: 'center',fontFamily:"KalMedium",fontSize:30 }}>
           Your Groups
@@ -81,9 +81,6 @@ export default function TabGroupScreen() {
       )}
     
    
-      
-
-
     </View>
   </KeyboardAvoidingView>
   );

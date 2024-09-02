@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs,router } from 'expo-router';
-import { Text, Dimensions, Platform } from 'react-native';
+import { Text, Dimensions, Platform, ActivityIndicator, Image } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,12 +33,12 @@ export default function TabLayout() {
     setSelectedGroup: state.setSelectedGroup,
     setUserData: state.setUserData, 
   }));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkUserId = async () => {
       try {
         const userString = await AsyncStorage.getItem('user');
-
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
@@ -49,11 +49,20 @@ export default function TabLayout() {
         }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
       }
     };
   
     checkUserId();
   }, []);
+  if (loading) {
+    return (  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: myColors.three }}>
+    <Image
+      source={require('../../assets/brat-button.jpg')} // Ensure this path is correct
+      style={{ objectFit:"contain",minHeight:Platform.isPad ? "55%": 10, minWidth:Platform.isPad  ? "90%" : 10,maxHeight:Platform.isPad ? 1000: 350 }} // Adjust the size as needed
+    />
+  </View>)}
 
   return (
     <Tabs
@@ -62,10 +71,11 @@ export default function TabLayout() {
       headerShown: false,
       tabBarStyle: {
         backgroundColor: myColors.three,
-        paddingBottom: 14,
+        paddingBottom: Platform.isPad ?0: 14,
         borderTopColor: myColors.three,
         borderTopWidth: 2,
         minHeight: Platform.isPad ? 100 : undefined,
+        justifyContent:"center"
       }
     }}
   >
