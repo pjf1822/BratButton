@@ -41,7 +41,7 @@ export default function TabGroupScreen() {
     <QRCodeModal selectedGroup={selectedGroup} redirectUrl={redirectUrl} modalVisible={modalVisible}setModalVisible={setModalVisible} />
 
       <View style={{ width: "100%",position:"relative" ,flex:1,justifyContent:"space-between"}}>
-              <NewGroupForm groupsOfUser={groupsOfUser} />
+              <NewGroupForm groupsOfUser={groupsOfUser} setModalVisible={setModalVisible} />
 
      {groupsOfUser.length > 0 && (
       <View style={{width: Platform.isPad ? "55%":"66%",alignSelf:"center",marginBottom:40}}>

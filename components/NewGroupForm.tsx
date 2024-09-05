@@ -6,12 +6,11 @@ import { myColors } from '@/theme';
 
 
   
-  const NewGroupForm: React.FC<NewGroupFormProps> = ({ groupsOfUser }) => {
+  const NewGroupForm: React.FC<NewGroupFormProps> = ({ groupsOfUser,setModalVisible }) => {
     const [newGroupName, setNewGroupName] = useState('');
 
   return (
     <View style={{ width: "90%",alignSelf:"center",marginTop:Platform.isPad ? 200:140}}> 
-
         <Text style={styles.modalTitle}>Enter New Group Name</Text>
         <TextInput
           style={styles.input}
@@ -22,7 +21,7 @@ import { myColors } from '@/theme';
         />
 
 <TouchableOpacity
-  onPress={() => handleCreateGroup(newGroupName, groupsOfUser,setNewGroupName)}
+  onPress={() => handleCreateGroup(newGroupName, groupsOfUser,setNewGroupName, setModalVisible)}
   style={{backgroundColor:myColors.four,maxWidth:"100%",width:"100%", alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.one,marginTop:10, shadowColor: '#000',  
   shadowOffset: { width: 0, height: 4 }, 
   shadowOpacity: 0.4, 

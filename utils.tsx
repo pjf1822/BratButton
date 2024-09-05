@@ -8,7 +8,7 @@ import { router } from "expo-router";
 
 
 
-export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[],setNewGroupName: Dispatch<SetStateAction<string>>) => {
+export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[],setNewGroupName: Dispatch<SetStateAction<string>>,setModalVisible) => {
     try {
      
     if (!groupName.trim()) {
@@ -46,13 +46,10 @@ export const handleCreateGroup = async (groupName: string , groupsOfUser:Group[]
         selectedMember: userData
       };
       setGroupsOfUser([...groupsOfUser, newGroup]);   
-      if (groupsOfUser.length === 0) {
-        setSelectedGroup(newGroup);
-      }
-      showToast(`Created ${groupName}`, true, "top")
-
+      setSelectedGroup(newGroup);
       setNewGroupName("")
       Keyboard.dismiss();
+      setModalVisible(true)
      } catch (error) {
       console.error("Failed to create group:", error);
     }
