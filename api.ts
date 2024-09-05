@@ -8,7 +8,7 @@ import {
   arrayUnion
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { Group, User, useGroupStore } from './zustandStore';
+import { Group, User } from './zustandStore';
 
 export interface CreateGroupParams {
   members: string[];
