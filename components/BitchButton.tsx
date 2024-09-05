@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import React, { useRef, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useGroupStore } from '@/zustandStore';
-import { myColors } from '@/theme';
 
 interface BitchButtonProps {
   userData: {
@@ -21,13 +20,18 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
 
 
     
-  async function playSound() {
+  async function playSound() { 
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+    });
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/bratt.wav')
     );
     setSound(sound);
     await sound.playAsync();
   }
+
+
    useEffect(() => {
     return sound
       ? () => {
