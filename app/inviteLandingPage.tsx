@@ -54,9 +54,10 @@ const [connectedToInternet ,setConnectedToInternet] = useState(true)
         if (foundGroup) {
           router.replace('/groups');
           showToast(`You're already in ${groupInviteName}`, true, 'top');
-        }
+        } 
       }
     }
+    
   }, [groupInviteId, groupsOfUser]);
 
 

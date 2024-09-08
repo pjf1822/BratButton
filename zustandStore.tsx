@@ -16,6 +16,7 @@ export interface Group {
 }
 export interface NewGroupFormProps {
   groupsOfUser: Group[];
+  setModalVisible:(visible: boolean) => void;
 }
 
 
