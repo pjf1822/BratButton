@@ -43,12 +43,14 @@ export default function TabGroupScreen() {
     <Image
       source={require('../../assets/bar-purple.jpg')} 
       style={{ 
-        width: Platform.isPad ?  340 : 200,
-        height: Platform.isPad ?  340 : 200, 
+         width: Platform.isPad 
+      ? (groupsOfUser.length > 0 ? 340 : 540)  // Larger size for iPad when groupsOfUser is not empty
+      : (groupsOfUser.length > 0 ? 240 : 280), // Larger size for iPhone when groupsOfUser is not empty
+    height: Platform.isPad 
+      ? (groupsOfUser.length > 0 ? 340 : 540)  // Same logic for height
+      : (groupsOfUser.length > 0 ? 240 : 280), 
         objectFit: "contain", 
         marginTop:40
-        // position: "absolute",
-        // top:0
       }} 
     />
 

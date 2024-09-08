@@ -34,13 +34,15 @@ const firstLaunch = () => {
          
         <Text style={styles.label}>Enter Your Username</Text>
         <Text style={styles.mainText}>BRAT</Text>
-
-        <MyTextInput
+        <View style={{width:"80%",alignSelf:"center"}}> 
+          <MyTextInput
           placeholder="Username"
           value={username}
           onChangeText={setUsername}
-        />
-        <MyButton onPress={addUserName}  label="Add user name"/>
+         />
+          <MyButton onPress={addUserName}  label="Add user name"/>
+        </View>
+     
       </KeyboardAvoidingView>
   
   )
