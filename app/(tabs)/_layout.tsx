@@ -50,7 +50,7 @@ export default function TabLayout() {
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
       } finally {
-        setLoading(false); // Set loading to false after fetching data
+        setLoading(false); 
       }
     };
   
@@ -59,7 +59,7 @@ export default function TabLayout() {
   if (loading) {
     return (  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: myColors.three }}>
     <Image
-      source={require('../../assets/brat-button.jpg')} // Ensure this path is correct
+      source={require('../../assets/brat-button.jpg')} 
       style={{ objectFit:"contain",minHeight:Platform.isPad ? "55%": 10, minWidth:Platform.isPad  ? "90%" : 10,maxHeight:Platform.isPad ? 1000: 350 }} // Adjust the size as needed
     />
   </View>)}
@@ -95,9 +95,8 @@ export default function TabLayout() {
           <Text
             style={{
               color: focused ? myColors.one : myColors.five,
-              fontSize: 17,
+              fontSize: Platform.isPad ? 24: 17,
               fontFamily: 'KalMedium',
-               // Set minHeight to 100 if on iPad, otherwise undefined
             }}
           >
             Home
@@ -125,7 +124,7 @@ export default function TabLayout() {
           <Text
             style={{
               color: focused ? myColors.one : myColors.five,
-              fontSize: 17,
+              fontSize: Platform.isPad ? 24: 17,
               fontFamily: 'KalMedium',
             }}
           >

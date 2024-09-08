@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { handleCreateGroup } from '@/utils';
 import { NewGroupFormProps } from '@/zustandStore';
 import { myColors } from '@/theme';
+import MyButton from './MyComponents/MyButton';
+import MyTextInput from './MyComponents/MyTextInput';
 
 
   
@@ -10,26 +12,15 @@ import { myColors } from '@/theme';
     const [newGroupName, setNewGroupName] = useState('');
 
   return (
-    <View style={{ width: "90%",alignSelf:"center",marginTop:Platform.isPad ? 200:140}}> 
+    <View style={{ width: "90%",alignSelf:"center"}}> 
         <Text style={styles.modalTitle}>Enter New Group Name</Text>
-        <TextInput
-          style={styles.input}
+        <MyTextInput
           placeholder="Group Name"
           value={newGroupName}
           onChangeText={setNewGroupName}
-          placeholderTextColor={"rgba(255,255,255,0.5)"}
         />
+        <MyButton  onPress={() => handleCreateGroup(newGroupName, groupsOfUser,setNewGroupName, setModalVisible)} label="Create Group"/>
 
-<TouchableOpacity
-  onPress={() => handleCreateGroup(newGroupName, groupsOfUser,setNewGroupName, setModalVisible)}
-  style={{backgroundColor:myColors.four,maxWidth:"100%",width:"100%", alignSelf:"center", padding:10, borderRadius:14, borderWidth:3, borderColor:myColors.one,marginTop:10, shadowColor: '#000',  
-  shadowOffset: { width: 0, height: 4 }, 
-  shadowOpacity: 0.4, 
-  shadowRadius: 6, 
-  
-}}>
-  <Text style={{ color: myColors.one, fontSize: 26,fontFamily:'KalMedium',width:"100%",textAlign:"center" }}>Create Group</Text>
-</TouchableOpacity>
 </View>
   )
 }
@@ -41,7 +32,7 @@ const styles = StyleSheet.create({
    
    
     modalTitle: {
-      fontSize: 28,
+      fontSize: Platform.isPad ? 40 : 28,
       marginBottom: 10,
       fontFamily: 'KalMedium',
       color: myColors.four,

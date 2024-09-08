@@ -1,4 +1,4 @@
-import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator,Image} from 'react-native';
+import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator,Image, Platform} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
@@ -105,7 +105,7 @@ export default function TabOneScreen() {
   
       {selectedGroup && (
         <View style={{ display: "flex", justifyContent: "center", alignItems: "center",marginBottom:60}}>
-          <Text style={styles.subtitle}>{selectedGroup?.groupName}</Text>
+          <Text style={[styles.subtitle,{fontFamily: "KalSemiBold"}]}>{selectedGroup?.groupName}</Text>
           <Text style={styles.subtitle}>Today's Brat Tally:</Text>
           <View style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
             {renderTallyGroups()}
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'KalMedium',
     color: myColors.one,
-    fontSize: 30,
+    fontSize: Platform.isPad ? 50: 29,
     fontWeight: '100',
   },
   tallyContainer: {
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: 'KalMedium',
     color: myColors.one,
-    fontSize: 29,
+    fontSize: Platform.isPad ? 40: 29,
     fontWeight: '100',
   },
   createGroupText: {

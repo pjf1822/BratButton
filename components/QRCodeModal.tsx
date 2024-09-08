@@ -35,11 +35,11 @@ interface QRCodeModalProps {
         <View style={styles.modalContent}>
           <QRCode
             value={redirectUrl}
-            size={Platform.isPad ? 500: 350}
+            size={Platform.isPad ? 800: 350}
             enableLinearGradient
             linearGradient={[myColors.two,myColors.four]}
             logo={logo}
-            logoSize={Platform.isPad ? 120 :80}
+            logoSize={Platform.isPad ? 150 :80}
 
 
           />

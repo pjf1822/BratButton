@@ -1,5 +1,5 @@
 import LottieView from 'lottie-react-native';
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, Platform } from 'react-native';
 import React, { useRef, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useGroupStore } from '@/zustandStore';
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
       
     },
     lottieView: {
-      width: 290,
-      height: 290,
+      width: Platform.isPad ? 500 :  290,
+      height: Platform.isPad ? 500:290,
  
     },
   });
