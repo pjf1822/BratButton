@@ -1,33 +1,38 @@
-import { StyleSheet,  Text, View ,  Button, Alert, ActivityIndicator,Image, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  ActivityIndicator,
+  Image,
+  Platform
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function TabOneScreen() {
-
-  const {  selectedGroup, groupsOfUser ,userData} = useGroupStore((state) => ({
+  const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
     selectedGroup: state.selectedGroup,
     groupsOfUser: state.groupsOfUser,
     userData: state.userData
-  })); 
-
-
-
+  }));
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
 
-
   useEffect(() => {
-      getTallyGroups()
-  },[selectedGroup])
+    getTallyGroups();
+  }, [selectedGroup]);
 
   const viewUserData = async () => {
     try {
-      const user = await AsyncStorage.getItem('user'); 
+      const user = await AsyncStorage.getItem('user');
       if (user !== null) {
         Alert.alert('User Data', user);
       } else {
@@ -39,16 +44,14 @@ export default function TabOneScreen() {
     }
   };
   const renderItem = ({ item }: { item: User }) => (
-    <Text  style={{color:"black"}}>{item?.username}</Text>
+    <Text style={{ color: 'black' }}>{item?.username}</Text>
   );
-
 
   const getTallyGroups = () => {
     if (!selectedGroup || !selectedGroup.votesYes) return [];
-    
+
     const tallyMarks = selectedGroup.votesYes.length;
     const groups = [];
-
 
     for (let i = 0; i < tallyMarks; i += 5) {
       groups.push(selectedGroup.votesYes.slice(i, i + 5));
@@ -57,14 +60,11 @@ export default function TabOneScreen() {
     return groups;
   };
 
-
-
-
   const renderTallyGroups = () => {
     const tallyGroups = getTallyGroups();
     return tallyGroups.map((group, index) => (
       <View key={index} style={[styles.tallyContainer]}>
-      {group.map((_, idx) => (
+        {group.map((_, idx) => (
           <View key={idx} style={styles.tallyMark}></View>
         ))}
         {group.length === 5 && <View style={styles.diagonalTallyMark}></View>}
@@ -74,48 +74,71 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{ display:"flex",
-    justifyContent: 'center',
-    alignItems: 'center',
-  
+      <View
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
 
-    flex: 1,}}>
-
-      {groupsOfUser.length === 0 ? (
-                  <View style={{ justifyContent: "center", alignItems: "center" }}>
-
-        <Text style={styles.noGroupsText}>Hey, create or join a group first!</Text>
-        </View>
-
-      ) : selectedGroup && selectedGroup.selectedMember.username ? (
-        <>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Text style={styles.title}>Is <Text style={{fontFamily:"KalBold"}}>{selectedGroup.selectedMember.username}</Text> Being A</Text>
+          flex: 1
+        }}
+      >
+        {groupsOfUser.length === 0 ? (
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={styles.noGroupsText}>
+              Hey, create or join a group first!
+            </Text>
           </View>
-        </>
-      ) : (
-        <ActivityIndicator size="large" color="white" />
-      )}
-  
-      {userData && <BitchButton userData={userData} selectedGroupId={selectedGroup?.id} />}
-      
-      {groupsOfUser.length > 0 && ( <Text style={styles.title}>Today</Text>)}
-     
+        ) : selectedGroup && selectedGroup.selectedMember.username ? (
+          <>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.title}>
+                Is{' '}
+                <Text style={{ fontFamily: 'KalBold' }}>
+                  {selectedGroup.selectedMember.username}
+                </Text>{' '}
+                Being A
+              </Text>
+            </View>
+          </>
+        ) : (
+          <ActivityIndicator size="large" color="white" />
+        )}
+
+        {userData && (
+          <BitchButton
+            userData={userData}
+            selectedGroupId={selectedGroup?.id}
+          />
+        )}
+
+        {groupsOfUser.length > 0 && <Text style={styles.title}>Today</Text>}
       </View>
-  
+
       {selectedGroup && (
-        <View style={{ display: "flex", justifyContent: "center", alignItems: "center",marginBottom:60}}>
-          <Text style={[styles.subtitle,{fontFamily: "KalSemiBold"}]}>{selectedGroup?.groupName}</Text>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 60
+          }}
+        >
+          <Text style={[styles.subtitle, { fontFamily: 'KalSemiBold' }]}>
+            {selectedGroup?.groupName}
+          </Text>
           <Text style={styles.subtitle}>Today's Brat Tally:</Text>
-          <View style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
+          <View
+            style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}
+          >
             {renderTallyGroups()}
           </View>
         </View>
       )}
-  
+
       {/* delete these */}
-      {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-      <Button color="white" onPress={viewUserData} title="View stored data" /> */}
+      <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+      <Button color="white" onPress={viewUserData} title="View stored data" />
     </View>
   );
 }
@@ -123,22 +146,23 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: myColors.three,
-    display:"flex",
+    display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flex: 1,
+    flex: 1
   },
   title: {
     fontFamily: 'KalMedium',
     color: myColors.one,
-    fontSize: Platform.isPad ? 50: 29,
-    fontWeight: '100',
+    fontSize: Platform.isPad ? 50 : 29,
+    fontWeight: '100'
   },
   tallyContainer: {
     position: 'relative',
-    width:50,
-    display:"flex",flexDirection:"row",
-    marginLeft:20,
+    width: 50,
+    display: 'flex',
+    flexDirection: 'row',
+    marginLeft: 20
   },
   diagonalTallyMark: {
     position: 'absolute',
@@ -147,52 +171,50 @@ const styles = StyleSheet.create({
     backgroundColor: myColors.five,
     transform: [{ rotate: '-70deg' }],
     left: 23,
-    top: -18, 
-    zIndex: 1, 
-    borderRadius:100
-
+    top: -18,
+    zIndex: 1,
+    borderRadius: 100
   },
   tallyMark: {
     height: 30,
     width: 4,
     backgroundColor: myColors.one,
-    borderRadius:100,
-    marginLeft:5
+    borderRadius: 100,
+    marginLeft: 5
   },
   mainText: {
     fontFamily: 'KalRegular',
     color: myColors.five,
     fontSize: 100,
-    fontWeight: '100',
+    fontWeight: '100'
   },
   subtitle: {
     fontFamily: 'KalMedium',
     color: myColors.one,
-    fontSize: Platform.isPad ? 40: 29,
-    fontWeight: '100',
+    fontSize: Platform.isPad ? 40 : 29,
+    fontWeight: '100'
   },
   createGroupText: {
     color: myColors.five,
-    fontSize: 40,
+    fontSize: 40
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)'
   },
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     width: '80%',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   modalTitle: {
     fontSize: 20,
     marginBottom: 10,
-    color: myColors.five,
-
+    color: myColors.five
   },
   input: {
     height: 40,
@@ -200,22 +222,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 10
   },
-  noGroupsText:{
+  noGroupsText: {
     fontFamily: 'KalMedium',
     color: myColors.one,
     fontSize: 33,
-    textAlign:"center",
-    paddingBottom:70,
-
-    
+    textAlign: 'center',
+    paddingBottom: 70
   },
   voteText: {
     fontFamily: 'KalBold',
     color: myColors.five,
     fontSize: 20,
-    marginVertical: 5,
-  },
+    marginVertical: 5
+  }
 });
-

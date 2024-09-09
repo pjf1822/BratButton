@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingVi
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUser } from '@/api';
-import { router} from 'expo-router';
+import { router, useLocalSearchParams} from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import MyTextInput from '@/components/MyComponents/MyTextInput';
@@ -11,7 +11,6 @@ import MyButton from '@/components/MyComponents/MyButton';
 const firstLaunch = () => {
     const [username, setUsername] = useState('');
     const { setUserData,invited } = useGroupStore(); 
-
 
     const addUserName= async() => {
         const newUserId = Math.floor(Math.random() * 1000000).toString();

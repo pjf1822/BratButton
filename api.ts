@@ -27,7 +27,8 @@ export const createUser = async (userData: User): Promise<string> => {
 
 export const populateGroups = async (
   id: string,
-  setSelectedGroup: (group: Group | undefined) => void
+  setSelectedGroup: (group: Group | undefined) => void,
+  selectedGroup: Group | undefined
 ): Promise<Group[]> => {
   try {
     const groupsRef = collection(db, 'groups');
@@ -57,7 +58,6 @@ export const populateGroups = async (
             votesYes: []
           });
         }
-
         // Check if the selectedMember needs to be updated
         const newSelectedMember = members[dailyIndex];
         if (newSelectedMember && newSelectedMember.id !== selectedMember.id) {
@@ -70,7 +70,7 @@ export const populateGroups = async (
         }
 
         const group: Group = {
-          id: doc.id,
+          id: doc?.id,
           groupName: data.groupName || '',
           members,
           dailyIndex,
@@ -82,17 +82,14 @@ export const populateGroups = async (
         return group;
       })
     );
-
     // Filter groups to include only those where the user is a member
     const userGroups = groups.filter((group) =>
-      group.members.some((member) => member.id === id)
+      group.members.some((member) => member?.id === id)
     );
 
     // Set the first group as the selected group if any exist
-    if (userGroups.length > 0) {
+    if (userGroups.length > 0 && !selectedGroup) {
       setSelectedGroup(userGroups[0]);
-    } else {
-      setSelectedGroup(undefined);
     }
 
     return userGroups;
