@@ -48,9 +48,9 @@ export default function TabOneScreen() {
     try {
       const user = await AsyncStorage.getItem('groupIds');
       if (user !== null) {
-        Alert.alert('User Data', user);
+        Alert.alert('Group daata', user);
       } else {
-        Alert.alert('No User Data Found');
+        Alert.alert('No Group Data Found');
       }
     } catch (error) {
       console.error('Failed to retrieve user data:', error);

@@ -60,6 +60,7 @@ function RootLayoutNav() {
     <QueryClientProvider client={queryClient}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="testPage" />
         <Stack.Screen name="firstLaunch" options={{ headerShown: false }} />
         <Stack.Screen
           name="inviteLandingPage"

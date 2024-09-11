@@ -16,7 +16,7 @@ import {
   DocumentReference
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { groupConverter, userConverter } from './app/firestoreConverters';
+import { userConverter } from './app/firestoreConverters';
 
 export const populateGroups = async (
   groupIds: string[],
@@ -35,6 +35,7 @@ export const populateGroups = async (
       const data = docSnapshot.data() as Group;
 
       if (data.lastUpdated !== today) {
+        console.log(`Group ${data.groupName}  needs to be updated.`);
         const newDailyIndex = Math.floor(Math.random() * data.members.length);
 
         const newSelectedMember = data.members[newDailyIndex];
@@ -45,7 +46,6 @@ export const populateGroups = async (
 
         const groupRef = doc(db, 'groups', docSnapshot.id);
 
-        console.log(groupsRef, 'teh gruops ref');
         await updateDoc(groupRef, {
           lastUpdated: data.lastUpdated,
           dailyIndex: data.dailyIndex,
@@ -53,7 +53,7 @@ export const populateGroups = async (
         });
       } else {
         console.log(
-          `Group ${docSnapshot.id}  did not need to be updated today.`
+          `Group ${data.groupName}  did not need to be updated today.`
         );
       }
 
@@ -150,6 +150,8 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
   setInvited,
   groupInviteName
 ) => {
+  console.log(groupId, groupInviteName, 'this ');
+  return;
   try {
     const { setGroupsOfUser, setSelectedGroup, groupsOfUser, userData } =
       useGroupStore.getState();

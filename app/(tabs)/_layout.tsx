@@ -40,17 +40,27 @@ export default function TabLayout() {
     setUserData,
     loading,
     setLoading,
-    selectedGroup
+    selectedGroup,
+    invited
   } = useGroupStore((state) => ({
     setGroupsOfUser: state.setGroupsOfUser,
     setSelectedGroup: state.setSelectedGroup,
     setUserData: state.setUserData,
     loading: state.loading,
     setLoading: state.setLoading,
-    selectedGroup: state.selectedGroup
+    selectedGroup: state.selectedGroup,
+    invited: state.invited
   }));
 
   useEffect(() => {
+    // so there are how many scenarios we have to check here.
+
+    // 2.OPENING THE APP ALONE. HAVING NO GROUPS, NO GROUP INVITE
+    // 3.OPENING THE APP WITH GROUPS, NO GROUP INVITE
+
+    // 5.INVITED TO THE APP JOINING A GROUP.  ALREADY HAVE USERNAME. HAVE NO GROUPS THOUGH
+    // 6.INIVTED TO THE APP JOING A GROUP. ALREADY IN OTHER GROUPS TOO
+
     const checkUserId = async () => {
       try {
         const userString = await AsyncStorage.getItem('user');
@@ -60,15 +70,21 @@ export default function TabLayout() {
           ? (JSON.parse(groupsString) as string[])
           : [];
 
+        console.log(user, groupIds, 'the stuff', invited);
         if (!user) {
+          // 1.JOINING THE APP FOR THE FIRST TIME ALONE. NO GROUP INVITE
+          // 4.INVITED TO THE APP JOINING A GROUP. FIRST TIME
           router.replace('/firstLaunch');
         } else {
           setUserData(user);
           if (groupIds.length === 0) {
-            router.replace('/groups');
+            if (!invited) {
+              router.replace('/groups');
+            } else {
+              router.replace('/inviteLandingPage');
+            }
           } else {
             const groups = await populateGroups(groupIds, setSelectedGroup);
-            // console.log(groups, 'here we are on the other side');
             setGroupsOfUser(groups ?? []);
           }
         }
