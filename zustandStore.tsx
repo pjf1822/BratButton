@@ -13,7 +13,7 @@ export interface Group {
   dailyIndex?: number;
   lastUpdated?: string;
   votesYes: DocumentReference<User>[]; // Array of DocumentReferences to User documents
-  // selectedMember: DocumentReference<User>;
+  selectedMember: DocumentReference<User>;
 }
 
 export interface NewGroupFormProps {

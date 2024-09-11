@@ -6,10 +6,74 @@ import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DocumentReference, doc } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+  DocumentReference
+} from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { userConverter } from './app/firestoreConverters';
+import { groupConverter, userConverter } from './app/firestoreConverters';
 
+export const populateGroups = async (
+  groupIds: string[],
+  setSelectedGroup: (group: Group | undefined) => void
+): Promise<Group[]> => {
+  try {
+    const groupsRef = collection(db, 'groups');
+    const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
+    const groupSnapshots = await getDocs(groupQuery);
+
+    const today = new Date().toLocaleDateString();
+
+    const allGroups: Group[] = [];
+
+    for (const docSnapshot of groupSnapshots.docs) {
+      const data = docSnapshot.data() as Group;
+
+      if (data.lastUpdated !== today) {
+        const newDailyIndex = Math.floor(Math.random() * data.members.length);
+
+        const newSelectedMember = data.members[newDailyIndex];
+
+        data.lastUpdated = today;
+        data.dailyIndex = newDailyIndex;
+        data.selectedMember = newSelectedMember;
+
+        const groupRef = doc(db, 'groups', docSnapshot.id);
+
+        console.log(groupsRef, 'teh gruops ref');
+        await updateDoc(groupRef, {
+          lastUpdated: data.lastUpdated,
+          dailyIndex: data.dailyIndex,
+          selectedMember: newSelectedMember
+        });
+      } else {
+        console.log(
+          `Group ${docSnapshot.id}  did not need to be updated today.`
+        );
+      }
+
+      allGroups.push(data);
+    }
+
+    setSelectedGroup(allGroups[0]);
+    // Optionally set the selected group if needed
+    // if (selectedGroup && updatedGroups.length > 0) {
+    //   setSelectedGroup(
+    //     updatedGroups.find((group) => group.id === selectedGroup.id)
+    //   );
+    // }
+
+    return allGroups;
+  } catch (error) {
+    console.error('Failed to populate groups:', error);
+    return [];
+  }
+};
 export const handleCreateGroup = async (
   groupName: string,
   groupsOfUser: Group[],
@@ -38,9 +102,10 @@ export const handleCreateGroup = async (
     const groupId = await createGroup({
       groupName,
       members: [userDocRef],
-      dailyIndex: 0,
       lastUpdated: new Date().toLocaleDateString(),
-      votesYes: []
+      votesYes: [],
+      dailyIndex: 0,
+      selectedMember: userDocRef
     });
 
     const newGroup: Group = {
@@ -49,7 +114,8 @@ export const handleCreateGroup = async (
       members: [userDocRef], // Use DocumentReference<User> here
       dailyIndex: 0,
       lastUpdated: new Date().toLocaleDateString(),
-      votesYes: [] // Initialize votesYes as an empty array
+      votesYes: [], // Initialize votesYes as an empty array,
+      selectedMember: userDocRef
     };
     // GLOBAL
     const updatedGroups = [...groupsOfUser, newGroup];
@@ -70,45 +136,6 @@ export const handleCreateGroup = async (
     setModalVisible(true);
   } catch (error) {
     console.error('Failed to create group:', error);
-  }
-};
-
-export const updateDailyIndexForGroup = () => {
-  const { selectedGroup, groupsOfUser, setGroupsOfUser } =
-    useGroupStore.getState();
-
-  if (!selectedGroup) {
-    console.error('No group selected');
-    return;
-  }
-
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-
-  const previousIndex = selectedGroup.dailyIndex;
-  const shouldUpdateIndex =
-    !previousIndex || new Date().toISOString().split('T')[0] !== today;
-
-  if (shouldUpdateIndex) {
-    const randomIndex = Math.floor(
-      Math.random() * selectedGroup.members.length
-    );
-    const updatedGroup = {
-      ...selectedGroup,
-      dailyIndex: randomIndex
-    };
-
-    const updatedGroups = groupsOfUser.map((group) =>
-      group.id === selectedGroup.id ? updatedGroup : group
-    );
-    setGroupsOfUser(updatedGroups);
-
-    console.log(
-      `Selected member for today: ${selectedGroup.members[randomIndex].username}`
-    );
-  } else {
-    console.log(
-      `Today's member was previously selected: ${selectedGroup.members[previousIndex].username}`
-    );
   }
 };
 

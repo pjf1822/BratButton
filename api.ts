@@ -1,20 +1,14 @@
 import {
   collection,
-  getDocs,
   doc,
   setDoc,
   getDoc,
   updateDoc,
   arrayUnion,
-  query,
-  where,
-  writeBatch,
-  DocumentSnapshot,
   DocumentReference
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Group, User } from './zustandStore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { userConverter } from './app/firestoreConverters';
 
 export const createUser = async (user: User) => {
@@ -26,67 +20,13 @@ export const createUser = async (user: User) => {
   }
 };
 
-export const populateGroups = async (
-  user: User,
-  groupIds: string[],
-  setSelectedGroup: (group: Group | undefined) => void,
-  selectedGroup: Group | undefined
-): Promise<Group[]> => {
-  try {
-    const groupsRef = collection(db, 'groups');
-    const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
-    const groupSnapshots = await getDocs(groupQuery);
-
-    const today = new Date().toLocaleDateString();
-
-    const allGroups: Group[] = [];
-
-    for (const docSnapshot of groupSnapshots.docs) {
-      const data = docSnapshot.data() as Group;
-
-      if (data.lastUpdated !== today) {
-        console.log(`Group ${docSnapshot.id} needs to be updated.`);
-
-        // Update the group data
-        data.lastUpdated = today;
-        data.dailyIndex = Math.floor(Math.random() * data.members.length);
-
-        // Write the updated data back to Firestore
-        const groupRef = doc(db, 'groups', docSnapshot.id);
-        await updateDoc(groupRef, {
-          lastUpdated: data.lastUpdated,
-          dailyIndex: data.dailyIndex
-        });
-      } else {
-        console.log(
-          `Group ${docSnapshot.id} was did not need to be updated today.`
-        );
-      }
-
-      allGroups.push(data);
-    }
-
-    setSelectedGroup(allGroups[0]);
-    // Optionally set the selected group if needed
-    // if (selectedGroup && updatedGroups.length > 0) {
-    //   setSelectedGroup(
-    //     updatedGroups.find((group) => group.id === selectedGroup.id)
-    //   );
-    // }
-
-    return allGroups;
-  } catch (error) {
-    console.error('Failed to populate groups:', error);
-    return [];
-  }
-};
-
 export const createGroup = async (params: {
   groupName: string;
   members: DocumentReference<User>[];
-  dailyIndex?: number;
   lastUpdated?: string;
   votesYes: DocumentReference<User>[];
+  dailyIndex?: number;
+  selectedMember: DocumentReference<User>;
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));

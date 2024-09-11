@@ -11,10 +11,10 @@ import {
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { populateGroups } from '@/api';
-import { useGroupStore } from '@/zustandStore';
+import { User, useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { View } from '@/components/Themed';
+import { populateGroups } from '@/utils';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 768;
@@ -54,24 +54,21 @@ export default function TabLayout() {
     const checkUserId = async () => {
       try {
         const userString = await AsyncStorage.getItem('user');
-        const user = JSON.parse(userString);
+        const user = userString ? (JSON.parse(userString) as User) : null;
         const groupsString = await AsyncStorage.getItem('groupIds');
-        const groupIds = JSON.parse(groupsString);
+        const groupIds = groupsString
+          ? (JSON.parse(groupsString) as string[])
+          : [];
 
-        if (!userString) {
+        if (!user) {
           router.replace('/firstLaunch');
         } else {
           setUserData(user);
           if (groupIds.length === 0) {
             router.replace('/groups');
           } else {
-            const groups = await populateGroups(
-              user,
-              groupIds,
-              setSelectedGroup,
-              selectedGroup
-            );
-            console.log(groups, 'here we are on the other side');
+            const groups = await populateGroups(groupIds, setSelectedGroup);
+            // console.log(groups, 'here we are on the other side');
             setGroupsOfUser(groups ?? []);
           }
         }

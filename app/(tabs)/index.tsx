@@ -22,9 +22,11 @@ export default function TabOneScreen() {
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
-    await AsyncStorage.removeItem('groupIds');
   };
 
+  const deleteGroupIds = async () => {
+    await AsyncStorage.removeItem('groupIds');
+  };
   useEffect(() => {
     getTallyGroups();
   }, [selectedGroup]);
@@ -151,6 +153,7 @@ export default function TabOneScreen() {
 
       {/* delete these */}
       <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+      <Button color="white" onPress={deleteGroupIds} title="Delete group ids" />
       <Button color="white" onPress={viewUserData} title="View stored data" />
       <Button color="white" onPress={viewGroupData} title="View group data" />
     </View>

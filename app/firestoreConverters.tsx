@@ -6,6 +6,7 @@ import {
   doc
 } from 'firebase/firestore';
 import { Group, User } from '../zustandStore';
+import { db } from '@/firebaseConfig';
 
 // Define the User data converter
 export const userConverter: FirestoreDataConverter<User> = {
@@ -34,7 +35,8 @@ export const groupConverter: FirestoreDataConverter<Group> = {
       members: group.members.map((memberRef) => memberRef.id), // Store as user IDs
       dailyIndex: group.dailyIndex,
       lastUpdated: group.lastUpdated,
-      votesYes: group.votesYes.map((voteRef) => voteRef.id) // Store as user IDs
+      votesYes: group.votesYes.map((voteRef) => voteRef.id), // Store as user IDs
+      selectedMember: group.selectedMember.path
     };
   },
   fromFirestore(
@@ -50,8 +52,11 @@ export const groupConverter: FirestoreDataConverter<Group> = {
       ),
       dailyIndex: data.dailyIndex,
       lastUpdated: data.lastUpdated,
-      votesYes: (data.votesYes || []).map(
-        (id: string) => doc(db, 'users', id).withConverter(userConverter) // Create references with converter
+      votesYes: (data.votesYes || []).map((id: string) =>
+        doc(db, 'users', id).withConverter(userConverter)
+      ),
+      selectedMember: doc(db, 'users', data.selectedMember).withConverter(
+        userConverter
       )
     };
   }
