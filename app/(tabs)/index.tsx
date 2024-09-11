@@ -5,7 +5,6 @@ import {
   Button,
   Alert,
   ActivityIndicator,
-  Image,
   Platform
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +12,6 @@ import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { useEffect } from 'react';
-import { useLocalSearchParams } from 'expo-router';
 
 export default function TabOneScreen() {
   const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
@@ -24,6 +22,7 @@ export default function TabOneScreen() {
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
+    await AsyncStorage.removeItem('groupIds');
   };
 
   useEffect(() => {
@@ -43,6 +42,20 @@ export default function TabOneScreen() {
       Alert.alert('Error', 'Failed to retrieve user data');
     }
   };
+  const viewGroupData = async () => {
+    try {
+      const user = await AsyncStorage.getItem('groupIds');
+      if (user !== null) {
+        Alert.alert('User Data', user);
+      } else {
+        Alert.alert('No User Data Found');
+      }
+    } catch (error) {
+      console.error('Failed to retrieve user data:', error);
+      Alert.alert('Error', 'Failed to retrieve user data');
+    }
+  };
+
   const renderItem = ({ item }: { item: User }) => (
     <Text style={{ color: 'black' }}>{item?.username}</Text>
   );
@@ -83,7 +96,7 @@ export default function TabOneScreen() {
           flex: 1
         }}
       >
-        {groupsOfUser.length === 0 ? (
+        {/* {groupsOfUser.length === 0 ? (
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Text style={styles.noGroupsText}>
               Hey, create or join a group first!
@@ -103,7 +116,7 @@ export default function TabOneScreen() {
           </>
         ) : (
           <ActivityIndicator size="large" color="white" />
-        )}
+        )} */}
 
         {userData && (
           <BitchButton
@@ -139,6 +152,7 @@ export default function TabOneScreen() {
       {/* delete these */}
       <Button color="white" onPress={deleteUserId} title="Delete some shit" />
       <Button color="white" onPress={viewUserData} title="View stored data" />
+      <Button color="white" onPress={viewGroupData} title="View group data" />
     </View>
   );
 }

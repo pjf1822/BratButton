@@ -54,17 +54,26 @@ export default function TabLayout() {
     const checkUserId = async () => {
       try {
         const userString = await AsyncStorage.getItem('user');
+        const user = JSON.parse(userString);
+        const groupsString = await AsyncStorage.getItem('groupIds');
+        const groupIds = JSON.parse(groupsString);
+
         if (!userString) {
           router.replace('/firstLaunch');
         } else {
-          const user = JSON.parse(userString);
           setUserData(user);
-          const groups = await populateGroups(
-            user.id,
-            setSelectedGroup,
-            selectedGroup
-          );
-          setGroupsOfUser(groups ?? []);
+          if (groupIds.length === 0) {
+            router.replace('/groups');
+          } else {
+            const groups = await populateGroups(
+              user,
+              groupIds,
+              setSelectedGroup,
+              selectedGroup
+            );
+            console.log(groups, 'here we are on the other side');
+            setGroupsOfUser(groups ?? []);
+          }
         }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
@@ -72,7 +81,6 @@ export default function TabLayout() {
         setLoading(false);
       }
     };
-
     checkUserId();
   }, []);
 

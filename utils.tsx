@@ -1,16 +1,20 @@
-import { createGroup, joinGroup, logDebugInfo } from './api';
-import { Group, useGroupStore } from './zustandStore';
+import { createGroup, joinGroup } from './api';
+import { Group, User, useGroupStore } from './zustandStore';
 import { Keyboard, Platform } from 'react-native';
 import { Dispatch, SetStateAction } from 'react';
 import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DocumentReference, doc } from 'firebase/firestore';
+import { db } from './firebaseConfig';
+import { userConverter } from './app/firestoreConverters';
 
 export const handleCreateGroup = async (
   groupName: string,
   groupsOfUser: Group[],
   setNewGroupName: Dispatch<SetStateAction<string>>,
-  setModalVisible
+  setModalVisible: (visible: boolean) => void
 ) => {
   try {
     if (!groupName.trim()) {
@@ -25,26 +29,42 @@ export const handleCreateGroup = async (
       throw new Error('User ID not found in AsyncStorage');
     }
 
+    const userDocRef: DocumentReference<User> = doc(
+      db,
+      'users',
+      userData.id
+    ).withConverter(userConverter);
+
     const groupId = await createGroup({
       groupName,
-      members: [userData],
+      members: [userDocRef],
       dailyIndex: 0,
       lastUpdated: new Date().toLocaleDateString(),
-      votesYes: [],
-      selectedMember: userData
+      votesYes: []
     });
 
     const newGroup: Group = {
       id: groupId,
       groupName,
-      members: [userData],
+      members: [userDocRef], // Use DocumentReference<User> here
       dailyIndex: 0,
       lastUpdated: new Date().toLocaleDateString(),
-      votesYes: [],
-      selectedMember: userData
+      votesYes: [] // Initialize votesYes as an empty array
     };
-    setGroupsOfUser([...groupsOfUser, newGroup]);
+    // GLOBAL
+    const updatedGroups = [...groupsOfUser, newGroup];
+    setGroupsOfUser(updatedGroups);
     setSelectedGroup(newGroup);
+
+    // ASYNC USER INFO
+    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
+    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
+    await AsyncStorage.setItem(
+      'groupIds',
+      JSON.stringify([...groupIds, groupId])
+    );
+
+    // LOCAL
     setNewGroupName('');
     Keyboard.dismiss();
     setModalVisible(true);
