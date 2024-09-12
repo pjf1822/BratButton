@@ -38,31 +38,56 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
-  ``;
-  const { setUserData, setGroupsOfUser, setSelectedGroup } =
-    useGroupStore.getState();
+  const {
+    setUserData,
+    setGroupsOfUser,
+    setSelectedGroup,
+    loading,
+    setLoading
+  } = useGroupStore.getState();
 
   const checkUser = async () => {
-    const userString = await AsyncStorage.getItem('user');
-    const user = userString ? (JSON.parse(userString) as User) : null;
-    setUserData(user);
-    const groupsString = await AsyncStorage.getItem('groupIds');
-    const groupIds = groupsString ? (JSON.parse(groupsString) as string[]) : [];
-    if (groupIds.length > 0) {
-      const groups = await populateGroups(groupIds, setSelectedGroup);
-      setGroupsOfUser(groups ?? []);
+    try {
+      const userString = await AsyncStorage.getItem('user');
+      const user = userString ? (JSON.parse(userString) as User) : null;
+      setUserData(user);
+
+      const groupsString = await AsyncStorage.getItem('groupIds');
+      const groupIds = groupsString
+        ? (JSON.parse(groupsString) as string[])
+        : [];
+      if (groupIds.length > 0) {
+        const groups = await populateGroups(groupIds, setSelectedGroup);
+        setGroupsOfUser(groups ?? []);
+      }
+    } catch (error) {
+      console.error('Error in checkUser:', error);
+    } finally {
+      setLoading(false); // Set loading to false when done
     }
-    console.log('done with this on the top level layout');
   };
 
   useEffect(() => {
-    if (loaded) {
-      checkUser();
-      SplashScreen.hideAsync();
-    }
+    const loadResources = async () => {
+      try {
+        if (loaded) {
+          // Perform user logic
+          await checkUser();
+
+          // Hide the splash screen
+          await SplashScreen.hideAsync();
+        }
+      } catch (error) {
+        console.error('Error during resource loading:', error);
+      } finally {
+        setLoading(false); // Stop the global loader
+      }
+    };
+
+    loadResources();
   }, [loaded]);
 
-  if (!loaded) {
+  if (!loaded || loading) {
     return null;
   }
 
@@ -80,10 +105,6 @@ function RootLayoutNav() {
     <QueryClientProvider client={queryClient}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="inviteLandingPage"
-          options={{ headerShown: false }}
-        />
       </Stack>
     </QueryClientProvider>
   );

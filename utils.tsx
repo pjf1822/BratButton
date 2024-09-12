@@ -52,9 +52,6 @@ export const populateGroups = async (
           selectedMember: newSelectedMember
         });
       } else {
-        console.log(
-          `Group ${data.groupName}  did not need to be updated today.`
-        );
       }
 
       allGroups.push(data);

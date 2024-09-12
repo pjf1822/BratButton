@@ -1,27 +1,12 @@
-import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Tabs, router, useLocalSearchParams } from 'expo-router';
-
-import {
-  Text,
-  Dimensions,
-  Platform,
-  ActivityIndicator,
-  Image,
-  KeyboardAvoidingView,
-  StyleSheet
-} from 'react-native';
-import Modal from 'react-native-modal';
-
+import { Tabs } from 'expo-router';
+import { Text, Dimensions, Platform, StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { User, useGroupStore } from '@/zustandStore';
+import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { View } from '@/components/Themed';
-import { populateGroups } from '@/utils';
-import MyTextInput from '@/components/MyComponents/MyTextInput';
-import MyButton from '@/components/MyComponents/MyButton';
+
 import LoginModal from '@/components/LoginModal';
 
 const { width } = Dimensions.get('window');
@@ -41,67 +26,10 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const [userName, setUsername] = useState('');
   const colorScheme = useColorScheme();
-  const {
-    setGroupsOfUser,
-    setSelectedGroup,
-    setUserData,
-    loading,
-    setLoading,
-    selectedGroup,
-    invited,
-    userData,
-    groupsOfUser
-  } = useGroupStore((state) => ({
-    setGroupsOfUser: state.setGroupsOfUser,
-    setSelectedGroup: state.setSelectedGroup,
-    setUserData: state.setUserData,
-    loading: state.loading,
-    setLoading: state.setLoading,
-    selectedGroup: state.selectedGroup,
-    invited: state.invited,
-    userData: state.userData,
-    groupsOfUser: state.groupsOfUser
+  const { userData } = useGroupStore((state) => ({
+    userData: state.userData
   }));
-  useEffect(() => {
-    // so there are how many scenarios we have to check here.
-
-    // 2.OPENING THE APP ALONE. HAVING NO GROUPS, NO GROUP INVITE
-    // 3.OPENING THE APP WITH GROUPS, NO GROUP INVITE
-
-    // 5.INVITED TO THE APP JOINING A GROUP.  ALREADY HAVE USERNAME. HAVE NO GROUPS THOUGH
-    // 6.INIVTED TO THE APP JOING A GROUP. ALREADY IN OTHER GROUPS TOO
-
-    console.log('ok were in the next layout');
-    const checkUserId = async () => {
-      try {
-        // if (user) {
-        //   // 1.JOINING THE APP FOR THE FIRST TIME ALONE. NO GROUP INVITE
-        //   // 4.INVITED TO THE APP JOINING A GROUP. FIRST TIME
-        //   // router.replace('/firstLaunch');
-        //   setHasUser(false);
-        // } else {
-        //   setUserData(user);
-        //   if (groupIds.length === 0) {
-        //     if (!invited) {
-        //       router.replace('/groups');
-        //     } else {
-        //       router.replace('/inviteLandingPage');
-        //     }
-        //   } else {
-        //     const groups = await populateGroups(groupIds, setSelectedGroup);
-        //     setGroupsOfUser(groups ?? []);
-        //   }
-        // }
-      } catch (error) {
-        console.error('Failed to check or assign User ID:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkUserId();
-  }, []);
 
   return userData === null ? (
     <LoginModal />
@@ -110,6 +38,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
+
         tabBarStyle: {
           backgroundColor: myColors.three,
           paddingBottom: Platform.isPad ? 0 : 14,
