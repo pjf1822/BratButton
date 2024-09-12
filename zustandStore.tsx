@@ -68,7 +68,7 @@ export const useGroupStore = create<StoreState>((set) => ({
             if (!group.votesYes.includes(member.id)) {
               const updatedGroup = {
                 ...group,
-                votesYes: [...group.votesYes, member.id] // Add the user's ID to votesYes
+                votesYes: [...group.votesYes, member.id]
               };
 
               if (state.selectedGroup?.id === groupId) {
