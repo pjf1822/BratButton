@@ -6,27 +6,32 @@ import {
   Platform,
   Image
 } from 'react-native';
-import { useState } from 'react';
 import * as Linking from 'expo-linking';
 import { useGroupStore } from '@/zustandStore';
-import { Picker } from '@react-native-picker/picker';
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
 import { myColors } from '@/theme';
 import MyButton from '@/components/MyComponents/MyButton';
+import { handleJoinGroup, showToast } from '@/utils';
+import { useEffect, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import NetInfo from '@react-native-community/netinfo';
+import GroupPicker from '@/components/GroupPicker';
+import NoInternetModal from '@/components/NoInternetModal';
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroup, setSelectedGroup, invited, userData } =
-    useGroupStore((state) => ({
+  const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore(
+    (state) => ({
       groupsOfUser: state.groupsOfUser,
       selectedGroup: state.selectedGroup,
-      setSelectedGroup: state.setSelectedGroup,
-      invited: state.invited
-    }));
-
+      setSelectedGroup: state.setSelectedGroup
+    })
+  );
   const [modalVisible, setModalVisible] = useState(false);
+  const [connectedToInternet, setConnectedToInternet] = useState(true);
 
-  const redirectUrl = Linking.createURL('/', {
+  // THE REDIRECT
+  const redirectUrl = Linking.createURL('/groups', {
     queryParams: {
       groupInviteId: selectedGroup?.id,
       invitedBool: 'true',
@@ -34,12 +39,40 @@ export default function TabGroupScreen() {
     }
   });
 
-  const handlePickerChange = (itemValue: string) => {
-    const selectedGroup = groupsOfUser.find((group) => group.id === itemValue);
-    if (selectedGroup) {
-      setSelectedGroup(selectedGroup);
-    }
+  const checkConnectivity = async () => {
+    const state = await NetInfo.fetch();
+    setConnectedToInternet(state?.isConnected);
+    return;
   };
+
+  // THE INVITE SECTION
+  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
+    groupInviteId?: string;
+    invitedBool: string;
+    groupInviteName: string;
+  }>();
+
+  useEffect(() => {
+    if (invitedBool) {
+      console.log(invitedBool, 'hey');
+      checkConnectivity();
+
+      const foundGroup = groupsOfUser?.find(
+        (group) => group.id === groupInviteId
+      );
+
+      if (foundGroup) {
+        showToast(`You're already in ${groupInviteName}`, true, 'top');
+        setSelectedGroup(foundGroup);
+      } else {
+        // Join the group if not already in it
+        handleJoinGroup(groupInviteId, groupInviteName);
+      }
+
+      // Redirect after processing the group invite
+      router.replace('/groups');
+    }
+  }, [invitedBool]);
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -102,32 +135,11 @@ export default function TabGroupScreen() {
             >
               Your Groups
             </Text>
-            <Picker
-              selectedValue={selectedGroup?.id}
-              onValueChange={handlePickerChange}
-              itemStyle={{
-                textAlign: 'center',
-                fontFamily: 'KalMedium',
-                fontSize: 25
-              }}
-              style={{
-                display: selectedGroup ? 'flex' : 'none',
-                maxHeight: 100,
-                justifyContent: 'center',
-                overflow: 'hidden',
-                marginTop: 10,
-                marginBottom: 10
-              }}
-            >
-              {groupsOfUser?.map((group) => (
-                <Picker.Item
-                  key={group?.id}
-                  color={myColors.three}
-                  label={group.groupName}
-                  value={group?.id}
-                />
-              ))}
-            </Picker>
+            <GroupPicker
+              selectedGroup={selectedGroup}
+              groupsOfUser={groupsOfUser}
+              setSelectedGroup={setSelectedGroup}
+            />
 
             <MyButton
               onPress={() => setModalVisible(true)}
@@ -136,6 +148,10 @@ export default function TabGroupScreen() {
           </View>
         )}
       </View>
+      <NoInternetModal
+        connectedToInternet={connectedToInternet}
+        setConnectedToInternet={setConnectedToInternet}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -196,8 +212,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   qrCodeSection: {
-    // paddingTop:100,
-    // paddingBottom:100,
     width: '100%',
     padding: 20,
     alignItems: 'center'

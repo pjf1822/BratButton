@@ -65,14 +65,12 @@ export const useGroupStore = create<StoreState>((set) => ({
       set((state) => {
         const updatedGroups = state.groupsOfUser.map((group) => {
           if (group.id === groupId) {
-            // Check if the member's ID is already in votesYes
             if (!group.votesYes.includes(member.id)) {
               const updatedGroup = {
                 ...group,
-                votesYes: [...group.votesYes, member.id] // Add the user's ID to votesYes
+                votesYes: [...group.votesYes, member.id]
               };
 
-              // Update selectedGroup if it's the same group
               if (state.selectedGroup?.id === groupId) {
                 set({ selectedGroup: updatedGroup });
               }

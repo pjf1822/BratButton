@@ -41,37 +41,31 @@ export const populateGroups = async (
           Math.random() * (data.members?.length || 1)
         );
 
-        data.lastUpdated = today;
-        data.dailyIndex = newDailyIndex;
-
         const groupRef = doc(db, 'groups', docSnapshot.id);
         await updateDoc(groupRef, {
-          lastUpdated: data.lastUpdated,
-          dailyIndex: data.dailyIndex,
+          lastUpdated: today,
+          dailyIndex: newDailyIndex,
           votesYes: [] // Reset votesYes array
         });
+
+        data.lastUpdated = today;
+        data.dailyIndex = newDailyIndex;
+        data.votesYes = []; // Res
       }
 
-      // Add the updated or existing group data to the list
       allGroups.push({
         ...data,
-        lastUpdated: today,
-        dailyIndex: data.dailyIndex
+        id: docSnapshot.id
       });
     });
 
     await Promise.all(updatePromises);
+
     allGroups.sort((a, b) => {
       return (originalOrderMap[a.id] || 0) - (originalOrderMap[b.id] || 0);
     });
 
     setSelectedGroup(allGroups[0]);
-    // Optionally set the selected group if needed
-    // if (selectedGroup && updatedGroups.length > 0) {
-    //   setSelectedGroup(
-    //     updatedGroups.find((group) => group.id === selectedGroup.id)
-    //   );
-    // }
 
     return allGroups;
   } catch (error) {

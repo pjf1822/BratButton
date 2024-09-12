@@ -1,74 +1,22 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Platform,
-  AppState
-} from 'react-native';
+import { StyleSheet, Text, View, Button, Platform } from 'react-native';
 import BitchButton from '@/components/BitchButton';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
-import { useEffect, useRef, useState } from 'react';
-import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import NetInfo from '@react-native-community/netinfo';
+
 import {
   deleteGroupIds,
   deleteUserId,
-  handleJoinGroup,
-  showToast,
   viewGroupData,
   viewUserData
 } from '@/utils';
-import Modal from 'react-native-modal';
 import TallyComp from '@/components/TallyComp';
 
 export default function TabOneScreen() {
-  const { selectedGroup, groupsOfUser, userData, setSelectedGroup } =
-    useGroupStore((state) => ({
-      selectedGroup: state.selectedGroup,
-      groupsOfUser: state.groupsOfUser,
-      userData: state.userData,
-      setSelectedGroup: state.setSelectedGroup
-    }));
-
-  // THE INVITE SECTION
-  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
-    groupInviteId?: string;
-    invitedBool: string;
-    groupInviteName: string;
-  }>();
-  const [connectedToInternet, setConnectedToInternet] = useState(true);
-
-  const checkConnectivity = async () => {
-    const state = await NetInfo.fetch();
-    setConnectedToInternet(state?.isConnected);
-    return;
-  };
-
-  useEffect(() => {
-    if (invitedBool) {
-      checkConnectivity();
-
-      const foundGroup = groupsOfUser?.find(
-        (group) => group.id === groupInviteId
-      );
-
-      if (foundGroup) {
-        showToast(`You're already in ${groupInviteName}`, true, 'top');
-        setSelectedGroup(foundGroup);
-        router.replace('/');
-      } else {
-        // or we join the group
-        handleJoinGroup(groupInviteId, groupInviteName);
-        router.replace('/');
-      }
-    }
-  }, [invitedBool]);
-
-  const handleModalClose = () => {
-    setConnectedToInternet(true);
-  };
+  const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
+    selectedGroup: state.selectedGroup,
+    groupsOfUser: state.groupsOfUser,
+    userData: state.userData
+  }));
 
   return (
     <>
@@ -78,7 +26,6 @@ export default function TabOneScreen() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-
             flex: 1
           }}
         >
@@ -138,28 +85,6 @@ export default function TabOneScreen() {
         <Button color="white" onPress={viewUserData} title="View stored data" />
         <Button color="white" onPress={viewGroupData} title="View group data" />
       </View>
-      <Modal
-        isVisible={!connectedToInternet}
-        onBackdropPress={handleModalClose}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: myColors.three,
-            padding: 20,
-            borderRadius: 10
-          }}
-        >
-          <Text
-            style={{ fontSize: 18, marginBottom: 40, fontFamily: 'KalMedium' }}
-          >
-            You are not connected to the internet. Please check connection and
-            rescan the QR code
-          </Text>
-        </View>
-      </Modal>
     </>
   );
 }
