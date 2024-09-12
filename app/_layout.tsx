@@ -3,7 +3,7 @@ import { User, useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { Stack, router } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -51,7 +51,6 @@ export default function RootLayout() {
       const userString = await AsyncStorage.getItem('user');
       const user = userString ? (JSON.parse(userString) as User) : null;
       setUserData(user);
-
       const groupsString = await AsyncStorage.getItem('groupIds');
       const groupIds = groupsString
         ? (JSON.parse(groupsString) as string[])
@@ -63,7 +62,7 @@ export default function RootLayout() {
     } catch (error) {
       console.error('Error in checkUser:', error);
     } finally {
-      setLoading(false); // Set loading to false when done
+      setLoading(false);
     }
   };
 
@@ -71,7 +70,6 @@ export default function RootLayout() {
     const loadResources = async () => {
       try {
         if (loaded) {
-          // Perform user logic
           await checkUser();
 
           // Hide the splash screen
@@ -79,15 +77,13 @@ export default function RootLayout() {
         }
       } catch (error) {
         console.error('Error during resource loading:', error);
-      } finally {
-        setLoading(false); // Stop the global loader
       }
     };
 
     loadResources();
   }, [loaded]);
 
-  if (!loaded || loading) {
+  if (!loaded) {
     return null;
   }
 

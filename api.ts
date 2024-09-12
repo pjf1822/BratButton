@@ -22,22 +22,21 @@ export const createUser = async (user: User) => {
 
 export const createGroup = async (params: {
   groupName: string;
-  members: DocumentReference<User>[];
+  members: User[];
   lastUpdated?: string;
-  votesYes: DocumentReference<User>[];
+  votesYes: [];
   dailyIndex?: number;
-  selectedMember: DocumentReference<User>;
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
-    const groupId = docRef.id;
+    const id = docRef.id; // Generate the document ID
 
     await setDoc(docRef, {
-      groupId,
+      id, // Use 'id' instead of 'groupId'
       ...params
     });
 
-    return groupId;
+    return id;
   } catch (error) {
     console.error('Error creating group:', error);
     throw new Error('Failed to create group');
@@ -71,11 +70,10 @@ export const joinGroup = async (
     const newGroup: Group = {
       id: groupId,
       groupName: updatedGroupDoc.data()?.groupName || '',
-      members: (updatedGroupDoc.data()?.members || []) as User[],
+      members: updatedGroupDoc.data()?.members as User[],
       dailyIndex: updatedGroupDoc.data()?.dailyIndex || 0,
       lastUpdated: updatedGroupDoc.data()?.lastUpdated || '',
-      votesYes: updatedGroupDoc.data()?.votesYes || [],
-      selectedMember: updatedGroupDoc.data()?.selectedMember || ''
+      votesYes: updatedGroupDoc.data()?.votesYes || []
     };
 
     return newGroup;
@@ -89,7 +87,7 @@ export const voteYes = async (groupId: string, user: User) => {
   try {
     const groupRef = doc(db, 'groups', groupId);
     await updateDoc(groupRef, {
-      votesYes: arrayUnion(user)
+      votesYes: arrayUnion(user.id)
     });
   } catch (error) {
     console.error('Error adding vote:', error);

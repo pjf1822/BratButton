@@ -16,7 +16,7 @@ import { myColors } from '@/theme';
 import MyButton from '@/components/MyComponents/MyButton';
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroup, setSelectedGroup, invited } =
+  const { groupsOfUser, selectedGroup, setSelectedGroup, invited, userData } =
     useGroupStore((state) => ({
       groupsOfUser: state.groupsOfUser,
       selectedGroup: state.selectedGroup,

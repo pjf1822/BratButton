@@ -12,11 +12,9 @@ import {
   doc,
   updateDoc,
   query,
-  where,
-  DocumentReference
+  where
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { userConverter } from './firestoreConverters';
 
 export const populateGroups = async (
   groupIds: string[],
@@ -38,18 +36,14 @@ export const populateGroups = async (
         console.log(`Group ${data}  needs to be updated.`);
         const newDailyIndex = Math.floor(Math.random() * data.members?.length);
 
-        const newSelectedMember = data.members[newDailyIndex];
-
         data.lastUpdated = today;
         data.dailyIndex = newDailyIndex;
-        data.selectedMember = newSelectedMember;
 
         const groupRef = doc(db, 'groups', docSnapshot.id);
 
         await updateDoc(groupRef, {
           lastUpdated: data.lastUpdated,
-          dailyIndex: data.dailyIndex,
-          selectedMember: newSelectedMember
+          dailyIndex: data.dailyIndex
         });
       } else {
       }
@@ -57,7 +51,6 @@ export const populateGroups = async (
       allGroups.push(data);
     }
 
-    console.log(allGroups[0], 'teh all gorups');
     setSelectedGroup(allGroups[0]);
     // Optionally set the selected group if needed
     // if (selectedGroup && updatedGroups.length > 0) {
@@ -91,29 +84,21 @@ export const handleCreateGroup = async (
       throw new Error('User ID not found in AsyncStorage');
     }
 
-    const userDocRef: DocumentReference<User> = doc(
-      db,
-      'users',
-      userData.id
-    ).withConverter(userConverter);
-
     const groupId = await createGroup({
       groupName,
-      members: [userDocRef],
+      members: [userData],
       lastUpdated: new Date().toLocaleDateString(),
       votesYes: [],
-      dailyIndex: 0,
-      selectedMember: userDocRef
+      dailyIndex: 0
     });
 
     const newGroup: Group = {
       id: groupId,
       groupName,
-      members: [userDocRef], // Use DocumentReference<User> here
+      members: [userData],
       dailyIndex: 0,
       lastUpdated: new Date().toLocaleDateString(),
-      votesYes: [], // Initialize votesYes as an empty array,
-      selectedMember: userDocRef
+      votesYes: []
     };
     // GLOBAL
     const updatedGroups = [...groupsOfUser, newGroup];
@@ -138,32 +123,30 @@ export const handleCreateGroup = async (
 };
 
 type HandleJoinGroupFunction = (
-  groupId: string | undefined,
-  setInvited: (invited: boolean) => void,
+  groupId: string,
   groupInviteName: string | undefined
 ) => Promise<void>;
 
 export const handleJoinGroup: HandleJoinGroupFunction = async (
   groupId,
-  setInvited,
   groupInviteName
 ) => {
-  console.log(groupId, groupInviteName, 'this ');
-  return;
   try {
     const { setGroupsOfUser, setSelectedGroup, groupsOfUser, userData } =
       useGroupStore.getState();
 
     const updatedGroup = await joinGroup(groupId, userData);
-
     if (updatedGroup) {
       const updatedGroups = [...groupsOfUser, updatedGroup];
       setGroupsOfUser(updatedGroups);
       setSelectedGroup(updatedGroup);
     }
+    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
+    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
+    const updatedGroupIds = [...groupIds, groupId];
+    await AsyncStorage.setItem('groupIds', JSON.stringify(updatedGroupIds));
+
     showToast(`You have joined ${groupInviteName}!`, true, 'top');
-    router.replace('/');
-    setInvited(false);
   } catch (error: any) {
     console.error('Failed to join group:', error);
   }
