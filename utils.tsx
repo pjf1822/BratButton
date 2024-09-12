@@ -16,7 +16,7 @@ import {
   DocumentReference
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { userConverter } from './app/firestoreConverters';
+import { userConverter } from './firestoreConverters';
 
 export const populateGroups = async (
   groupIds: string[],
@@ -35,7 +35,7 @@ export const populateGroups = async (
       const data = docSnapshot.data() as Group;
 
       if (data.lastUpdated !== today) {
-        console.log(`Group ${data.groupName}  needs to be updated.`);
+        console.log(`Group ${data}  needs to be updated.`);
         const newDailyIndex = Math.floor(Math.random() * data.members?.length);
 
         const newSelectedMember = data.members[newDailyIndex];
@@ -57,6 +57,7 @@ export const populateGroups = async (
       allGroups.push(data);
     }
 
+    console.log(allGroups[0], 'teh all gorups');
     setSelectedGroup(allGroups[0]);
     // Optionally set the selected group if needed
     // if (selectedGroup && updatedGroups.length > 0) {

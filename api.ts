@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Group, User } from './zustandStore';
-import { userConverter } from './app/firestoreConverters';
+import { userConverter } from './firestoreConverters';
 
 export const createUser = async (user: User) => {
   try {
@@ -30,10 +30,14 @@ export const createGroup = async (params: {
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
+    const groupId = docRef.id;
+
     await setDoc(docRef, {
+      groupId,
       ...params
     });
-    return docRef.id;
+
+    return groupId;
   } catch (error) {
     console.error('Error creating group:', error);
     throw new Error('Failed to create group');

@@ -12,6 +12,7 @@ import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function TabOneScreen() {
   const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
@@ -19,6 +20,12 @@ export default function TabOneScreen() {
     groupsOfUser: state.groupsOfUser,
     userData: state.userData
   }));
+  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
+    groupInviteId?: string;
+    invitedBool: string;
+    groupInviteName: string;
+  }>();
+  console.log(groupInviteId, 'what do you think');
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');

@@ -14,7 +14,6 @@ import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
 import { myColors } from '@/theme';
 import MyButton from '@/components/MyComponents/MyButton';
-import { useLocalSearchParams } from 'expo-router';
 
 export default function TabGroupScreen() {
   const { groupsOfUser, selectedGroup, setSelectedGroup, invited } =
@@ -27,7 +26,7 @@ export default function TabGroupScreen() {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const redirectUrl = Linking.createURL('/inviteLandingPage', {
+  const redirectUrl = Linking.createURL('/', {
     queryParams: {
       groupInviteId: selectedGroup?.id,
       invitedBool: 'true',

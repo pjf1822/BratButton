@@ -27,9 +27,139 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { userData } = useGroupStore((state) => ({
-    userData: state.userData
+  const { userData, groupsOfUser } = useGroupStore((state) => ({
+    userData: state.userData,
+    groupsOfUser: state.groupsOfUser
   }));
+
+  const renderTabs =
+    groupsOfUser.length === 0 ? (
+      <>
+        <Tabs.Screen
+          name="groups"
+          options={{
+            title: 'Groups',
+            tabBarIcon: () => <View></View>,
+            tabBarLabel: ({ focused, color }) => (
+              <View
+                style={{
+                  backgroundColor: myColors.three,
+                  alignItems: 'center',
+                  marginBottom: isTablet ? 10 : 0
+                }}
+              >
+                <TabBarIcon
+                  name="users"
+                  color={focused ? myColors.one : myColors.five}
+                />
+                <Text
+                  style={{
+                    color: focused ? myColors.one : myColors.five,
+                    fontSize: Platform.isPad ? 24 : 17,
+                    fontFamily: 'KalMedium'
+                  }}
+                >
+                  Groups
+                </Text>
+              </View>
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ focused, color }) => <View></View>,
+            tabBarLabel: ({ focused, color }) => (
+              <View
+                style={{
+                  backgroundColor: myColors.three,
+                  alignItems: 'center',
+                  marginBottom: isTablet ? 10 : 0
+                }}
+              >
+                <TabBarIcon
+                  name="home"
+                  color={focused ? myColors.one : myColors.five}
+                />
+                <Text
+                  style={{
+                    color: focused ? myColors.one : myColors.five,
+                    fontSize: Platform.isPad ? 24 : 17,
+                    fontFamily: 'KalMedium'
+                  }}
+                >
+                  Home
+                </Text>
+              </View>
+            )
+          }}
+        />
+      </>
+    ) : (
+      <>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ focused, color }) => <View></View>,
+            tabBarLabel: ({ focused, color }) => (
+              <View
+                style={{
+                  backgroundColor: myColors.three,
+                  alignItems: 'center',
+                  marginBottom: isTablet ? 10 : 0
+                }}
+              >
+                <TabBarIcon
+                  name="home"
+                  color={focused ? myColors.one : myColors.five}
+                />
+                <Text
+                  style={{
+                    color: focused ? myColors.one : myColors.five,
+                    fontSize: Platform.isPad ? 24 : 17,
+                    fontFamily: 'KalMedium'
+                  }}
+                >
+                  Home
+                </Text>
+              </View>
+            )
+          }}
+        />
+        <Tabs.Screen
+          name="groups"
+          options={{
+            title: 'Groups',
+            tabBarIcon: () => <View></View>,
+            tabBarLabel: ({ focused, color }) => (
+              <View
+                style={{
+                  backgroundColor: myColors.three,
+                  alignItems: 'center',
+                  marginBottom: isTablet ? 10 : 0
+                }}
+              >
+                <TabBarIcon
+                  name="users"
+                  color={focused ? myColors.one : myColors.five}
+                />
+                <Text
+                  style={{
+                    color: focused ? myColors.one : myColors.five,
+                    fontSize: Platform.isPad ? 24 : 17,
+                    fontFamily: 'KalMedium'
+                  }}
+                >
+                  Groups
+                </Text>
+              </View>
+            )
+          }}
+        />
+      </>
+    );
 
   return userData === null ? (
     <LoginModal />

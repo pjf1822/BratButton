@@ -5,7 +5,7 @@ import {
   SnapshotOptions,
   doc
 } from 'firebase/firestore';
-import { Group, User } from '../zustandStore';
+import { Group, User } from './zustandStore';
 import { db } from '@/firebaseConfig';
 
 // Define the User data converter
