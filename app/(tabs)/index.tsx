@@ -16,6 +16,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import NetInfo from '@react-native-community/netinfo';
 import { handleJoinGroup, showToast } from '@/utils';
 import Modal from 'react-native-modal';
+import TallyComp from '@/components/TallyComp';
 
 export default function TabOneScreen() {
   const { selectedGroup, groupsOfUser, userData, setSelectedGroup } =
@@ -98,39 +99,6 @@ export default function TabOneScreen() {
     }
   };
 
-  // TALLY BULLSHIT
-
-  const renderItem = ({ item }: { item: User }) => (
-    <Text style={{ color: 'black' }}>{item?.username}</Text>
-  );
-  const getTallyGroups = () => {
-    if (!selectedGroup || !selectedGroup.votesYes) return [];
-
-    const tallyMarks = selectedGroup.votesYes.length;
-    const groups = [];
-
-    for (let i = 0; i < tallyMarks; i += 5) {
-      groups.push(selectedGroup.votesYes.slice(i, i + 5));
-    }
-
-    return groups;
-  };
-
-  const renderTallyGroups = () => {
-    const tallyGroups = getTallyGroups();
-    return tallyGroups.map((group, index) => (
-      <View key={index} style={[styles.tallyContainer]}>
-        {group.map((_, idx) => (
-          <View key={idx} style={styles.tallyMark}></View>
-        ))}
-        {group.length === 5 && <View style={styles.diagonalTallyMark}></View>}
-      </View>
-    ));
-  };
-
-  useEffect(() => {
-    getTallyGroups();
-  }, [selectedGroup]);
   return (
     <>
       <View style={styles.container}>
@@ -185,11 +153,7 @@ export default function TabOneScreen() {
               {selectedGroup?.groupName}
             </Text>
             <Text style={styles.subtitle}>Today's Brat Tally:</Text>
-            <View
-              style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}
-            >
-              {renderTallyGroups()}
-            </View>
+            <TallyComp selectedGroup={selectedGroup} />
           </View>
         )}
 
@@ -223,9 +187,6 @@ export default function TabOneScreen() {
             You are not connected to the internet. Please check connection and
             rescan the QR code
           </Text>
-          {/* <TouchableOpacity onPress={handleModalClose} style={{ backgroundColor: myColors.four, padding: 10, borderRadius: 5, }}>
-            <Text style={{ color: myColors.one,fontFamily:"KalMedium", fontSize: 20 }}>Close</Text>
-          </TouchableOpacity> */}
         </View>
       </Modal>
     </>
