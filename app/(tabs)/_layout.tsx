@@ -60,6 +60,7 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="index"
+        redirect={groupsOfUser.length === 0}
         options={{
           title: 'Home',
           tabBarIcon: ({ focused, color }) => <View></View>,

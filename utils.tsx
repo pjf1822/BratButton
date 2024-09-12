@@ -1,6 +1,6 @@
 import { createGroup, joinGroup } from './api';
 import { Group, useGroupStore } from './zustandStore';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard, Platform, Alert } from 'react-native';
 import { Dispatch, SetStateAction } from 'react';
 import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
@@ -196,4 +196,39 @@ export const showToast = (
       fontSize: Platform.OS === 'ios' && Platform.isPad ? 27 : 23
     }
   });
+};
+
+export const deleteUserId = async () => {
+  await AsyncStorage.removeItem('user');
+};
+
+export const deleteGroupIds = async () => {
+  await AsyncStorage.removeItem('groupIds');
+};
+
+export const viewUserData = async () => {
+  try {
+    const user = await AsyncStorage.getItem('user');
+    if (user !== null) {
+      Alert.alert('User Data', user);
+    } else {
+      Alert.alert('No User Data Found');
+    }
+  } catch (error) {
+    console.error('Failed to retrieve user data:', error);
+    Alert.alert('Error', 'Failed to retrieve user data');
+  }
+};
+export const viewGroupData = async () => {
+  try {
+    const user = await AsyncStorage.getItem('groupIds');
+    if (user !== null) {
+      Alert.alert('Group daata', user);
+    } else {
+      Alert.alert('No Group Data Found');
+    }
+  } catch (error) {
+    console.error('Failed to retrieve user data:', error);
+    Alert.alert('Error', 'Failed to retrieve user data');
+  }
 };

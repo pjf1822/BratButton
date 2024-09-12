@@ -3,18 +3,23 @@ import {
   Text,
   View,
   Button,
-  Alert,
   Platform,
   AppState
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
-import { User, useGroupStore } from '@/zustandStore';
+import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { useEffect, useRef, useState } from 'react';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import NetInfo from '@react-native-community/netinfo';
-import { handleJoinGroup, showToast } from '@/utils';
+import {
+  deleteGroupIds,
+  deleteUserId,
+  handleJoinGroup,
+  showToast,
+  viewGroupData,
+  viewUserData
+} from '@/utils';
 import Modal from 'react-native-modal';
 import TallyComp from '@/components/TallyComp';
 
@@ -60,43 +65,9 @@ export default function TabOneScreen() {
       }
     }
   }, [invitedBool]);
+
   const handleModalClose = () => {
     setConnectedToInternet(true);
-  };
-  // ASYNC STUIFF THAT WILL GO AWAY
-  const deleteUserId = async () => {
-    await AsyncStorage.removeItem('user');
-  };
-
-  const deleteGroupIds = async () => {
-    await AsyncStorage.removeItem('groupIds');
-  };
-
-  const viewUserData = async () => {
-    try {
-      const user = await AsyncStorage.getItem('user');
-      if (user !== null) {
-        Alert.alert('User Data', user);
-      } else {
-        Alert.alert('No User Data Found');
-      }
-    } catch (error) {
-      console.error('Failed to retrieve user data:', error);
-      Alert.alert('Error', 'Failed to retrieve user data');
-    }
-  };
-  const viewGroupData = async () => {
-    try {
-      const user = await AsyncStorage.getItem('groupIds');
-      if (user !== null) {
-        Alert.alert('Group daata', user);
-      } else {
-        Alert.alert('No Group Data Found');
-      }
-    } catch (error) {
-      console.error('Failed to retrieve user data:', error);
-      Alert.alert('Error', 'Failed to retrieve user data');
-    }
   };
 
   return (
