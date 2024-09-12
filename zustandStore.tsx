@@ -72,7 +72,6 @@ export const useGroupStore = create<StoreState>((set) => ({
                 votesYes: [...group.votesYes, member.id] // Add the user's ID to votesYes
               };
 
-              // Update selectedGroup if it's the same group
               if (state.selectedGroup?.id === groupId) {
                 set({ selectedGroup: updatedGroup });
               }
