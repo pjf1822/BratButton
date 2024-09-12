@@ -1,6 +1,5 @@
 import {
   collection,
-  getDocs,
   doc,
   setDoc,
   getDoc,
@@ -9,112 +8,34 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Group, User } from './zustandStore';
+import { userConverter } from './firestoreConverters';
 
-export interface CreateGroupParams {
-  members: string[];
-}
-
-export const createUser = async (userData: User): Promise<string> => {
+export const createUser = async (user: User) => {
   try {
-    const docRef = doc(collection(db, 'users'), userData.id);
-    await setDoc(docRef, userData);
-    return docRef.id;
+    const userDocRef = doc(db, 'users', user.id).withConverter(userConverter);
+    await setDoc(userDocRef, user);
   } catch (error) {
     console.error('Error creating user:', error);
-    throw new Error('Failed to create user');
-  }
-};
-
-export const populateGroups = async (
-  id: string,
-  setSelectedGroup: (group: Group | undefined) => void
-): Promise<Group[]> => {
-  try {
-    const groupsRef = collection(db, 'groups');
-    const querySnapshot = await getDocs(groupsRef);
-    const today = new Date().toLocaleDateString();
-
-    const groups: Group[] = await Promise.all(
-      querySnapshot.docs.map(async (doc) => {
-        const data = doc.data();
-        const members: User[] = data.members || [];
-        const currentDailyIndex = data.dailyIndex || 0;
-        const currentSelectedMember = data.selectedMember || {
-          id: '',
-          username: ''
-        };
-
-        let dailyIndex = currentDailyIndex;
-        let selectedMember = currentSelectedMember;
-
-        // Check if we need to update the dailyIndex
-        if (data.lastUpdated !== today) {
-          dailyIndex = Math.floor(Math.random() * members.length);
-          console.log('Assigning a new index today');
-          await updateDoc(doc.ref, {
-            dailyIndex,
-            lastUpdated: today,
-            votesYes: []
-          });
-        }
-
-        // Check if the selectedMember needs to be updated
-        const newSelectedMember = members[dailyIndex];
-        if (newSelectedMember && newSelectedMember.id !== selectedMember.id) {
-          selectedMember = newSelectedMember;
-          console.log('we have updated the selectedMember');
-          // Update the group document with the new selectedMember
-          await updateDoc(doc.ref, {
-            selectedMember
-          });
-        }
-
-        const group: Group = {
-          id: doc.id,
-          groupName: data.groupName || '',
-          members,
-          dailyIndex,
-          lastUpdated: data.lastUpdated || '',
-          votesYes: data.votesYes || [],
-          selectedMember
-        };
-
-        return group;
-      })
-    );
-
-    // Filter groups to include only those where the user is a member
-    const userGroups = groups.filter((group) =>
-      group.members.some((member) => member.id === id)
-    );
-
-    // Set the first group as the selected group if any exist
-    if (userGroups.length > 0) {
-      setSelectedGroup(userGroups[0]);
-    } else {
-      setSelectedGroup(undefined);
-    }
-
-    return userGroups;
-  } catch (error) {
-    console.error('Error fetching user groups:', error);
-    return [];
   }
 };
 
 export const createGroup = async (params: {
-  members: User[];
   groupName: string;
-  dailyIndex?: number;
+  members: User[];
   lastUpdated?: string;
   votesYes: [];
-  selectedMember: User;
+  dailyIndex?: number;
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
-    await setDoc(docRef, params);
-    const createdDoc = await getDoc(docRef);
-    return docRef.id;
+    const id = docRef.id; // Generate the document ID
+
+    await setDoc(docRef, {
+      id,
+      ...params
+    });
+
+    return id;
   } catch (error) {
     console.error('Error creating group:', error);
     throw new Error('Failed to create group');
@@ -148,11 +69,10 @@ export const joinGroup = async (
     const newGroup: Group = {
       id: groupId,
       groupName: updatedGroupDoc.data()?.groupName || '',
-      members: (updatedGroupDoc.data()?.members || []) as User[],
+      members: updatedGroupDoc.data()?.members as User[],
       dailyIndex: updatedGroupDoc.data()?.dailyIndex || 0,
       lastUpdated: updatedGroupDoc.data()?.lastUpdated || '',
-      votesYes: updatedGroupDoc.data()?.votesYes || [],
-      selectedMember: updatedGroupDoc.data()?.selectedMember || ''
+      votesYes: updatedGroupDoc.data()?.votesYes || []
     };
 
     return newGroup;
@@ -166,7 +86,7 @@ export const voteYes = async (groupId: string, user: User) => {
   try {
     const groupRef = doc(db, 'groups', groupId);
     await updateDoc(groupRef, {
-      votesYes: arrayUnion(user)
+      votesYes: arrayUnion(user.id)
     });
   } catch (error) {
     console.error('Error adding vote:', error);

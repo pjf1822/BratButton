@@ -10,13 +10,12 @@ import {
 import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUser } from '@/api';
-import { router } from 'expo-router';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import MyTextInput from '@/components/MyComponents/MyTextInput';
 import MyButton from '@/components/MyComponents/MyButton';
 
-const firstLaunch = () => {
+const LoginModal = () => {
   const [username, setUsername] = useState('');
   const { setUserData, invited } = useGroupStore();
 
@@ -27,11 +26,6 @@ const firstLaunch = () => {
     await AsyncStorage.setItem('groupIds', JSON.stringify([]));
     setUserData(userData);
     await createUser(userData);
-    if (invited) {
-      router.replace('/inviteLandingPage');
-    } else {
-      router.replace('/groups');
-    }
   };
 
   return (
@@ -58,7 +52,7 @@ const firstLaunch = () => {
   );
 };
 
-export default firstLaunch;
+export default LoginModal;
 
 const styles = StyleSheet.create({
   container: {
