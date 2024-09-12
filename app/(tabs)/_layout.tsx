@@ -1,5 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { Text, Dimensions, Platform } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -8,6 +8,7 @@ import { myColors } from '@/theme';
 import { View } from '@/components/Themed';
 
 import LoginModal from '@/components/LoginModal';
+import { useEffect } from 'react';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 768;
@@ -27,9 +28,10 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { userData, loading } = useGroupStore((state) => ({
+  const { userData, loading, groupsOfUser } = useGroupStore((state) => ({
     userData: state.userData,
-    loading: state.loading
+    loading: state.loading,
+    groupsOfUser: state.groupsOfUser
   }));
 
   if (loading) {

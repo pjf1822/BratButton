@@ -4,8 +4,7 @@ import {
   setDoc,
   getDoc,
   updateDoc,
-  arrayUnion,
-  DocumentReference
+  arrayUnion
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Group, User } from './zustandStore';
@@ -32,7 +31,7 @@ export const createGroup = async (params: {
     const id = docRef.id; // Generate the document ID
 
     await setDoc(docRef, {
-      id, // Use 'id' instead of 'groupId'
+      id,
       ...params
     });
 

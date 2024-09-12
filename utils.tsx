@@ -1,10 +1,9 @@
 import { createGroup, joinGroup } from './api';
-import { Group, User, useGroupStore } from './zustandStore';
+import { Group, useGroupStore } from './zustandStore';
 import { Keyboard, Platform } from 'react-native';
 import { Dispatch, SetStateAction } from 'react';
 import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
-import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   collection,
@@ -44,7 +43,6 @@ export const populateGroups = async (
 
         data.lastUpdated = today;
         data.dailyIndex = newDailyIndex;
-        data.votesYes = []; // Reset votesYes array
 
         const groupRef = doc(db, 'groups', docSnapshot.id);
         await updateDoc(groupRef, {

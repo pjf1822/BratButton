@@ -1,21 +1,12 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Alert,
-  Platform,
-  AppState
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { myColors } from '@/theme';
 import { Group, User } from '@/zustandStore';
 
 interface TallyCompProps {
-  selectedGroup: Group | undefined; // Make sure to handle the case where selectedGroup might be undefined
+  selectedGroup: Group | undefined;
 }
 const TallyComp: React.FC<TallyCompProps> = ({ selectedGroup }) => {
-  //   console.log(selectedGroup, 'the selectedGroup in the tally seciotn');
   useEffect(() => {
     getTallyGroups();
   }, [selectedGroup]);
