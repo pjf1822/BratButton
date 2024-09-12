@@ -8,16 +8,16 @@ import {
 } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useGroupStore } from '@/zustandStore';
-import { Picker } from '@react-native-picker/picker';
 import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
 import { myColors } from '@/theme';
 import MyButton from '@/components/MyComponents/MyButton';
-import Modal from 'react-native-modal';
 import { handleJoinGroup, showToast } from '@/utils';
 import { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import NetInfo from '@react-native-community/netinfo';
+import GroupPicker from '@/components/GroupPicker';
+import NoInternetModal from '@/components/NoInternetModal';
 
 export default function TabGroupScreen() {
   const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore(
@@ -29,6 +29,7 @@ export default function TabGroupScreen() {
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [connectedToInternet, setConnectedToInternet] = useState(true);
+
   // THE REDIRECT
   const redirectUrl = Linking.createURL('/groups', {
     queryParams: {
@@ -38,14 +39,12 @@ export default function TabGroupScreen() {
     }
   });
 
-  const handleModalClose = () => {
-    setConnectedToInternet(true);
-  };
   const checkConnectivity = async () => {
     const state = await NetInfo.fetch();
     setConnectedToInternet(state?.isConnected);
     return;
   };
+
   // THE INVITE SECTION
   const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
     groupInviteId?: string;
@@ -65,21 +64,15 @@ export default function TabGroupScreen() {
       if (foundGroup) {
         showToast(`You're already in ${groupInviteName}`, true, 'top');
         setSelectedGroup(foundGroup);
-        router.replace('/');
       } else {
-        // or we join the group
+        // Join the group if not already in it
         handleJoinGroup(groupInviteId, groupInviteName);
-        router.replace('/');
       }
+
+      // Redirect after processing the group invite
+      router.replace('/groups');
     }
   }, [invitedBool]);
-
-  const handlePickerChange = (itemValue: string) => {
-    const selectedGroup = groupsOfUser.find((group) => group.id === itemValue);
-    if (selectedGroup) {
-      setSelectedGroup(selectedGroup);
-    }
-  };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -142,32 +135,11 @@ export default function TabGroupScreen() {
             >
               Your Groups
             </Text>
-            <Picker
-              selectedValue={selectedGroup?.id}
-              onValueChange={handlePickerChange}
-              itemStyle={{
-                textAlign: 'center',
-                fontFamily: 'KalMedium',
-                fontSize: 25
-              }}
-              style={{
-                display: selectedGroup ? 'flex' : 'none',
-                maxHeight: 100,
-                justifyContent: 'center',
-                overflow: 'hidden',
-                marginTop: 10,
-                marginBottom: 10
-              }}
-            >
-              {groupsOfUser?.map((group) => (
-                <Picker.Item
-                  key={group?.id}
-                  color={myColors.three}
-                  label={group.groupName}
-                  value={group?.id}
-                />
-              ))}
-            </Picker>
+            <GroupPicker
+              selectedGroup={selectedGroup}
+              groupsOfUser={groupsOfUser}
+              setSelectedGroup={setSelectedGroup}
+            />
 
             <MyButton
               onPress={() => setModalVisible(true)}
@@ -176,28 +148,10 @@ export default function TabGroupScreen() {
           </View>
         )}
       </View>
-      <Modal
-        isVisible={!connectedToInternet}
-        onBackdropPress={handleModalClose}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: myColors.three,
-            padding: 20,
-            borderRadius: 10
-          }}
-        >
-          <Text
-            style={{ fontSize: 18, marginBottom: 40, fontFamily: 'KalMedium' }}
-          >
-            You are not connected to the internet. Please check connection and
-            rescan the QR code
-          </Text>
-        </View>
-      </Modal>
+      <NoInternetModal
+        connectedToInternet={connectedToInternet}
+        setConnectedToInternet={setConnectedToInternet}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -258,8 +212,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   qrCodeSection: {
-    // paddingTop:100,
-    // paddingBottom:100,
     width: '100%',
     padding: 20,
     alignItems: 'center'
