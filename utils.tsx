@@ -155,6 +155,7 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
       setGroupsOfUser(updatedGroups);
       setSelectedGroup(updatedGroup);
     }
+    // ADD GORUPS TO ASYNC GROUP
     const groupIdsJSON = await AsyncStorage.getItem('groupIds');
     const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
     const updatedGroupIds = [...groupIds, groupId];

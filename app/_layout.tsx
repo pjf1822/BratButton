@@ -38,13 +38,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
-  const {
-    setUserData,
-    setGroupsOfUser,
-    setSelectedGroup,
-    loading,
-    setLoading
-  } = useGroupStore.getState();
+  const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
+    useGroupStore.getState();
 
   const checkUser = async () => {
     try {
