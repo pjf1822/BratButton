@@ -57,13 +57,11 @@ export default function RootLayout() {
         : [];
       if (groupIds.length > 0) {
         const groups = await populateGroups(groupIds, setSelectedGroup);
-
         setGroupsOfUser(groups ?? []);
       }
     } catch (error) {
       console.error('Error in checkUser:', error);
     } finally {
-      console.log('ok loading is done');
       setLoading(false);
     }
   };

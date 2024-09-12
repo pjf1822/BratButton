@@ -4,28 +4,65 @@ import {
   View,
   Button,
   Alert,
-  ActivityIndicator,
-  Platform
+  Platform,
+  AppState
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BitchButton from '@/components/BitchButton';
 import { User, useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
-import { useEffect } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import NetInfo from '@react-native-community/netinfo';
+import { handleJoinGroup, showToast } from '@/utils';
+import Modal from 'react-native-modal';
 
 export default function TabOneScreen() {
-  const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
-    selectedGroup: state.selectedGroup,
-    groupsOfUser: state.groupsOfUser,
-    userData: state.userData
-  }));
+  const { selectedGroup, groupsOfUser, userData, setSelectedGroup } =
+    useGroupStore((state) => ({
+      selectedGroup: state.selectedGroup,
+      groupsOfUser: state.groupsOfUser,
+      userData: state.userData,
+      setSelectedGroup: state.setSelectedGroup
+    }));
+
+  // THE INVITE SECTION
   const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
     groupInviteId?: string;
     invitedBool: string;
     groupInviteName: string;
   }>();
+  const [connectedToInternet, setConnectedToInternet] = useState(true);
 
+  const checkConnectivity = async () => {
+    const state = await NetInfo.fetch();
+    setConnectedToInternet(state?.isConnected);
+    return;
+  };
+
+  useEffect(() => {
+    if (invitedBool) {
+      checkConnectivity();
+
+      const foundGroup = groupsOfUser?.find(
+        (group) => group.id === groupInviteId
+      );
+
+      if (foundGroup) {
+        showToast(`You're already in ${groupInviteName}`, true, 'top');
+        setSelectedGroup(foundGroup);
+        router.replace('/');
+      } else {
+        // or we join the group
+        handleJoinGroup(groupInviteId, groupInviteName);
+        router.replace('/');
+      }
+    }
+  }, [invitedBool]);
+  const handleModalClose = () => {
+    setConnectedToInternet(true);
+  };
+  // ASYNC STUIFF THAT WILL GO AWAY
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
   };
@@ -33,10 +70,6 @@ export default function TabOneScreen() {
   const deleteGroupIds = async () => {
     await AsyncStorage.removeItem('groupIds');
   };
-
-  useEffect(() => {
-    getTallyGroups();
-  }, [selectedGroup]);
 
   const viewUserData = async () => {
     try {
@@ -65,14 +98,15 @@ export default function TabOneScreen() {
     }
   };
 
+  // TALLY BULLSHIT
+
   const renderItem = ({ item }: { item: User }) => (
     <Text style={{ color: 'black' }}>{item?.username}</Text>
   );
-
   const getTallyGroups = () => {
     if (!selectedGroup || !selectedGroup.votesYes) return [];
 
-    const tallyMarks = selectedGroup.votesYes?.length;
+    const tallyMarks = selectedGroup.votesYes.length;
     const groups = [];
 
     for (let i = 0; i < tallyMarks; i += 5) {
@@ -89,81 +123,112 @@ export default function TabOneScreen() {
         {group.map((_, idx) => (
           <View key={idx} style={styles.tallyMark}></View>
         ))}
-        {group?.length === 5 && <View style={styles.diagonalTallyMark}></View>}
+        {group.length === 5 && <View style={styles.diagonalTallyMark}></View>}
       </View>
     ));
   };
 
+  useEffect(() => {
+    getTallyGroups();
+  }, [selectedGroup]);
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-
-          flex: 1
-        }}
-      >
-        {/* {groupsOfUser.length === 0 ? (
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.noGroupsText}>
-              Hey, create or join a group first!
-            </Text>
-          </View>
-        ) : selectedGroup && selectedGroup.selectedMember.username ? (
-          <>
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={styles.title}>
-                Is{' '}
-                <Text style={{ fontFamily: 'KalBold' }}>
-                  {selectedGroup.selectedMember.username}
-                </Text>{' '}
-                Being A
-              </Text>
-            </View>
-          </>
-        ) : (
-          <ActivityIndicator size="large" color="white" />
-        )} */}
-
-        {userData && (
-          <BitchButton
-            userData={userData}
-            selectedGroupId={selectedGroup?.id}
-          />
-        )}
-
-        {groupsOfUser?.length > 0 && <Text style={styles.title}>Today</Text>}
-      </View>
-
-      {selectedGroup && (
+    <>
+      <View style={styles.container}>
         <View
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 60
+
+            flex: 1
           }}
         >
-          <Text style={[styles.subtitle, { fontFamily: 'KalSemiBold' }]}>
-            {selectedGroup?.groupName}
-          </Text>
-          <Text style={styles.subtitle}>Today's Brat Tally:</Text>
-          <View
-            style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}
-          >
-            {renderTallyGroups()}
-          </View>
-        </View>
-      )}
+          {groupsOfUser.length === 0 ? (
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.noGroupsText}>
+                Hey, create or join a group first!
+              </Text>
+            </View>
+          ) : (
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.title}>
+                Is{' '}
+                <Text style={{ fontFamily: 'KalBold' }}>
+                  {
+                    selectedGroup?.members[selectedGroup?.dailyIndex || 0]
+                      .username
+                  }
+                </Text>{' '}
+                Being A
+              </Text>
+            </View>
+          )}
 
-      {/* delete these */}
-      <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-      <Button color="white" onPress={deleteGroupIds} title="Delete group ids" />
-      <Button color="white" onPress={viewUserData} title="View stored data" />
-      <Button color="white" onPress={viewGroupData} title="View group data" />
-    </View>
+          <BitchButton
+            userData={userData}
+            selectedGroupId={selectedGroup?.id}
+          />
+
+          {groupsOfUser?.length > 0 && <Text style={styles.title}>Today</Text>}
+        </View>
+
+        {selectedGroup && (
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 60
+            }}
+          >
+            <Text style={[styles.subtitle, { fontFamily: 'KalSemiBold' }]}>
+              {selectedGroup?.groupName}
+            </Text>
+            <Text style={styles.subtitle}>Today's Brat Tally:</Text>
+            <View
+              style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}
+            >
+              {renderTallyGroups()}
+            </View>
+          </View>
+        )}
+
+        {/* delete these */}
+        {/* <Button color="white" onPress={deleteUserId} title="Delete some shit" />
+        <Button
+          color="white"
+          onPress={deleteGroupIds}
+          title="Delete group ids"
+        />
+        <Button color="white" onPress={viewUserData} title="View stored data" />
+        <Button color="white" onPress={viewGroupData} title="View group data" /> */}
+      </View>
+      <Modal
+        isVisible={!connectedToInternet}
+        onBackdropPress={handleModalClose}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: myColors.three,
+            padding: 20,
+            borderRadius: 10
+          }}
+        >
+          <Text
+            style={{ fontSize: 18, marginBottom: 40, fontFamily: 'KalMedium' }}
+          >
+            You are not connected to the internet. Please check connection and
+            rescan the QR code
+          </Text>
+          {/* <TouchableOpacity onPress={handleModalClose} style={{ backgroundColor: myColors.four, padding: 10, borderRadius: 5, }}>
+            <Text style={{ color: myColors.one,fontFamily:"KalMedium", fontSize: 20 }}>Close</Text>
+          </TouchableOpacity> */}
+        </View>
+      </Modal>
+    </>
   );
 }
 

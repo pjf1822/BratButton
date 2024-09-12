@@ -24,16 +24,14 @@ const inviteLandingPage = () => {
 
   const {
     groupsOfUser,
-    inviteParams,
-    setInviteParams,
+
     setInvited,
     setSelectedGroup,
     loading,
     setLoading
   } = useGroupStore((state) => ({
     groupsOfUser: state.groupsOfUser,
-    setInviteParams: state.setInviteParams,
-    inviteParams: state.inviteParams,
+
     setInvited: state.setInvited,
     setSelectedGroup: state.setSelectedGroup,
     loading: state.loading,

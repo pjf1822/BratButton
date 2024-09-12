@@ -12,11 +12,9 @@ import {
   doc,
   updateDoc,
   query,
-  where,
-  DocumentReference
+  where
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import { userConverter } from './firestoreConverters';
 
 export const populateGroups = async (
   groupIds: string[],
@@ -53,7 +51,6 @@ export const populateGroups = async (
       allGroups.push(data);
     }
 
-    console.log(allGroups[0], 'teh all gorups');
     setSelectedGroup(allGroups[0]);
     // Optionally set the selected group if needed
     // if (selectedGroup && updatedGroups.length > 0) {
@@ -126,32 +123,30 @@ export const handleCreateGroup = async (
 };
 
 type HandleJoinGroupFunction = (
-  groupId: string | undefined,
-  setInvited: (invited: boolean) => void,
+  groupId: string,
   groupInviteName: string | undefined
 ) => Promise<void>;
 
 export const handleJoinGroup: HandleJoinGroupFunction = async (
   groupId,
-  setInvited,
   groupInviteName
 ) => {
-  console.log(groupId, groupInviteName, 'this ');
-  return;
   try {
     const { setGroupsOfUser, setSelectedGroup, groupsOfUser, userData } =
       useGroupStore.getState();
 
     const updatedGroup = await joinGroup(groupId, userData);
-
     if (updatedGroup) {
       const updatedGroups = [...groupsOfUser, updatedGroup];
       setGroupsOfUser(updatedGroups);
       setSelectedGroup(updatedGroup);
     }
+    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
+    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
+    const updatedGroupIds = [...groupIds, groupId];
+    await AsyncStorage.setItem('groupIds', JSON.stringify(updatedGroupIds));
+
     showToast(`You have joined ${groupInviteName}!`, true, 'top');
-    router.replace('/');
-    setInvited(false);
   } catch (error: any) {
     console.error('Failed to join group:', error);
   }

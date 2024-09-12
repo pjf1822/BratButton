@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Keyboard,
-  Platform
-} from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import React, { useState } from 'react';
 import { handleCreateGroup } from '@/utils';
 import { NewGroupFormProps } from '@/zustandStore';

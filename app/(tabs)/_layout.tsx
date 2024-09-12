@@ -8,7 +8,6 @@ import { myColors } from '@/theme';
 import { View } from '@/components/Themed';
 
 import LoginModal from '@/components/LoginModal';
-import { useEffect } from 'react';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 768;
