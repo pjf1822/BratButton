@@ -6,7 +6,6 @@ import {
   Platform,
   Image
 } from 'react-native';
-import { useState } from 'react';
 import * as Linking from 'expo-linking';
 import { useGroupStore } from '@/zustandStore';
 import { Picker } from '@react-native-picker/picker';
@@ -14,25 +13,66 @@ import NewGroupForm from '@/components/NewGroupForm';
 import QRCodeModal from '@/components/QRCodeModal';
 import { myColors } from '@/theme';
 import MyButton from '@/components/MyComponents/MyButton';
+import Modal from 'react-native-modal';
+import { handleJoinGroup, showToast } from '@/utils';
+import { useEffect, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import NetInfo from '@react-native-community/netinfo';
 
 export default function TabGroupScreen() {
-  const { groupsOfUser, selectedGroup, setSelectedGroup, invited, userData } =
-    useGroupStore((state) => ({
+  const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore(
+    (state) => ({
       groupsOfUser: state.groupsOfUser,
       selectedGroup: state.selectedGroup,
-      setSelectedGroup: state.setSelectedGroup,
-      invited: state.invited
-    }));
-
+      setSelectedGroup: state.setSelectedGroup
+    })
+  );
   const [modalVisible, setModalVisible] = useState(false);
-
-  const redirectUrl = Linking.createURL('/', {
+  const [connectedToInternet, setConnectedToInternet] = useState(true);
+  // THE REDIRECT
+  const redirectUrl = Linking.createURL('/groups', {
     queryParams: {
       groupInviteId: selectedGroup?.id,
       invitedBool: 'true',
       groupInviteName: selectedGroup?.groupName
     }
   });
+
+  const handleModalClose = () => {
+    setConnectedToInternet(true);
+  };
+  const checkConnectivity = async () => {
+    const state = await NetInfo.fetch();
+    setConnectedToInternet(state?.isConnected);
+    return;
+  };
+  // THE INVITE SECTION
+  const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
+    groupInviteId?: string;
+    invitedBool: string;
+    groupInviteName: string;
+  }>();
+
+  useEffect(() => {
+    if (invitedBool) {
+      console.log(invitedBool, 'hey');
+      checkConnectivity();
+
+      const foundGroup = groupsOfUser?.find(
+        (group) => group.id === groupInviteId
+      );
+
+      if (foundGroup) {
+        showToast(`You're already in ${groupInviteName}`, true, 'top');
+        setSelectedGroup(foundGroup);
+        router.replace('/');
+      } else {
+        // or we join the group
+        handleJoinGroup(groupInviteId, groupInviteName);
+        router.replace('/');
+      }
+    }
+  }, [invitedBool]);
 
   const handlePickerChange = (itemValue: string) => {
     const selectedGroup = groupsOfUser.find((group) => group.id === itemValue);
@@ -136,6 +176,28 @@ export default function TabGroupScreen() {
           </View>
         )}
       </View>
+      <Modal
+        isVisible={!connectedToInternet}
+        onBackdropPress={handleModalClose}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: myColors.three,
+            padding: 20,
+            borderRadius: 10
+          }}
+        >
+          <Text
+            style={{ fontSize: 18, marginBottom: 40, fontFamily: 'KalMedium' }}
+          >
+            You are not connected to the internet. Please check connection and
+            rescan the QR code
+          </Text>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
