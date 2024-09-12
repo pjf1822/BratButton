@@ -9,16 +9,16 @@ export interface User {
 export interface Group {
   id: string;
   groupName: string;
-  members: DocumentReference<User>[]; // Array of DocumentReferences to User documents
+  members: User[];
   dailyIndex?: number;
   lastUpdated?: string;
-  votesYes: DocumentReference<User>[]; // Array of DocumentReferences to User documents
-  selectedMember: DocumentReference<User>;
+  votesYes: string[];
 }
 
 export interface NewGroupFormProps {
   groupsOfUser: Group[];
   setModalVisible: (visible: boolean) => void;
+  userData: User;
 }
 
 interface StoreState {

@@ -22,11 +22,10 @@ export const createUser = async (user: User) => {
 
 export const createGroup = async (params: {
   groupName: string;
-  members: DocumentReference<User>[];
+  members: User[];
   lastUpdated?: string;
-  votesYes: DocumentReference<User>[];
+  votesYes: [];
   dailyIndex?: number;
-  selectedMember: DocumentReference<User>;
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));

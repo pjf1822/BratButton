@@ -25,7 +25,6 @@ export default function TabOneScreen() {
     invitedBool: string;
     groupInviteName: string;
   }>();
-  console.log(groupInviteId, 'what do you think');
 
   const deleteUserId = async () => {
     await AsyncStorage.removeItem('user');
@@ -34,6 +33,7 @@ export default function TabOneScreen() {
   const deleteGroupIds = async () => {
     await AsyncStorage.removeItem('groupIds');
   };
+
   useEffect(() => {
     getTallyGroups();
   }, [selectedGroup]);

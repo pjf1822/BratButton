@@ -35,8 +35,11 @@ export const groupConverter: FirestoreDataConverter<Group> = {
       members: group.members.map((memberRef) => memberRef.id), // Store as user IDs
       dailyIndex: group.dailyIndex,
       lastUpdated: group.lastUpdated,
-      votesYes: group.votesYes.map((voteRef) => voteRef.id), // Store as user IDs
-      selectedMember: group.selectedMember.path
+      votesYes: group.votesYes,
+      selectedMember: {
+        id: group.selectedMember.id, // Store User object fields directly
+        username: group.selectedMember.username
+      }
     };
   },
   fromFirestore(
@@ -52,12 +55,11 @@ export const groupConverter: FirestoreDataConverter<Group> = {
       ),
       dailyIndex: data.dailyIndex,
       lastUpdated: data.lastUpdated,
-      votesYes: (data.votesYes || []).map((id: string) =>
-        doc(db, 'users', id).withConverter(userConverter)
-      ),
-      selectedMember: doc(db, 'users', data.selectedMember).withConverter(
-        userConverter
-      )
+      votesYes: data.votesYes || [],
+      selectedMember: {
+        id: data.selectedMember.id, // Rebuild the User object
+        username: data.selectedMember.username
+      }
     };
   }
 };
