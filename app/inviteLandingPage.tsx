@@ -56,8 +56,7 @@ const inviteLandingPage = () => {
 
   useEffect(() => {
     console.log('hey invite landing page');
-    setInvited(true);
-    console.log('i think we set invited');
+
     return;
     if (!loading) {
       checkConnectivity();

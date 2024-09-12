@@ -65,7 +65,7 @@ export default function TabOneScreen() {
   const getTallyGroups = () => {
     if (!selectedGroup || !selectedGroup.votesYes) return [];
 
-    const tallyMarks = selectedGroup.votesYes.length;
+    const tallyMarks = selectedGroup.votesYes?.length;
     const groups = [];
 
     for (let i = 0; i < tallyMarks; i += 5) {
@@ -82,7 +82,7 @@ export default function TabOneScreen() {
         {group.map((_, idx) => (
           <View key={idx} style={styles.tallyMark}></View>
         ))}
-        {group.length === 5 && <View style={styles.diagonalTallyMark}></View>}
+        {group?.length === 5 && <View style={styles.diagonalTallyMark}></View>}
       </View>
     ));
   };
@@ -127,7 +127,7 @@ export default function TabOneScreen() {
           />
         )}
 
-        {groupsOfUser.length > 0 && <Text style={styles.title}>Today</Text>}
+        {groupsOfUser?.length > 0 && <Text style={styles.title}>Today</Text>}
       </View>
 
       {selectedGroup && (

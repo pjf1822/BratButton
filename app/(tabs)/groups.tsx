@@ -54,17 +54,17 @@ export default function TabGroupScreen() {
         source={require('../../assets/bar-purple.jpg')}
         style={{
           width: Platform.isPad
-            ? groupsOfUser.length > 0
+            ? groupsOfUser?.length > 0
               ? 340
               : 540 // Larger size for iPad when groupsOfUser is not empty
-            : groupsOfUser.length > 0
+            : groupsOfUser?.length > 0
             ? 240
             : 280, // Larger size for iPhone when groupsOfUser is not empty
           height: Platform.isPad
-            ? groupsOfUser.length > 0
+            ? groupsOfUser?.length > 0
               ? 340
               : 540 // Same logic for height
-            : groupsOfUser.length > 0
+            : groupsOfUser?.length > 0
             ? 240
             : 280,
           objectFit: 'contain',
@@ -77,7 +77,7 @@ export default function TabGroupScreen() {
           width: '100%',
           position: 'relative',
           flex: 1,
-          justifyContent: groupsOfUser.length > 0 ? 'space-around' : 'center'
+          justifyContent: groupsOfUser?.length > 0 ? 'space-around' : 'center'
         }}
       >
         <NewGroupForm
@@ -120,12 +120,12 @@ export default function TabGroupScreen() {
                 marginBottom: 10
               }}
             >
-              {groupsOfUser.map((group) => (
+              {groupsOfUser?.map((group) => (
                 <Picker.Item
-                  key={group.id}
+                  key={group?.id}
                   color={myColors.three}
                   label={group.groupName}
-                  value={group.id}
+                  value={group?.id}
                 />
               ))}
             </Picker>

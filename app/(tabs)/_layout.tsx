@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs, router, useLocalSearchParams } from 'expo-router';
+
 import {
   Text,
   Dimensions,
   Platform,
   ActivityIndicator,
-  Image
+  Image,
+  KeyboardAvoidingView,
+  StyleSheet
 } from 'react-native';
+import Modal from 'react-native-modal';
+
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +20,9 @@ import { User, useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import { View } from '@/components/Themed';
 import { populateGroups } from '@/utils';
+import MyTextInput from '@/components/MyComponents/MyTextInput';
+import MyButton from '@/components/MyComponents/MyButton';
+import LoginModal from '@/components/LoginModal';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 768;
@@ -33,6 +41,7 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const [userName, setUsername] = useState('');
   const colorScheme = useColorScheme();
   const {
     setGroupsOfUser,
@@ -41,7 +50,9 @@ export default function TabLayout() {
     loading,
     setLoading,
     selectedGroup,
-    invited
+    invited,
+    userData,
+    groupsOfUser
   } = useGroupStore((state) => ({
     setGroupsOfUser: state.setGroupsOfUser,
     setSelectedGroup: state.setSelectedGroup,
@@ -49,9 +60,10 @@ export default function TabLayout() {
     loading: state.loading,
     setLoading: state.setLoading,
     selectedGroup: state.selectedGroup,
-    invited: state.invited
+    invited: state.invited,
+    userData: state.userData,
+    groupsOfUser: state.groupsOfUser
   }));
-
   useEffect(() => {
     // so there are how many scenarios we have to check here.
 
@@ -61,33 +73,27 @@ export default function TabLayout() {
     // 5.INVITED TO THE APP JOINING A GROUP.  ALREADY HAVE USERNAME. HAVE NO GROUPS THOUGH
     // 6.INIVTED TO THE APP JOING A GROUP. ALREADY IN OTHER GROUPS TOO
 
+    console.log('ok were in the next layout');
     const checkUserId = async () => {
       try {
-        const userString = await AsyncStorage.getItem('user');
-        const user = userString ? (JSON.parse(userString) as User) : null;
-        const groupsString = await AsyncStorage.getItem('groupIds');
-        const groupIds = groupsString
-          ? (JSON.parse(groupsString) as string[])
-          : [];
-
-        console.log(user, groupIds, 'the stuff', invited);
-        if (!user) {
-          // 1.JOINING THE APP FOR THE FIRST TIME ALONE. NO GROUP INVITE
-          // 4.INVITED TO THE APP JOINING A GROUP. FIRST TIME
-          router.replace('/firstLaunch');
-        } else {
-          setUserData(user);
-          if (groupIds.length === 0) {
-            if (!invited) {
-              router.replace('/groups');
-            } else {
-              router.replace('/inviteLandingPage');
-            }
-          } else {
-            const groups = await populateGroups(groupIds, setSelectedGroup);
-            setGroupsOfUser(groups ?? []);
-          }
-        }
+        // if (user) {
+        //   // 1.JOINING THE APP FOR THE FIRST TIME ALONE. NO GROUP INVITE
+        //   // 4.INVITED TO THE APP JOINING A GROUP. FIRST TIME
+        //   // router.replace('/firstLaunch');
+        //   setHasUser(false);
+        // } else {
+        //   setUserData(user);
+        //   if (groupIds.length === 0) {
+        //     if (!invited) {
+        //       router.replace('/groups');
+        //     } else {
+        //       router.replace('/inviteLandingPage');
+        //     }
+        //   } else {
+        //     const groups = await populateGroups(groupIds, setSelectedGroup);
+        //     setGroupsOfUser(groups ?? []);
+        //   }
+        // }
       } catch (error) {
         console.error('Failed to check or assign User ID:', error);
       } finally {
@@ -97,30 +103,9 @@ export default function TabLayout() {
     checkUserId();
   }, []);
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: myColors.three
-        }}
-      >
-        <Image
-          source={require('../../assets/brat-button.jpg')}
-          style={{
-            objectFit: 'contain',
-            minHeight: Platform.isPad ? '55%' : 10,
-            minWidth: Platform.isPad ? '90%' : 10,
-            maxHeight: Platform.isPad ? 1000 : 350
-          }} // Adjust the size as needed
-        />
-      </View>
-    );
-  }
-
-  return (
+  return userData === null ? (
+    <LoginModal />
+  ) : (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -199,3 +184,26 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20
+  },
+  mainText: {
+    fontFamily: 'KalBold',
+    color: myColors.four,
+    fontSize: Platform.isPad ? 120 : 100,
+    fontWeight: '100',
+    alignItems: 'center',
+    textAlign: 'center',
+    paddingBottom: 20
+  },
+  label: {
+    fontFamily: 'KalRegular',
+    color: myColors.four,
+    fontSize: Platform.isPad ? 50 : 33,
+    textAlign: 'center'
+  }
+});

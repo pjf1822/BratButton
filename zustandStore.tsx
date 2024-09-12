@@ -54,6 +54,7 @@ interface StoreState {
 export const useGroupStore = create<StoreState>((set) => ({
   loading: true,
   setLoading: (loading) => set({ loading }),
+
   userData: null,
   groupsOfUser: [],
   selectedGroup: undefined,

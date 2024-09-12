@@ -1,6 +1,9 @@
+import { populateGroups } from '@/utils';
+import { User, useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -35,9 +38,26 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
+  ``;
+  const { setUserData, setGroupsOfUser, setSelectedGroup } =
+    useGroupStore.getState();
+
+  const checkUser = async () => {
+    const userString = await AsyncStorage.getItem('user');
+    const user = userString ? (JSON.parse(userString) as User) : null;
+    setUserData(user);
+    const groupsString = await AsyncStorage.getItem('groupIds');
+    const groupIds = groupsString ? (JSON.parse(groupsString) as string[]) : [];
+    if (groupIds.length > 0) {
+      const groups = await populateGroups(groupIds, setSelectedGroup);
+      setGroupsOfUser(groups ?? []);
+    }
+    console.log('done with this on the top level layout');
+  };
 
   useEffect(() => {
     if (loaded) {
+      checkUser();
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -60,8 +80,6 @@ function RootLayoutNav() {
     <QueryClientProvider client={queryClient}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="testPage" />
-        <Stack.Screen name="firstLaunch" options={{ headerShown: false }} />
         <Stack.Screen
           name="inviteLandingPage"
           options={{ headerShown: false }}

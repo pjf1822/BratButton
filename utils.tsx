@@ -36,7 +36,7 @@ export const populateGroups = async (
 
       if (data.lastUpdated !== today) {
         console.log(`Group ${data.groupName}  needs to be updated.`);
-        const newDailyIndex = Math.floor(Math.random() * data.members.length);
+        const newDailyIndex = Math.floor(Math.random() * data.members?.length);
 
         const newSelectedMember = data.members[newDailyIndex];
 
