@@ -28,6 +28,7 @@ export const populateGroups = async (
     const allGroups: Group[] = [];
 
     const originalOrderMap: { [key: string]: number } = {};
+
     groupIds.forEach((id, index) => {
       originalOrderMap[id] = index;
     });

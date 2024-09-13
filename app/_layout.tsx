@@ -52,7 +52,6 @@ export default function RootLayout() {
         : [];
       if (groupIds.length > 0) {
         const groups = await populateGroups(groupIds, setSelectedGroup);
-        console.log(groups, 'the groups outside of the function');
         setGroupsOfUser(groups ?? []);
       }
     } catch (error) {
