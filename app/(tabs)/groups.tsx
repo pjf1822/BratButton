@@ -54,7 +54,6 @@ export default function TabGroupScreen() {
 
   useEffect(() => {
     if (invitedBool) {
-      console.log(invitedBool, 'hey');
       checkConnectivity();
 
       const foundGroup = groupsOfUser?.find(
