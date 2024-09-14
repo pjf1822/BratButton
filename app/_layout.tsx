@@ -62,7 +62,10 @@ export default function RootLayout() {
 
   const fetchGroups = async () => {
     const groupIds = await grabAsyncData();
-    if (groupIds.length === 0) return;
+    if (groupIds.length === 0) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const groupsRef = collection(db, 'groups');
@@ -76,6 +79,7 @@ export default function RootLayout() {
       // );
 
       console.log(groupSnapshots.docs[0].data(), 't');
+
       const populatedGroups = await populateGroups(groupSnapshots);
 
       setSelectedGroup(populatedGroups[0]);
