@@ -62,23 +62,34 @@ export default function RootLayout() {
 
   const fetchGroups = async () => {
     const groupIds = await grabAsyncData();
+    if (groupIds.length === 0) return;
+
     try {
-      if (groupIds.length > 0) {
-        const groupsRef = collection(db, 'groups');
-        const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
+      const groupsRef = collection(db, 'groups');
+      const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
 
-        const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
-          const updatedGroupsList = snapshot.docs.map((doc) => ({
-            ...(doc.data() as any)
-          }));
-          console.log(updatedGroupsList);
-          setSelectedGroup(updatedGroupsList[0]);
-          setGroupsOfUser(updatedGroupsList);
-          setLoading(false);
-        });
+      const groupSnapshots = await getDocs(groupQuery);
 
-        return unsubscribe;
-      }
+      // console.log(
+      //   groupSnapshots.docs.map((doc) => doc.data()),
+      //   'the snapshot docs'
+      // );
+
+      console.log(groupSnapshots.docs[0].data(), 't');
+      const populatedGroups = await populateGroups(groupSnapshots);
+
+      setSelectedGroup(populatedGroups[0]);
+
+      const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
+        const groupsList = snapshot.docs.map((doc) => ({
+          ...(doc.data() as any)
+        }));
+        console.log(groupsList, 'the list');
+        setGroupsOfUser(groupsList);
+        setLoading(false);
+      });
+
+      return unsubscribe;
     } catch (error) {
       console.error('Error fetching puppies: ', error);
     }
@@ -89,7 +100,6 @@ export default function RootLayout() {
 
     const fetchDataAndHideSplash = async () => {
       if (loaded) {
-        // Await the result of fetchGroups and assign the unsubscribe function
         unsubscribe = await fetchGroups();
         await SplashScreen.hideAsync(); // Await hiding the splash screen
       }
@@ -97,7 +107,7 @@ export default function RootLayout() {
     fetchDataAndHideSplash();
     return () => {
       if (unsubscribe) {
-        unsubscribe(); // Only call unsubscribe if it's defined
+        unsubscribe();
       }
     };
   }, [loaded]);
