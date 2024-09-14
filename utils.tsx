@@ -11,7 +11,8 @@ import {
   doc,
   updateDoc,
   query,
-  where
+  where,
+  onSnapshot
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
@@ -21,52 +22,61 @@ export const populateGroups = async (
 ): Promise<Group[]> => {
   try {
     const groupsRef = collection(db, 'groups');
-    const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
-    const groupSnapshots = await getDocs(groupQuery);
 
-    const today = new Date().toLocaleDateString();
-    const allGroups: Group[] = [];
-
-    const originalOrderMap: { [key: string]: number } = {};
-
-    groupIds.forEach((id, index) => {
-      originalOrderMap[id] = index;
+    const unsubscribe = onSnapshot(groupsRef, (snapshot) => {
+      // Map the snapshot to get all document data
+      const groups = snapshot.docs.map((doc) => ({
+        ...doc.data()
+      }));
+      // Update state with the list of puppies
+      return groups;
     });
+    // const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
+    // const groupSnapshots = await getDocs(groupQuery);
 
-    const updatePromises = groupSnapshots.docs.map(async (docSnapshot) => {
-      const data = docSnapshot.data() as Group;
+    // const today = new Date().toLocaleDateString();
+    // const allGroups: Group[] = [];
 
-      if (data.lastUpdated !== today) {
-        console.log(`Group ${docSnapshot.id} needs to be updated.`);
-        const newDailyIndex = Math.floor(
-          Math.random() * (data.members?.length || 1)
-        );
+    // const originalOrderMap: { [key: string]: number } = {};
 
-        const groupRef = doc(db, 'groups', docSnapshot.id);
-        await updateDoc(groupRef, {
-          lastUpdated: today,
-          dailyIndex: newDailyIndex,
-          votesYes: [] // Reset votesYes array
-        });
+    // groupIds.forEach((id, index) => {
+    //   originalOrderMap[id] = index;
+    // });
 
-        data.lastUpdated = today;
-        data.dailyIndex = newDailyIndex;
-        data.votesYes = []; // Res
-      }
+    // const updatePromises = groupSnapshots.docs.map(async (docSnapshot) => {
+    //   const data = docSnapshot.data() as Group;
 
-      allGroups.push({
-        ...data,
-        id: docSnapshot.id
-      });
-    });
+    //   if (data.lastUpdated !== today) {
+    //     console.log(`Group ${docSnapshot.id} needs to be updated.`);
+    //     const newDailyIndex = Math.floor(
+    //       Math.random() * (data.members?.length || 1)
+    //     );
 
-    await Promise.all(updatePromises);
+    //     const groupRef = doc(db, 'groups', docSnapshot.id);
+    //     await updateDoc(groupRef, {
+    //       lastUpdated: today,
+    //       dailyIndex: newDailyIndex,
+    //       votesYes: [] // Reset votesYes array
+    //     });
 
-    allGroups.sort((a, b) => {
-      return (originalOrderMap[a.id] || 0) - (originalOrderMap[b.id] || 0);
-    });
+    //     data.lastUpdated = today;
+    //     data.dailyIndex = newDailyIndex;
+    //     data.votesYes = []; // Res
+    //   }
 
-    setSelectedGroup(allGroups[0]);
+    //   allGroups.push({
+    //     ...data,
+    //     id: docSnapshot.id
+    //   });
+    // });
+
+    // await Promise.all(updatePromises);
+
+    // allGroups.sort((a, b) => {
+    //   return (originalOrderMap[a.id] || 0) - (originalOrderMap[b.id] || 0);
+    // });
+
+    // setSelectedGroup(allGroups[0]);
 
     return allGroups;
   } catch (error) {

@@ -1,10 +1,12 @@
+import { db } from '@/firebaseConfig';
 import { populateGroups } from '@/utils';
-import { User, useGroupStore } from '@/zustandStore';
+import { Group, User, useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -41,41 +43,28 @@ export default function RootLayout() {
   const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
     useGroupStore.getState();
 
-  const checkUser = async () => {
+  const fetchGroups = () => {
     try {
-      const userString = await AsyncStorage.getItem('user');
-      const user = userString ? (JSON.parse(userString) as User) : null;
-      setUserData(user);
-      const groupsString = await AsyncStorage.getItem('groupIds');
-      const groupIds = groupsString
-        ? (JSON.parse(groupsString) as string[])
-        : [];
-      if (groupIds.length > 0) {
-        const groups = await populateGroups(groupIds, setSelectedGroup);
-        setGroupsOfUser(groups ?? []);
-      }
+      const groupsCollection = collection(db, 'groups');
+
+      const unsubscribe = onSnapshot(groupsCollection, (snapshot) => {
+        const groupsList = snapshot.docs.map((doc) => ({
+          ...(doc.data() as any)
+        }));
+        console.log(groupsList);
+        setGroupsOfUser(groupsList);
+      });
+
+      return () => unsubscribe();
     } catch (error) {
-      console.error('Error in checkUser:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error fetching puppies: ', error);
     }
   };
 
   useEffect(() => {
-    const loadResources = async () => {
-      try {
-        if (loaded) {
-          await checkUser();
+    const unsubscribe = fetchGroups();
 
-          // Hide the splash screen
-          await SplashScreen.hideAsync();
-        }
-      } catch (error) {
-        console.error('Error during resource loading:', error);
-      }
-    };
-
-    loadResources();
+    return () => unsubscribe && unsubscribe();
   }, [loaded]);
 
   if (!loaded) {
