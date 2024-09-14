@@ -15,7 +15,6 @@ export interface Group {
 }
 
 export interface NewGroupFormProps {
-  groupsOfUser: Group[];
   setModalVisible: (visible: boolean) => void;
 }
 
@@ -59,6 +58,7 @@ export const useGroupStore = create<StoreState>((set) => ({
   invited: false,
   setInvited: (invited) => set({ invited }),
   addVoteYes: async (groupId: string, member: User) => {
+    // console.log(groupId, member, 'inside the add yes vote');
     try {
       await voteYes(groupId, member);
 

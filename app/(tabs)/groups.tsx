@@ -111,10 +111,7 @@ export default function TabGroupScreen() {
           justifyContent: groupsOfUser?.length > 0 ? 'space-around' : 'center'
         }}
       >
-        <NewGroupForm
-          groupsOfUser={groupsOfUser}
-          setModalVisible={setModalVisible}
-        />
+        <NewGroupForm setModalVisible={setModalVisible} />
 
         {groupsOfUser.length > 0 && (
           <View

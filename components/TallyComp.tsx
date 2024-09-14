@@ -5,11 +5,17 @@ import { Group, User } from '@/zustandStore';
 
 interface TallyCompProps {
   selectedGroup: Group | undefined;
+  groupsOfUser: Group[];
 }
-const TallyComp: React.FC<TallyCompProps> = ({ selectedGroup }) => {
+const TallyComp: React.FC<TallyCompProps> = ({
+  selectedGroup,
+  groupsOfUser
+}) => {
   useEffect(() => {
     getTallyGroups();
   }, [selectedGroup]);
+
+  console.log(selectedGroup, 'the selected group info');
   const renderItem = ({ item }: { item: User }) => (
     <Text style={{ color: 'black' }}>{item?.username}</Text>
   );

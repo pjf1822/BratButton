@@ -49,46 +49,31 @@ export default function RootLayout() {
   const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
     useGroupStore.getState();
 
-  const grabAsyncData = async () => {
+  const fetchGroups = async () => {
     const userString = await AsyncStorage.getItem('user');
     const user = userString ? (JSON.parse(userString) as User) : null;
     if (user) {
       setUserData(user);
     }
-    const groupsString = await AsyncStorage.getItem('groupIds');
-    const groupIds = groupsString ? (JSON.parse(groupsString) as string[]) : [];
-    return groupIds;
-  };
-
-  const fetchGroups = async () => {
-    const groupIds = await grabAsyncData();
-    if (groupIds.length === 0) {
-      setLoading(false);
-      return;
-    }
 
     try {
       const groupsRef = collection(db, 'groups');
-      const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
-
+      const groupQuery = query(
+        groupsRef,
+        where('members', 'array-contains', user)
+      );
       const groupSnapshots = await getDocs(groupQuery);
 
-      // console.log(
-      //   groupSnapshots.docs.map((doc) => doc.data()),
-      //   'the snapshot docs'
-      // );
-
-      console.log(groupSnapshots.docs[0].data(), 't');
-
       const populatedGroups = await populateGroups(groupSnapshots);
-
       setSelectedGroup(populatedGroups[0]);
-
       const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
         const groupsList = snapshot.docs.map((doc) => ({
           ...(doc.data() as any)
         }));
-        console.log(groupsList, 'the list');
+        console.log(
+          groupsList.map((gourp) => gourp.votesYes),
+          'the list'
+        );
         setGroupsOfUser(groupsList);
         setLoading(false);
       });

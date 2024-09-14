@@ -5,15 +5,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  query,
-  where,
-  onSnapshot
-} from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 export const populateGroups = async (groupSnapshots: any): Promise<Group[]> => {
@@ -67,7 +59,6 @@ export const populateGroups = async (groupSnapshots: any): Promise<Group[]> => {
 };
 export const handleCreateGroup = async (
   groupName: string,
-  groupsOfUser: Group[],
   setNewGroupName: Dispatch<SetStateAction<string>>,
   setModalVisible: (visible: boolean) => void
 ) => {
@@ -77,8 +68,7 @@ export const handleCreateGroup = async (
       throw new Error('Group name is required');
     }
 
-    const { userData, setGroupsOfUser, setSelectedGroup } =
-      useGroupStore.getState();
+    const { userData, setSelectedGroup } = useGroupStore.getState();
 
     if (!userData) {
       throw new Error('User ID not found in AsyncStorage');
@@ -100,18 +90,8 @@ export const handleCreateGroup = async (
       lastUpdated: new Date().toLocaleDateString(),
       votesYes: []
     };
-    // GLOBAL
-    const updatedGroups = [...groupsOfUser, newGroup];
-    setGroupsOfUser(updatedGroups);
+    console.log(newGroup, ' we have a new gorup');
     setSelectedGroup(newGroup);
-
-    // ASYNC USER INFO
-    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
-    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
-    await AsyncStorage.setItem(
-      'groupIds',
-      JSON.stringify([...groupIds, groupId])
-    );
 
     // LOCAL
     setNewGroupName('');
@@ -188,10 +168,6 @@ export const deleteUserId = async () => {
   await AsyncStorage.removeItem('user');
 };
 
-export const deleteGroupIds = async () => {
-  await AsyncStorage.removeItem('groupIds');
-};
-
 export const viewUserData = async () => {
   try {
     const user = await AsyncStorage.getItem('user');
@@ -199,19 +175,6 @@ export const viewUserData = async () => {
       Alert.alert('User Data', user);
     } else {
       Alert.alert('No User Data Found');
-    }
-  } catch (error) {
-    console.error('Failed to retrieve user data:', error);
-    Alert.alert('Error', 'Failed to retrieve user data');
-  }
-};
-export const viewGroupData = async () => {
-  try {
-    const user = await AsyncStorage.getItem('groupIds');
-    if (user !== null) {
-      Alert.alert('Group daata', user);
-    } else {
-      Alert.alert('No Group Data Found');
     }
   } catch (error) {
     console.error('Failed to retrieve user data:', error);

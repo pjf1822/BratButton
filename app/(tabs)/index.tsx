@@ -3,13 +3,9 @@ import BitchButton from '@/components/BitchButton';
 import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 
-import {
-  deleteGroupIds,
-  deleteUserId,
-  viewGroupData,
-  viewUserData
-} from '@/utils';
+import { deleteUserId, viewUserData } from '@/utils';
 import TallyComp from '@/components/TallyComp';
+import { useEffect } from 'react';
 
 export default function TabOneScreen() {
   const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
@@ -71,19 +67,17 @@ export default function TabOneScreen() {
               {selectedGroup?.groupName}
             </Text>
             <Text style={styles.subtitle}>Today's Brat Tally:</Text>
-            <TallyComp selectedGroup={selectedGroup} />
+            <TallyComp
+              selectedGroup={selectedGroup}
+              groupsOfUser={groupsOfUser}
+            />
           </View>
         )}
 
         {/* delete these */}
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button
-          color="white"
-          onPress={deleteGroupIds}
-          title="Delete group ids"
-        />
+
         <Button color="white" onPress={viewUserData} title="View stored data" />
-        <Button color="white" onPress={viewGroupData} title="View group data" />
       </View>
     </>
   );

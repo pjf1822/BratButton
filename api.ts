@@ -28,7 +28,7 @@ export const createGroup = async (params: {
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
-    const id = docRef.id; // Generate the document ID
+    const id = docRef.id;
 
     await setDoc(docRef, {
       id,
