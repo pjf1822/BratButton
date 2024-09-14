@@ -6,7 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { collection, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where
+} from 'firebase/firestore';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -43,28 +49,57 @@ export default function RootLayout() {
   const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
     useGroupStore.getState();
 
-  const fetchGroups = () => {
+  const grabAsyncData = async () => {
+    const userString = await AsyncStorage.getItem('user');
+    const user = userString ? (JSON.parse(userString) as User) : null;
+    if (user) {
+      setUserData(user);
+    }
+    const groupsString = await AsyncStorage.getItem('groupIds');
+    const groupIds = groupsString ? (JSON.parse(groupsString) as string[]) : [];
+    return groupIds;
+  };
+
+  const fetchGroups = async () => {
+    const groupIds = await grabAsyncData();
     try {
-      const groupsCollection = collection(db, 'groups');
+      if (groupIds.length > 0) {
+        const groupsRef = collection(db, 'groups');
+        const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
 
-      const unsubscribe = onSnapshot(groupsCollection, (snapshot) => {
-        const groupsList = snapshot.docs.map((doc) => ({
-          ...(doc.data() as any)
-        }));
-        console.log(groupsList);
-        setGroupsOfUser(groupsList);
-      });
+        const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
+          const updatedGroupsList = snapshot.docs.map((doc) => ({
+            ...(doc.data() as any)
+          }));
+          console.log(updatedGroupsList);
+          setSelectedGroup(updatedGroupsList[0]);
+          setGroupsOfUser(updatedGroupsList);
+          setLoading(false);
+        });
 
-      return () => unsubscribe();
+        return unsubscribe;
+      }
     } catch (error) {
       console.error('Error fetching puppies: ', error);
     }
   };
 
   useEffect(() => {
-    const unsubscribe = fetchGroups();
+    let unsubscribe: (() => void) | undefined;
 
-    return () => unsubscribe && unsubscribe();
+    const fetchDataAndHideSplash = async () => {
+      if (loaded) {
+        // Await the result of fetchGroups and assign the unsubscribe function
+        unsubscribe = await fetchGroups();
+        await SplashScreen.hideAsync(); // Await hiding the splash screen
+      }
+    };
+    fetchDataAndHideSplash();
+    return () => {
+      if (unsubscribe) {
+        unsubscribe(); // Only call unsubscribe if it's defined
+      }
+    };
   }, [loaded]);
 
   if (!loaded) {
