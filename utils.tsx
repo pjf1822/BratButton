@@ -1,4 +1,3 @@
-import { createGroup, joinGroup } from './api';
 import { Group, User, useGroupStore } from './zustandStore';
 import { Keyboard, Platform, Alert } from 'react-native';
 import { Dispatch, SetStateAction } from 'react';
@@ -23,6 +22,7 @@ export const populateGroups = async (groupSnapshots: any): Promise<Group[]> => {
     const today = new Date().toLocaleDateString();
     const allGroups: Group[] = [];
     const originalOrderMap: { [key: string]: number } = {};
+
     groupSnapshots.docs.forEach((docSnapshot: any, index: number) => {
       originalOrderMap[docSnapshot.id] = index;
     });
@@ -125,7 +125,6 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
     await updateDoc(groupRef, {
       members: arrayUnion(userData)
     });
-
     setSelectedGroup(groupId);
 
     showToast(`You have joined ${groupInviteName}!`, true, 'top');
@@ -195,6 +194,7 @@ export const fetchUser = async () => {
   setUserData(user);
   return user;
 };
+
 export const fetchGroups = async (user: User) => {
   const { setGroupsOfUser, setSelectedGroup, setLoading } =
     useGroupStore.getState();
@@ -207,8 +207,10 @@ export const fetchGroups = async (user: User) => {
     );
     const groupSnapshots = await getDocs(groupQuery);
 
-    const populatedGroups = await populateGroups(groupSnapshots);
-    setSelectedGroup(populatedGroups[0]?.id);
+    if (groupSnapshots.docs.map((doccy) => doccy.data()).length > 0) {
+      const populatedGroups = await populateGroups(groupSnapshots);
+      setSelectedGroup(populatedGroups[0]?.id);
+    }
 
     const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
       const groupsList = snapshot.docs.map((doc) => ({

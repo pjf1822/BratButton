@@ -25,8 +25,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { setUserData, setLoading } = useGroupStore.getState();
-
   const [loaded, error] = useFonts({
     KalThin: require('../assets/fonts/Kalnia-Thin.ttf'),
     KalSemiBold: require('../assets/fonts/Kalnia-SemiBold.ttf'),

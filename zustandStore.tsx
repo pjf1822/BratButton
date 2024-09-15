@@ -64,10 +64,6 @@ export const useGroupStore = create<StoreState>((set) => ({
                 votesYes: [...group.votesYes, member.id]
               };
 
-              // if (state.selectedGroup === groupId) {
-              //   set({ selectedGroup: updatedGroup.id });
-              // }
-
               return updatedGroup;
             }
           }

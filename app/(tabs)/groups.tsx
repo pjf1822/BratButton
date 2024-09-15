@@ -60,17 +60,14 @@ export default function TabGroupScreen() {
       const foundGroup = groupsOfUser?.find(
         (group) => group.id === groupInviteId
       );
-      console.log('show me the found group', foundGroup);
 
       if (foundGroup) {
         showToast(`You're already in ${groupInviteName}`, true, 'top');
         setSelectedGroup(foundGroup.id);
       } else {
-        // Join the group if not already in it
         handleJoinGroup(groupInviteId, groupInviteName);
       }
 
-      // Redirect after processing the group invite
       router.replace('/groups');
     }
   }, [invitedBool]);
