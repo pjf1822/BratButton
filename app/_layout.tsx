@@ -1,7 +1,5 @@
 import { fetchGroups, fetchUser } from '@/utils';
-import { User, useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
