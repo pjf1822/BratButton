@@ -207,7 +207,6 @@ export const fetchGroups = async (user: User) => {
     );
     const groupSnapshots = await getDocs(groupQuery);
 
-    console.log(groupSnapshots, 'whats up with that ');
     const populatedGroups = await populateGroups(groupSnapshots);
     setSelectedGroup(populatedGroups[0]?.id);
 
@@ -217,7 +216,7 @@ export const fetchGroups = async (user: User) => {
       }));
       console.log(
         groupsList.map((gourp) => gourp),
-        'the list'
+        'the list that we are listengin to '
       );
       setGroupsOfUser(groupsList);
       setLoading(false);

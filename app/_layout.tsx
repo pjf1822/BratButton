@@ -58,10 +58,9 @@ export default function RootLayout() {
     };
 
     fetchDataAndHideSplash();
+
     return () => {
-      console.log('in the useEffect');
       if (unsubscribe) {
-        console.log('actually unsubbing');
         unsubscribe();
       }
     };

@@ -5,7 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUser } from '@/api';
 import { useGroupStore } from '@/zustandStore';
@@ -24,13 +24,16 @@ const LoginModal = () => {
     await AsyncStorage.setItem('user', JSON.stringify(userData));
     setUserData(userData);
     await createUser(userData);
-
     const unsubscribe = await fetchGroups(userData);
+
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
     };
+  };
+  const handlePress = async () => {
+    await addUserName();
   };
 
   return (
@@ -51,7 +54,7 @@ const LoginModal = () => {
           value={username}
           onChangeText={setUsername}
         />
-        <MyButton onPress={addUserName} label="Add user name" />
+        <MyButton onPress={handlePress} label="Add user name" />
       </View>
     </KeyboardAvoidingView>
   );
