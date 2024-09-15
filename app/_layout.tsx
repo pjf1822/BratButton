@@ -65,7 +65,7 @@ export default function RootLayout() {
       const groupSnapshots = await getDocs(groupQuery);
 
       const populatedGroups = await populateGroups(groupSnapshots);
-      setSelectedGroup(populatedGroups[0]);
+      setSelectedGroup(populatedGroups[0]?.id);
       const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
         const groupsList = snapshot.docs.map((doc) => ({
           ...(doc.data() as any)

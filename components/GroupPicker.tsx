@@ -4,25 +4,19 @@ import { myColors } from '@/theme';
 import { Group } from '@/zustandStore';
 
 interface GroupPickerProps {
-  selectedGroup: Group | null;
+  selectedGroup: string;
   groupsOfUser: Group[];
-  setSelectedGroup: (group: Group) => void;
+  setSelectedGroup: (groupId: string) => void;
 }
 const GroupPicker: React.FC<GroupPickerProps> = ({
   selectedGroup,
   groupsOfUser,
   setSelectedGroup
 }) => {
-  const handlePickerChange = (itemValue: string) => {
-    const selectedGroup = groupsOfUser.find((group) => group.id === itemValue);
-    if (selectedGroup) {
-      setSelectedGroup(selectedGroup);
-    }
-  };
   return (
     <Picker
-      selectedValue={selectedGroup?.id}
-      onValueChange={handlePickerChange}
+      selectedValue={selectedGroup}
+      onValueChange={(itemValue: string) => setSelectedGroup(itemValue)}
       itemStyle={{
         textAlign: 'center',
         fontFamily: 'KalMedium',

@@ -11,19 +11,22 @@ import QRCode from 'react-native-qrcode-svg';
 import { myColors } from '@/theme';
 
 import logo from '../assets/brat.jpg';
+import { Group } from '@/zustandStore';
 
 interface QRCodeModalProps {
-  selectedGroup?: { groupName?: string };
+  selectedGroup?: string;
   redirectUrl: string;
   modalVisible: boolean;
   setModalVisible: (visible: boolean) => void;
+  groupsOfUser: Group[];
 }
 
 const QRCodeModal: React.FC<QRCodeModalProps> = ({
   selectedGroup,
   redirectUrl,
   modalVisible,
-  setModalVisible
+  setModalVisible,
+  groupsOfUser
 }) => {
   return (
     <Modal
@@ -58,7 +61,9 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
             }}
           >
             Join The {''}
-            {selectedGroup?.groupName || 'Unknown'} Group
+            {groupsOfUser.find((group) => group.id === selectedGroup)
+              ?.groupName || 'Unknown'}{' '}
+            Group
           </Text>
         </View>
       </TouchableOpacity>

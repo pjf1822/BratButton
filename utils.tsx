@@ -91,7 +91,7 @@ export const handleCreateGroup = async (
       votesYes: []
     };
     console.log(newGroup, ' we have a new gorup');
-    setSelectedGroup(newGroup);
+    setSelectedGroup(newGroup.id);
 
     // LOCAL
     setNewGroupName('');
@@ -103,7 +103,7 @@ export const handleCreateGroup = async (
 };
 
 type HandleJoinGroupFunction = (
-  groupId: string,
+  groupId: string | undefined,
   groupInviteName: string | undefined
 ) => Promise<void>;
 
@@ -119,7 +119,7 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
     if (updatedGroup) {
       const updatedGroups = [...groupsOfUser, updatedGroup];
       setGroupsOfUser(updatedGroups);
-      setSelectedGroup(updatedGroup);
+      setSelectedGroup(updatedGroup.id);
     }
     // ADD GORUPS TO ASYNC GROUP
     const groupIdsJSON = await AsyncStorage.getItem('groupIds');

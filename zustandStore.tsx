@@ -25,8 +25,8 @@ interface StoreState {
   groupsOfUser: Group[];
   setGroupsOfUser: (groups: Group[]) => void;
 
-  selectedGroup: Group | undefined;
-  setSelectedGroup: (group: Group | undefined) => void;
+  selectedGroup: string | undefined; // Change to string | undefined
+  setSelectedGroup: (groupId: string | undefined) => void; // Update function signature
 
   userData: User | null;
   setUserData: (data: User) => void;
@@ -49,16 +49,13 @@ export const useGroupStore = create<StoreState>((set) => ({
   setGroupsOfUser: (groups: Group[]) => {
     set({ groupsOfUser: groups });
   },
-
   selectedGroup: undefined,
-  setSelectedGroup: (group: Group | undefined) => {
-    set({ selectedGroup: group });
+  setSelectedGroup: (groupId: string | undefined) => {
+    set({ selectedGroup: groupId });
   },
-
   invited: false,
   setInvited: (invited) => set({ invited }),
   addVoteYes: async (groupId: string, member: User) => {
-    // console.log(groupId, member, 'inside the add yes vote');
     try {
       await voteYes(groupId, member);
 
@@ -71,8 +68,9 @@ export const useGroupStore = create<StoreState>((set) => ({
                 votesYes: [...group.votesYes, member.id]
               };
 
-              if (state.selectedGroup?.id === groupId) {
-                set({ selectedGroup: updatedGroup });
+              // Update selectedGroup if it matches the groupId
+              if (state.selectedGroup === groupId) {
+                set({ selectedGroup: updatedGroup.id });
               }
 
               return updatedGroup;

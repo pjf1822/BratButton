@@ -13,6 +13,11 @@ export default function TabOneScreen() {
     groupsOfUser: state.groupsOfUser,
     userData: state.userData
   }));
+  console.log(
+    groupsOfUser,
+    'so the index page is getting updated',
+    selectedGroup
+  );
 
   return (
     <>
@@ -25,36 +30,46 @@ export default function TabOneScreen() {
             flex: 1
           }}
         >
-          {groupsOfUser.length === 0 ? (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            {groupsOfUser.length === 0 ? (
               <Text style={styles.noGroupsText}>
                 Hey, create or join a group first!
               </Text>
-            </View>
-          ) : (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={styles.title}>
-                Is{' '}
-                <Text style={{ fontFamily: 'KalBold' }}>
-                  {
-                    selectedGroup?.members[selectedGroup?.dailyIndex || 0]
-                      .username
-                  }
-                </Text>{' '}
-                Being A
-              </Text>
-            </View>
-          )}
+            ) : (
+              (() => {
+                // Find the group with the matching ID
+                const group = groupsOfUser.find(
+                  (group) => group?.id === selectedGroup
+                );
+                // Access the member's username using the group's dailyIndex
+                const memberUsername =
+                  group?.members[group?.dailyIndex || 0]?.username;
 
-          <BitchButton
-            userData={userData}
-            selectedGroupId={selectedGroup?.id}
-          />
+                return (
+                  <Text style={styles.title}>
+                    Is{' '}
+                    <Text style={{ fontFamily: 'KalBold' }}>
+                      {memberUsername || 'Unknown'}
+                    </Text>{' '}
+                    Being A
+                  </Text>
+                );
+              })()
+            )}
+          </View>
+
+          <BitchButton userData={userData} selectedGroupId={selectedGroup} />
 
           {groupsOfUser?.length > 0 && <Text style={styles.title}>Today</Text>}
         </View>
-
-        {selectedGroup && (
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 60
+          }}
+        >
           <View
             style={{
               display: 'flex',
@@ -63,16 +78,35 @@ export default function TabOneScreen() {
               marginBottom: 60
             }}
           >
-            <Text style={[styles.subtitle, { fontFamily: 'KalSemiBold' }]}>
-              {selectedGroup?.groupName}
-            </Text>
-            <Text style={styles.subtitle}>Today's Brat Tally:</Text>
-            <TallyComp
-              selectedGroup={selectedGroup}
-              groupsOfUser={groupsOfUser}
-            />
+            {selectedGroup ? (
+              // Find the group from the list
+              (() => {
+                const group = groupsOfUser.find(
+                  (group) => group?.id === selectedGroup
+                );
+
+                return group ? (
+                  <>
+                    <Text
+                      style={[styles.subtitle, { fontFamily: 'KalSemiBold' }]}
+                    >
+                      {group?.groupName || 'No Group Name'}
+                    </Text>
+                    <Text style={styles.subtitle}>Today's Brat Tally:</Text>
+                    <TallyComp
+                      selectedGroup={group?.id}
+                      groupsOfUser={groupsOfUser}
+                    />
+                  </>
+                ) : (
+                  <Text style={styles.subtitle}>Group not found</Text>
+                );
+              })()
+            ) : (
+              <Text style={styles.subtitle}>No group selected</Text>
+            )}
           </View>
-        )}
+        </View>
 
         {/* delete these */}
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
