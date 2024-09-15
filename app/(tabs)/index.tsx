@@ -13,11 +13,6 @@ export default function TabOneScreen() {
     groupsOfUser: state.groupsOfUser,
     userData: state.userData
   }));
-  console.log(
-    groupsOfUser,
-    'so the index page is getting updated',
-    selectedGroup
-  );
 
   return (
     <>
@@ -37,11 +32,9 @@ export default function TabOneScreen() {
               </Text>
             ) : (
               (() => {
-                // Find the group with the matching ID
                 const group = groupsOfUser.find(
                   (group) => group?.id === selectedGroup
                 );
-                // Access the member's username using the group's dailyIndex
                 const memberUsername =
                   group?.members[group?.dailyIndex || 0]?.username;
 
@@ -58,7 +51,10 @@ export default function TabOneScreen() {
             )}
           </View>
 
-          <BitchButton userData={userData} selectedGroupId={selectedGroup} />
+          <BitchButton
+            userData={userData || { id: '', username: 'Guest' }}
+            selectedGroupId={selectedGroup}
+          />
 
           {groupsOfUser?.length > 0 && <Text style={styles.title}>Today</Text>}
         </View>

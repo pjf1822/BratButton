@@ -5,7 +5,13 @@ import { Dispatch, SetStateAction } from 'react';
 import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { doc, updateDoc } from 'firebase/firestore';
+import {
+  arrayUnion,
+  collection,
+  doc,
+  setDoc,
+  updateDoc
+} from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 export const populateGroups = async (groupSnapshots: any): Promise<Group[]> => {
@@ -73,8 +79,11 @@ export const handleCreateGroup = async (
     if (!userData) {
       throw new Error('User ID not found in AsyncStorage');
     }
+    const docRef = doc(collection(db, 'groups'));
+    const groupId = docRef.id;
 
-    const groupId = await createGroup({
+    await setDoc(docRef, {
+      id: groupId,
       groupName,
       members: [userData],
       lastUpdated: new Date().toLocaleDateString(),
@@ -82,17 +91,7 @@ export const handleCreateGroup = async (
       dailyIndex: 0
     });
 
-    const newGroup: Group = {
-      id: groupId,
-      groupName,
-      members: [userData],
-      dailyIndex: 0,
-      lastUpdated: new Date().toLocaleDateString(),
-      votesYes: []
-    };
-    console.log(newGroup, ' we have a new gorup');
-    setSelectedGroup(newGroup.id);
-
+    setSelectedGroup(groupId);
     // LOCAL
     setNewGroupName('');
     Keyboard.dismiss();
@@ -112,20 +111,18 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
   groupInviteName
 ) => {
   try {
-    const { setGroupsOfUser, setSelectedGroup, groupsOfUser, userData } =
-      useGroupStore.getState();
+    const { setSelectedGroup, userData } = useGroupStore.getState();
 
-    const updatedGroup = await joinGroup(groupId, userData);
-    if (updatedGroup) {
-      const updatedGroups = [...groupsOfUser, updatedGroup];
-      setGroupsOfUser(updatedGroups);
-      setSelectedGroup(updatedGroup.id);
+    if (typeof groupId !== 'string') {
+      throw new Error('Invalid group ID');
     }
-    // ADD GORUPS TO ASYNC GROUP
-    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
-    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
-    const updatedGroupIds = [...groupIds, groupId];
-    await AsyncStorage.setItem('groupIds', JSON.stringify(updatedGroupIds));
+    const groupRef = doc(db, 'groups', groupId);
+
+    await updateDoc(groupRef, {
+      members: arrayUnion(userData)
+    });
+
+    setSelectedGroup(groupId);
 
     showToast(`You have joined ${groupInviteName}!`, true, 'top');
   } catch (error: any) {

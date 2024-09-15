@@ -32,6 +32,9 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
+    useGroupStore.getState();
+
   const [loaded, error] = useFonts({
     KalThin: require('../assets/fonts/Kalnia-Thin.ttf'),
     KalSemiBold: require('../assets/fonts/Kalnia-SemiBold.ttf'),
@@ -46,15 +49,15 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
-  const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
-    useGroupStore.getState();
 
   const fetchGroups = async () => {
     const userString = await AsyncStorage.getItem('user');
     const user = userString ? (JSON.parse(userString) as User) : null;
-    if (user) {
-      setUserData(user);
+    if (!user) {
+      setLoading(false);
+      return;
     }
+    setUserData(user);
 
     try {
       const groupsRef = collection(db, 'groups');
@@ -66,12 +69,13 @@ export default function RootLayout() {
 
       const populatedGroups = await populateGroups(groupSnapshots);
       setSelectedGroup(populatedGroups[0]?.id);
+
       const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
         const groupsList = snapshot.docs.map((doc) => ({
           ...(doc.data() as any)
         }));
         console.log(
-          groupsList.map((gourp) => gourp.votesYes),
+          groupsList.map((gourp) => gourp),
           'the list'
         );
         setGroupsOfUser(groupsList);
@@ -90,12 +94,14 @@ export default function RootLayout() {
     const fetchDataAndHideSplash = async () => {
       if (loaded) {
         unsubscribe = await fetchGroups();
-        await SplashScreen.hideAsync(); // Await hiding the splash screen
+        await SplashScreen.hideAsync();
       }
     };
     fetchDataAndHideSplash();
     return () => {
+      console.log('in the useEffect');
       if (unsubscribe) {
+        console.log('actually unsubbing');
         unsubscribe();
       }
     };

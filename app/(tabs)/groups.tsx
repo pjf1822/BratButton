@@ -60,6 +60,7 @@ export default function TabGroupScreen() {
       const foundGroup = groupsOfUser?.find(
         (group) => group.id === groupInviteId
       );
+      console.log('show me the found group', foundGroup);
 
       if (foundGroup) {
         showToast(`You're already in ${groupInviteName}`, true, 'top');
