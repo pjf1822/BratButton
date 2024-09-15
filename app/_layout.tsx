@@ -1,18 +1,11 @@
-import { db } from '@/firebaseConfig';
-import { populateGroups } from '@/utils';
-import { Group, User, useGroupStore } from '@/zustandStore';
+import { fetchGroups, fetchUser } from '@/utils';
+import { User, useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where
-} from 'firebase/firestore';
+
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -32,9 +25,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
-    useGroupStore.getState();
-
   const [loaded, error] = useFonts({
     KalThin: require('../assets/fonts/Kalnia-Thin.ttf'),
     KalSemiBold: require('../assets/fonts/Kalnia-SemiBold.ttf'),
@@ -50,58 +40,25 @@ export default function RootLayout() {
     if (error) throw error;
   }, [error]);
 
-  const fetchGroups = async () => {
-    const userString = await AsyncStorage.getItem('user');
-    const user = userString ? (JSON.parse(userString) as User) : null;
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    setUserData(user);
-
-    try {
-      const groupsRef = collection(db, 'groups');
-      const groupQuery = query(
-        groupsRef,
-        where('members', 'array-contains', user)
-      );
-      const groupSnapshots = await getDocs(groupQuery);
-
-      const populatedGroups = await populateGroups(groupSnapshots);
-      setSelectedGroup(populatedGroups[0]?.id);
-
-      const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
-        const groupsList = snapshot.docs.map((doc) => ({
-          ...(doc.data() as any)
-        }));
-        console.log(
-          groupsList.map((gourp) => gourp),
-          'the list'
-        );
-        setGroupsOfUser(groupsList);
-        setLoading(false);
-      });
-
-      return unsubscribe;
-    } catch (error) {
-      console.error('Error fetching puppies: ', error);
-    }
-  };
-
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
     const fetchDataAndHideSplash = async () => {
-      if (loaded) {
-        unsubscribe = await fetchGroups();
+      const user = await fetchUser();
+      if (!user) {
+        await SplashScreen.hideAsync();
+      }
+
+      if (user && loaded) {
+        unsubscribe = await fetchGroups(user);
         await SplashScreen.hideAsync();
       }
     };
+
     fetchDataAndHideSplash();
+
     return () => {
-      console.log('in the useEffect');
       if (unsubscribe) {
-        console.log('actually unsubbing');
         unsubscribe();
       }
     };
@@ -122,10 +79,10 @@ function RootLayoutNav() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </QueryClientProvider>
+    // <QueryClientProvider client={queryClient}>
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
+    // </QueryClientProvider>
   );
 }

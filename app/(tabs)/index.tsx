@@ -5,7 +5,6 @@ import { myColors } from '@/theme';
 
 import { deleteUserId, viewUserData } from '@/utils';
 import TallyComp from '@/components/TallyComp';
-import { useEffect } from 'react';
 
 export default function TabOneScreen() {
   const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({
@@ -13,6 +12,8 @@ export default function TabOneScreen() {
     groupsOfUser: state.groupsOfUser,
     userData: state.userData
   }));
+
+  console.log('inthe index pag eis loaded');
 
   return (
     <>
@@ -75,7 +76,6 @@ export default function TabOneScreen() {
             }}
           >
             {selectedGroup ? (
-              // Find the group from the list
               (() => {
                 const group = groupsOfUser.find(
                   (group) => group?.id === selectedGroup
@@ -104,9 +104,7 @@ export default function TabOneScreen() {
           </View>
         </View>
 
-        {/* delete these */}
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-
         <Button color="white" onPress={viewUserData} title="View stored data" />
       </View>
     </>
@@ -127,72 +125,12 @@ const styles = StyleSheet.create({
     fontSize: Platform.isPad ? 50 : 29,
     fontWeight: '100'
   },
-  tallyContainer: {
-    position: 'relative',
-    width: 50,
-    display: 'flex',
-    flexDirection: 'row',
-    marginLeft: 20
-  },
-  diagonalTallyMark: {
-    position: 'absolute',
-    height: 65,
-    width: 4,
-    backgroundColor: myColors.five,
-    transform: [{ rotate: '-70deg' }],
-    left: 23,
-    top: -18,
-    zIndex: 1,
-    borderRadius: 100
-  },
-  tallyMark: {
-    height: 30,
-    width: 4,
-    backgroundColor: myColors.one,
-    borderRadius: 100,
-    marginLeft: 5
-  },
-  mainText: {
-    fontFamily: 'KalRegular',
-    color: myColors.five,
-    fontSize: 100,
-    fontWeight: '100'
-  },
+
   subtitle: {
     fontFamily: 'KalMedium',
     color: myColors.one,
     fontSize: Platform.isPad ? 40 : 29,
     fontWeight: '100'
-  },
-  createGroupText: {
-    color: myColors.five,
-    fontSize: 40
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)'
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center'
-  },
-  modalTitle: {
-    fontSize: 20,
-    marginBottom: 10,
-    color: myColors.five
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    width: '100%',
-    paddingHorizontal: 10
   },
   noGroupsText: {
     fontFamily: 'KalMedium',
@@ -200,11 +138,5 @@ const styles = StyleSheet.create({
     fontSize: 33,
     textAlign: 'center',
     paddingBottom: 70
-  },
-  voteText: {
-    fontFamily: 'KalBold',
-    color: myColors.five,
-    fontSize: 20,
-    marginVertical: 5
   }
 });

@@ -52,6 +52,7 @@ export default function TabGroupScreen() {
     invitedBool: string;
     groupInviteName: string;
   }>();
+  console.log(invitedBool, 'the invited boolean');
 
   useEffect(() => {
     if (invitedBool) {
@@ -60,17 +61,14 @@ export default function TabGroupScreen() {
       const foundGroup = groupsOfUser?.find(
         (group) => group.id === groupInviteId
       );
-      console.log('show me the found group', foundGroup);
 
       if (foundGroup) {
         showToast(`You're already in ${groupInviteName}`, true, 'top');
         setSelectedGroup(foundGroup.id);
       } else {
-        // Join the group if not already in it
         handleJoinGroup(groupInviteId, groupInviteName);
       }
 
-      // Redirect after processing the group invite
       router.replace('/groups');
     }
   }, [invitedBool]);
@@ -135,7 +133,7 @@ export default function TabGroupScreen() {
               Your Groups
             </Text>
             <GroupPicker
-              selectedGroup={selectedGroup}
+              selectedGroup={selectedGroup || ''}
               groupsOfUser={groupsOfUser}
               setSelectedGroup={setSelectedGroup}
             />
@@ -165,57 +163,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
     width: '100%'
-  },
-  title: {
-    fontFamily: 'KalBold',
-    color: myColors.five,
-    fontSize: 30,
-    fontWeight: '100'
-  },
-  mainText: {
-    fontFamily: 'KalThin',
-    color: myColors.five,
-    fontSize: 100,
-    fontWeight: '100'
-  },
-  subtitle: {
-    fontFamily: 'KalBold',
-    color: myColors.five,
-    fontSize: 30,
-    fontWeight: '100'
-  },
-  createGroupText: {
-    color: myColors.five,
-    fontSize: 40
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)'
-  },
-  modalContent: {
-    backgroundColor: myColors.three,
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center'
-  },
-  modalTitle: {
-    fontSize: 20,
-    marginBottom: 10
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    width: '100%',
-    paddingHorizontal: 10
-  },
-  qrCodeSection: {
-    width: '100%',
-    padding: 20,
-    alignItems: 'center'
   }
 });
