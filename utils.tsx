@@ -6,34 +6,24 @@ import { myColors } from './theme';
 import Toast from 'react-native-root-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
+  arrayUnion,
   collection,
-  getDocs,
   doc,
-  updateDoc,
-  query,
-  where
+  setDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
-export const populateGroups = async (
-  groupIds: string[],
-  setSelectedGroup: (group: Group | undefined) => void
-): Promise<Group[]> => {
+export const populateGroups = async (groupSnapshots: any): Promise<Group[]> => {
   try {
-    const groupsRef = collection(db, 'groups');
-    const groupQuery = query(groupsRef, where('__name__', 'in', groupIds));
-    const groupSnapshots = await getDocs(groupQuery);
-
     const today = new Date().toLocaleDateString();
     const allGroups: Group[] = [];
-
     const originalOrderMap: { [key: string]: number } = {};
-
-    groupIds.forEach((id, index) => {
-      originalOrderMap[id] = index;
+    groupSnapshots.docs.forEach((docSnapshot: any, index: number) => {
+      originalOrderMap[docSnapshot.id] = index;
     });
 
-    const updatePromises = groupSnapshots.docs.map(async (docSnapshot) => {
+    const updatePromises = groupSnapshots.docs.map(async (docSnapshot: any) => {
       const data = docSnapshot.data() as Group;
 
       if (data.lastUpdated !== today) {
@@ -51,7 +41,7 @@ export const populateGroups = async (
 
         data.lastUpdated = today;
         data.dailyIndex = newDailyIndex;
-        data.votesYes = []; // Res
+        data.votesYes = []; // Reset votesYes array
       }
 
       allGroups.push({
@@ -62,13 +52,12 @@ export const populateGroups = async (
 
     await Promise.all(updatePromises);
 
+    // Sort the groups based on the original order
     allGroups.sort((a, b) => {
       return (originalOrderMap[a.id] || 0) - (originalOrderMap[b.id] || 0);
     });
 
-    setSelectedGroup(allGroups[0]);
-
-    return allGroups;
+    return allGroups; // Return the sorted
   } catch (error) {
     console.error('Failed to populate groups:', error);
     return [];
@@ -76,7 +65,6 @@ export const populateGroups = async (
 };
 export const handleCreateGroup = async (
   groupName: string,
-  groupsOfUser: Group[],
   setNewGroupName: Dispatch<SetStateAction<string>>,
   setModalVisible: (visible: boolean) => void
 ) => {
@@ -86,14 +74,16 @@ export const handleCreateGroup = async (
       throw new Error('Group name is required');
     }
 
-    const { userData, setGroupsOfUser, setSelectedGroup } =
-      useGroupStore.getState();
+    const { userData, setSelectedGroup } = useGroupStore.getState();
 
     if (!userData) {
       throw new Error('User ID not found in AsyncStorage');
     }
+    const docRef = doc(collection(db, 'groups'));
+    const groupId = docRef.id;
 
-    const groupId = await createGroup({
+    await setDoc(docRef, {
+      id: groupId,
       groupName,
       members: [userData],
       lastUpdated: new Date().toLocaleDateString(),
@@ -101,27 +91,7 @@ export const handleCreateGroup = async (
       dailyIndex: 0
     });
 
-    const newGroup: Group = {
-      id: groupId,
-      groupName,
-      members: [userData],
-      dailyIndex: 0,
-      lastUpdated: new Date().toLocaleDateString(),
-      votesYes: []
-    };
-    // GLOBAL
-    const updatedGroups = [...groupsOfUser, newGroup];
-    setGroupsOfUser(updatedGroups);
-    setSelectedGroup(newGroup);
-
-    // ASYNC USER INFO
-    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
-    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
-    await AsyncStorage.setItem(
-      'groupIds',
-      JSON.stringify([...groupIds, groupId])
-    );
-
+    setSelectedGroup(groupId);
     // LOCAL
     setNewGroupName('');
     Keyboard.dismiss();
@@ -132,7 +102,7 @@ export const handleCreateGroup = async (
 };
 
 type HandleJoinGroupFunction = (
-  groupId: string,
+  groupId: string | undefined,
   groupInviteName: string | undefined
 ) => Promise<void>;
 
@@ -141,20 +111,18 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
   groupInviteName
 ) => {
   try {
-    const { setGroupsOfUser, setSelectedGroup, groupsOfUser, userData } =
-      useGroupStore.getState();
+    const { setSelectedGroup, userData } = useGroupStore.getState();
 
-    const updatedGroup = await joinGroup(groupId, userData);
-    if (updatedGroup) {
-      const updatedGroups = [...groupsOfUser, updatedGroup];
-      setGroupsOfUser(updatedGroups);
-      setSelectedGroup(updatedGroup);
+    if (typeof groupId !== 'string') {
+      throw new Error('Invalid group ID');
     }
-    // ADD GORUPS TO ASYNC GROUP
-    const groupIdsJSON = await AsyncStorage.getItem('groupIds');
-    const groupIds = groupIdsJSON ? JSON.parse(groupIdsJSON) : [];
-    const updatedGroupIds = [...groupIds, groupId];
-    await AsyncStorage.setItem('groupIds', JSON.stringify(updatedGroupIds));
+    const groupRef = doc(db, 'groups', groupId);
+
+    await updateDoc(groupRef, {
+      members: arrayUnion(userData)
+    });
+
+    setSelectedGroup(groupId);
 
     showToast(`You have joined ${groupInviteName}!`, true, 'top');
   } catch (error: any) {
@@ -197,10 +165,6 @@ export const deleteUserId = async () => {
   await AsyncStorage.removeItem('user');
 };
 
-export const deleteGroupIds = async () => {
-  await AsyncStorage.removeItem('groupIds');
-};
-
 export const viewUserData = async () => {
   try {
     const user = await AsyncStorage.getItem('user');
@@ -208,19 +172,6 @@ export const viewUserData = async () => {
       Alert.alert('User Data', user);
     } else {
       Alert.alert('No User Data Found');
-    }
-  } catch (error) {
-    console.error('Failed to retrieve user data:', error);
-    Alert.alert('Error', 'Failed to retrieve user data');
-  }
-};
-export const viewGroupData = async () => {
-  try {
-    const user = await AsyncStorage.getItem('groupIds');
-    if (user !== null) {
-      Alert.alert('Group daata', user);
-    } else {
-      Alert.alert('No Group Data Found');
     }
   } catch (error) {
     console.error('Failed to retrieve user data:', error);

@@ -15,7 +15,6 @@ export interface Group {
 }
 
 export interface NewGroupFormProps {
-  groupsOfUser: Group[];
   setModalVisible: (visible: boolean) => void;
 }
 
@@ -26,16 +25,13 @@ interface StoreState {
   groupsOfUser: Group[];
   setGroupsOfUser: (groups: Group[]) => void;
 
-  selectedGroup: Group | undefined;
-  setSelectedGroup: (group: Group | undefined) => void;
+  selectedGroup: string | undefined;
+  setSelectedGroup: (groupId: string | undefined) => void;
 
   userData: User | null;
   setUserData: (data: User) => void;
 
   addVoteYes: (groupId: string, member: User) => Promise<void>;
-
-  invited: boolean;
-  setInvited: (invited: boolean) => void;
 }
 
 export const useGroupStore = create<StoreState>((set) => ({
@@ -50,14 +46,11 @@ export const useGroupStore = create<StoreState>((set) => ({
   setGroupsOfUser: (groups: Group[]) => {
     set({ groupsOfUser: groups });
   },
-
   selectedGroup: undefined,
-  setSelectedGroup: (group: Group | undefined) => {
-    set({ selectedGroup: group });
+  setSelectedGroup: (groupId: string | undefined) => {
+    set({ selectedGroup: groupId });
   },
 
-  invited: false,
-  setInvited: (invited) => set({ invited }),
   addVoteYes: async (groupId: string, member: User) => {
     try {
       await voteYes(groupId, member);
@@ -71,9 +64,9 @@ export const useGroupStore = create<StoreState>((set) => ({
                 votesYes: [...group.votesYes, member.id]
               };
 
-              if (state.selectedGroup?.id === groupId) {
-                set({ selectedGroup: updatedGroup });
-              }
+              // if (state.selectedGroup === groupId) {
+              //   set({ selectedGroup: updatedGroup.id });
+              // }
 
               return updatedGroup;
             }

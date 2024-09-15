@@ -17,7 +17,7 @@ import MyButton from '@/components/MyComponents/MyButton';
 
 const LoginModal = () => {
   const [username, setUsername] = useState('');
-  const { setUserData, invited } = useGroupStore();
+  const { setUserData } = useGroupStore();
 
   const addUserName = async () => {
     const newUserId = Math.floor(Math.random() * 1000000).toString();

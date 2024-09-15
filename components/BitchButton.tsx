@@ -1,28 +1,35 @@
 import LottieView from 'lottie-react-native';
-import { StyleSheet, TouchableOpacity, Text, View, Platform } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  Platform
+} from 'react-native';
 import React, { useRef, useEffect, useState } from 'react';
 import { Audio } from 'expo-av';
 import { useGroupStore } from '@/zustandStore';
 
 interface BitchButtonProps {
   userData: {
-    id: string;  
+    id: string;
     username: string;
   };
-  selectedGroupId: string | undefined;  
+  selectedGroupId: string | undefined;
 }
-const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) => {
-      const [sound, setSound] = useState<Audio.Sound | null>(null);
+const BitchButton: React.FC<BitchButtonProps> = ({
+  userData,
+  selectedGroupId
+}) => {
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
 
-      const animation = useRef<LottieView>(null);
+  const animation = useRef<LottieView>(null);
 
-      const addVoteYes = useGroupStore((state) => state.addVoteYes);
+  const addVoteYes = useGroupStore((state) => state.addVoteYes);
 
-
-    
-  async function playSound() { 
+  async function playSound() {
     await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true,
+      playsInSilentModeIOS: true
     });
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/bratt.wav')
@@ -31,8 +38,7 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
     await sound.playAsync();
   }
 
-
-   useEffect(() => {
+  useEffect(() => {
     return sound
       ? () => {
           sound.unloadAsync();
@@ -40,44 +46,35 @@ const BitchButton: React.FC<BitchButtonProps> = ({ userData, selectedGroupId }) 
       : undefined;
   }, [sound]);
 
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        animation.current?.reset();
+        animation.current?.play();
+        playSound();
+        if (selectedGroupId && userData) {
+          addVoteYes(selectedGroupId, userData);
+        }
+      }}
+      style={styles.button}
+    >
+      <LottieView
+        progress={1}
+        loop={false}
+        ref={animation}
+        style={styles.lottieView}
+        source={require('../assets/slatt.json')}
+      />
+    </TouchableOpacity>
+  );
+};
 
-
-    return (
-        <TouchableOpacity
-        onPress={() => {
-          animation.current?.reset();
-          animation.current?.play();
-          playSound();
-          if (selectedGroupId && userData) {
-            addVoteYes(selectedGroupId, userData);
-          }        }}
-        style={styles.button}
-      >
-        <LottieView
-          progress={1}
-          loop={false}
-          ref={animation}
-          style={styles.lottieView}
-          source={require('../assets/slatt.json')}
-        />
-
-      </TouchableOpacity>
-  )
-}
-
-export default BitchButton
+export default BitchButton;
 
 const styles = StyleSheet.create({
- 
-    button: {
-     
-    
-      
-    },
-    lottieView: {
-      width: Platform.isPad ? 500 :  290,
-      height: Platform.isPad ? 500:290,
- 
-    },
-  });
-  
+  button: {},
+  lottieView: {
+    width: Platform.isPad ? 500 : 290,
+    height: Platform.isPad ? 500 : 290
+  }
+});

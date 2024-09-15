@@ -1,30 +1,39 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { myColors } from '@/theme';
 import { Group, User } from '@/zustandStore';
 
 interface TallyCompProps {
-  selectedGroup: Group | undefined;
+  selectedGroup: string;
+  groupsOfUser: Group[];
 }
-const TallyComp: React.FC<TallyCompProps> = ({ selectedGroup }) => {
-  useEffect(() => {
-    getTallyGroups();
-  }, [selectedGroup]);
-  const renderItem = ({ item }: { item: User }) => (
-    <Text style={{ color: 'black' }}>{item?.username}</Text>
-  );
-  const getTallyGroups = () => {
-    if (!selectedGroup || !selectedGroup.votesYes) return [];
+const TallyComp: React.FC<TallyCompProps> = ({
+  selectedGroup,
+  groupsOfUser
+}) => {
+  const [group, setGroup] = useState<Group | undefined>(undefined);
 
-    const tallyMarks = selectedGroup.votesYes.length;
+  useEffect(() => {
+    const foundGroup = groupsOfUser.find((group) => group.id === selectedGroup);
+    setGroup(foundGroup);
+  }, [selectedGroup, groupsOfUser]);
+
+  const getTallyGroups = () => {
+    if (!group || !group.votesYes) return [];
+
+    const tallyMarks = group.votesYes.length;
     const groups = [];
 
     for (let i = 0; i < tallyMarks; i += 5) {
-      groups.push(selectedGroup.votesYes.slice(i, i + 5));
+      groups.push(group.votesYes.slice(i, i + 5));
     }
 
     return groups;
   };
+
+  const renderItem = ({ item }: { item: User }) => (
+    <Text style={{ color: 'black' }}>{item?.username}</Text>
+  );
 
   const renderTallyGroups = () => {
     const tallyGroups = getTallyGroups();
@@ -37,7 +46,6 @@ const TallyComp: React.FC<TallyCompProps> = ({ selectedGroup }) => {
       </View>
     ));
   };
-
   return (
     <View style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}>
       {renderTallyGroups()}

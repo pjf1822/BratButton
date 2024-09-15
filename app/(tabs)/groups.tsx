@@ -33,9 +33,10 @@ export default function TabGroupScreen() {
   // THE REDIRECT
   const redirectUrl = Linking.createURL('/groups', {
     queryParams: {
-      groupInviteId: selectedGroup?.id,
+      groupInviteId: selectedGroup,
       invitedBool: 'true',
-      groupInviteName: selectedGroup?.groupName
+      groupInviteName: groupsOfUser.find((group) => group.id === selectedGroup)
+        ?.groupName
     }
   });
 
@@ -59,10 +60,11 @@ export default function TabGroupScreen() {
       const foundGroup = groupsOfUser?.find(
         (group) => group.id === groupInviteId
       );
+      console.log('show me the found group', foundGroup);
 
       if (foundGroup) {
         showToast(`You're already in ${groupInviteName}`, true, 'top');
-        setSelectedGroup(foundGroup);
+        setSelectedGroup(foundGroup.id);
       } else {
         // Join the group if not already in it
         handleJoinGroup(groupInviteId, groupInviteName);
@@ -80,6 +82,7 @@ export default function TabGroupScreen() {
         redirectUrl={redirectUrl}
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
+        groupsOfUser={groupsOfUser}
       />
       <Image
         source={require('../../assets/bar-purple.jpg')}
@@ -111,10 +114,7 @@ export default function TabGroupScreen() {
           justifyContent: groupsOfUser?.length > 0 ? 'space-around' : 'center'
         }}
       >
-        <NewGroupForm
-          groupsOfUser={groupsOfUser}
-          setModalVisible={setModalVisible}
-        />
+        <NewGroupForm setModalVisible={setModalVisible} />
 
         {groupsOfUser.length > 0 && (
           <View
@@ -142,7 +142,10 @@ export default function TabGroupScreen() {
 
             <MyButton
               onPress={() => setModalVisible(true)}
-              label={`Invite someone to ${selectedGroup?.groupName}`}
+              label={`Invite someone to ${
+                groupsOfUser.find((group) => group.id === selectedGroup)
+                  ?.groupName || 'Unknown'
+              }`}
             />
           </View>
         )}

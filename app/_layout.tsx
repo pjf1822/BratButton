@@ -1,10 +1,18 @@
+import { db } from '@/firebaseConfig';
 import { populateGroups } from '@/utils';
-import { User, useGroupStore } from '@/zustandStore';
+import { Group, User, useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where
+} from 'firebase/firestore';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -24,6 +32,9 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
+    useGroupStore.getState();
+
   const [loaded, error] = useFonts({
     KalThin: require('../assets/fonts/Kalnia-Thin.ttf'),
     KalSemiBold: require('../assets/fonts/Kalnia-SemiBold.ttf'),
@@ -38,44 +49,62 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
-  const { setUserData, setGroupsOfUser, setSelectedGroup, setLoading } =
-    useGroupStore.getState();
 
-  const checkUser = async () => {
-    try {
-      const userString = await AsyncStorage.getItem('user');
-      const user = userString ? (JSON.parse(userString) as User) : null;
-      setUserData(user);
-      const groupsString = await AsyncStorage.getItem('groupIds');
-      const groupIds = groupsString
-        ? (JSON.parse(groupsString) as string[])
-        : [];
-      if (groupIds.length > 0) {
-        const groups = await populateGroups(groupIds, setSelectedGroup);
-        setGroupsOfUser(groups ?? []);
-      }
-    } catch (error) {
-      console.error('Error in checkUser:', error);
-    } finally {
+  const fetchGroups = async () => {
+    const userString = await AsyncStorage.getItem('user');
+    const user = userString ? (JSON.parse(userString) as User) : null;
+    if (!user) {
       setLoading(false);
+      return;
+    }
+    setUserData(user);
+
+    try {
+      const groupsRef = collection(db, 'groups');
+      const groupQuery = query(
+        groupsRef,
+        where('members', 'array-contains', user)
+      );
+      const groupSnapshots = await getDocs(groupQuery);
+
+      const populatedGroups = await populateGroups(groupSnapshots);
+      setSelectedGroup(populatedGroups[0]?.id);
+
+      const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
+        const groupsList = snapshot.docs.map((doc) => ({
+          ...(doc.data() as any)
+        }));
+        console.log(
+          groupsList.map((gourp) => gourp),
+          'the list'
+        );
+        setGroupsOfUser(groupsList);
+        setLoading(false);
+      });
+
+      return unsubscribe;
+    } catch (error) {
+      console.error('Error fetching puppies: ', error);
     }
   };
 
   useEffect(() => {
-    const loadResources = async () => {
-      try {
-        if (loaded) {
-          await checkUser();
+    let unsubscribe: (() => void) | undefined;
 
-          // Hide the splash screen
-          await SplashScreen.hideAsync();
-        }
-      } catch (error) {
-        console.error('Error during resource loading:', error);
+    const fetchDataAndHideSplash = async () => {
+      if (loaded) {
+        unsubscribe = await fetchGroups();
+        await SplashScreen.hideAsync();
       }
     };
-
-    loadResources();
+    fetchDataAndHideSplash();
+    return () => {
+      console.log('in the useEffect');
+      if (unsubscribe) {
+        console.log('actually unsubbing');
+        unsubscribe();
+      }
+    };
   }, [loaded]);
 
   if (!loaded) {

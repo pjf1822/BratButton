@@ -28,7 +28,7 @@ export const createGroup = async (params: {
 }): Promise<string> => {
   try {
     const docRef = doc(collection(db, 'groups'));
-    const id = docRef.id; // Generate the document ID
+    const id = docRef.id;
 
     await setDoc(docRef, {
       id,
@@ -54,10 +54,7 @@ export const logDebugInfo = async (debugData: any) => {
   }
 };
 
-export const joinGroup = async (
-  groupId: string,
-  user: User
-): Promise<Group | null> => {
+export const joinGroup = async (groupId: string, user: User): Promise<void> => {
   try {
     const groupRef = doc(db, 'groups', groupId);
 
@@ -65,20 +62,19 @@ export const joinGroup = async (
       members: arrayUnion(user)
     });
 
-    const updatedGroupDoc = await getDoc(groupRef);
-    const newGroup: Group = {
-      id: groupId,
-      groupName: updatedGroupDoc.data()?.groupName || '',
-      members: updatedGroupDoc.data()?.members as User[],
-      dailyIndex: updatedGroupDoc.data()?.dailyIndex || 0,
-      lastUpdated: updatedGroupDoc.data()?.lastUpdated || '',
-      votesYes: updatedGroupDoc.data()?.votesYes || []
-    };
+    // const updatedGroupDoc = await getDoc(groupRef);
+    // const newGroup: Group = {
+    //   id: groupId,
+    //   groupName: updatedGroupDoc.data()?.groupName || '',
+    //   members: updatedGroupDoc.data()?.members as User[],
+    //   dailyIndex: updatedGroupDoc.data()?.dailyIndex || 0,
+    //   lastUpdated: updatedGroupDoc.data()?.lastUpdated || '',
+    //   votesYes: updatedGroupDoc.data()?.votesYes || []
+    // };
 
-    return newGroup;
+    // return newGroup;
   } catch (error) {
     console.error('Error joining group:', error);
-    return null;
   }
 };
 

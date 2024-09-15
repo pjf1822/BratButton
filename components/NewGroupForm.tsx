@@ -6,10 +6,7 @@ import { myColors } from '@/theme';
 import MyButton from './MyComponents/MyButton';
 import MyTextInput from './MyComponents/MyTextInput';
 
-const NewGroupForm: React.FC<NewGroupFormProps> = ({
-  groupsOfUser,
-  setModalVisible
-}) => {
+const NewGroupForm: React.FC<NewGroupFormProps> = ({ setModalVisible }) => {
   const [newGroupName, setNewGroupName] = useState('');
 
   return (
@@ -22,12 +19,7 @@ const NewGroupForm: React.FC<NewGroupFormProps> = ({
       />
       <MyButton
         onPress={() =>
-          handleCreateGroup(
-            newGroupName,
-            groupsOfUser,
-            setNewGroupName,
-            setModalVisible
-          )
+          handleCreateGroup(newGroupName, setNewGroupName, setModalVisible)
         }
         label="Create Group"
       />

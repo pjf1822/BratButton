@@ -34,7 +34,15 @@ export default function TabLayout() {
   }));
 
   if (loading) {
-    return null;
+    return (
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+          backgroundColor: myColors.three
+        }}
+      ></View>
+    );
   }
 
   if (userData === null) {
