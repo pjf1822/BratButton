@@ -1,9 +1,7 @@
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
@@ -14,6 +12,7 @@ import { useGroupStore } from '@/zustandStore';
 import { myColors } from '@/theme';
 import MyTextInput from '@/components/MyComponents/MyTextInput';
 import MyButton from '@/components/MyComponents/MyButton';
+import { fetchGroups } from '@/utils';
 
 const LoginModal = () => {
   const [username, setUsername] = useState('');
@@ -23,9 +22,15 @@ const LoginModal = () => {
     const newUserId = Math.floor(Math.random() * 1000000).toString();
     const userData = { id: newUserId, username };
     await AsyncStorage.setItem('user', JSON.stringify(userData));
-    await AsyncStorage.setItem('groupIds', JSON.stringify([]));
     setUserData(userData);
     await createUser(userData);
+
+    const unsubscribe = await fetchGroups(userData);
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   };
 
   return (

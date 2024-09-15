@@ -5,7 +5,6 @@ import { myColors } from '@/theme';
 
 import { deleteUserId, viewUserData } from '@/utils';
 import TallyComp from '@/components/TallyComp';
-import { useEffect } from 'react';
 
 export default function TabOneScreen() {
   const { selectedGroup, groupsOfUser, userData } = useGroupStore((state) => ({

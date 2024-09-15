@@ -1,5 +1,5 @@
 import { createGroup, joinGroup } from './api';
-import { Group, useGroupStore } from './zustandStore';
+import { Group, User, useGroupStore } from './zustandStore';
 import { Keyboard, Platform, Alert } from 'react-native';
 import { Dispatch, SetStateAction } from 'react';
 import { myColors } from './theme';
@@ -9,8 +9,12 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDocs,
+  onSnapshot,
+  query,
   setDoc,
-  updateDoc
+  updateDoc,
+  where
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
@@ -68,13 +72,13 @@ export const handleCreateGroup = async (
   setNewGroupName: Dispatch<SetStateAction<string>>,
   setModalVisible: (visible: boolean) => void
 ) => {
+  const { setSelectedGroup, userData } = useGroupStore.getState();
+
   try {
     if (!groupName.trim()) {
       showToast('You need to add a group name', false, 'top');
       throw new Error('Group name is required');
     }
-
-    const { userData, setSelectedGroup } = useGroupStore.getState();
 
     if (!userData) {
       throw new Error('User ID not found in AsyncStorage');
@@ -110,9 +114,9 @@ export const handleJoinGroup: HandleJoinGroupFunction = async (
   groupId,
   groupInviteName
 ) => {
-  try {
-    const { setSelectedGroup, userData } = useGroupStore.getState();
+  const { setSelectedGroup, userData } = useGroupStore.getState();
 
+  try {
     if (typeof groupId !== 'string') {
       throw new Error('Invalid group ID');
     }
@@ -176,5 +180,51 @@ export const viewUserData = async () => {
   } catch (error) {
     console.error('Failed to retrieve user data:', error);
     Alert.alert('Error', 'Failed to retrieve user data');
+  }
+};
+
+export const fetchUser = async () => {
+  const { setUserData, setLoading } = useGroupStore.getState();
+
+  const userString = await AsyncStorage.getItem('user');
+  const user = userString ? (JSON.parse(userString) as User) : null;
+  if (!user) {
+    setLoading(false);
+    return null;
+  }
+  setUserData(user);
+  return user;
+};
+export const fetchGroups = async (user: User) => {
+  const { setGroupsOfUser, setSelectedGroup, setLoading } =
+    useGroupStore.getState();
+
+  try {
+    const groupsRef = collection(db, 'groups');
+    const groupQuery = query(
+      groupsRef,
+      where('members', 'array-contains', user)
+    );
+    const groupSnapshots = await getDocs(groupQuery);
+
+    console.log(groupSnapshots, 'whats up with that ');
+    const populatedGroups = await populateGroups(groupSnapshots);
+    setSelectedGroup(populatedGroups[0]?.id);
+
+    const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
+      const groupsList = snapshot.docs.map((doc) => ({
+        ...(doc.data() as any)
+      }));
+      console.log(
+        groupsList.map((gourp) => gourp),
+        'the list'
+      );
+      setGroupsOfUser(groupsList);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    console.error('Error fetching puppies: ', error);
   }
 };
