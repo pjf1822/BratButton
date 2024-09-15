@@ -166,10 +166,10 @@ export const fetchGroups = async (user: User) => {
       const groupsList = snapshot.docs.map((doc) => ({
         ...(doc.data() as any)
       }));
-      console.log(
-        groupsList.map((gourp) => gourp),
-        'the list that we are listengin to '
-      );
+      // console.log(
+      //   groupsList.map((gourp) => gourp),
+      //   'the list that we are listengin to '
+      // );
       setGroupsOfUser(groupsList);
       setLoading(false);
     });

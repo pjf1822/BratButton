@@ -2,6 +2,7 @@ import React from 'react';
 import { Picker } from '@react-native-picker/picker';
 import { myColors } from '@/theme';
 import { Group } from '@/zustandStore';
+import { Platform } from 'react-native';
 
 interface GroupPickerProps {
   selectedGroup: string;
@@ -20,7 +21,7 @@ const GroupPicker: React.FC<GroupPickerProps> = ({
       itemStyle={{
         textAlign: 'center',
         fontFamily: 'KalMedium',
-        fontSize: 25
+        fontSize: Platform.isPad ? 35 : 25
       }}
       style={{
         display: selectedGroup ? 'flex' : 'none',

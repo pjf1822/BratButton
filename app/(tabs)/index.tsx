@@ -13,8 +13,6 @@ export default function TabOneScreen() {
     userData: state.userData
   }));
 
-  // console.log('inthe index pag eis loaded');
-
   return (
     <>
       <View style={styles.container}>
@@ -103,9 +101,9 @@ export default function TabOneScreen() {
             )}
           </View>
         </View>
-
+        {/* 
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button color="white" onPress={viewUserData} title="View stored data" />
+        <Button color="white" onPress={viewUserData} title="View stored data" /> */}
       </View>
     </>
   );

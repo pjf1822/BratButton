@@ -1,4 +1,5 @@
 import { fetchGroups, fetchUser } from '@/utils';
+import { useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -7,7 +8,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,7 +49,9 @@ export default function RootLayout() {
 
       if (user && loaded) {
         unsubscribe = await fetchGroups(user);
-        await SplashScreen.hideAsync();
+        setTimeout(async () => {
+          await SplashScreen.hideAsync();
+        }, 500);
       }
     };
 

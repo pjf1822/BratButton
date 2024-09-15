@@ -43,7 +43,6 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.5.0",
     "react-native-web": "~0.19.10",
-    "react-query": "^3.39.3",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
