@@ -17,56 +17,6 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
-export const populateGroups = async (groupSnapshots: any): Promise<Group[]> => {
-  try {
-    const today = new Date().toLocaleDateString();
-    const allGroups: Group[] = [];
-    const originalOrderMap: { [key: string]: number } = {};
-
-    groupSnapshots.docs.forEach((docSnapshot: any, index: number) => {
-      originalOrderMap[docSnapshot.id] = index;
-    });
-
-    const updatePromises = groupSnapshots.docs.map(async (docSnapshot: any) => {
-      const data = docSnapshot.data() as Group;
-
-      if (data.lastUpdated !== today) {
-        console.log(`Group ${docSnapshot.id} needs to be updated.`);
-        const newDailyIndex = Math.floor(
-          Math.random() * (data.members?.length || 1)
-        );
-
-        const groupRef = doc(db, 'groups', docSnapshot.id);
-        await updateDoc(groupRef, {
-          lastUpdated: today,
-          dailyIndex: newDailyIndex,
-          votesYes: [] // Reset votesYes array
-        });
-
-        data.lastUpdated = today;
-        data.dailyIndex = newDailyIndex;
-        data.votesYes = []; // Reset votesYes array
-      }
-
-      allGroups.push({
-        ...data,
-        id: docSnapshot.id
-      });
-    });
-
-    await Promise.all(updatePromises);
-
-    // Sort the groups based on the original order
-    allGroups.sort((a, b) => {
-      return (originalOrderMap[a.id] || 0) - (originalOrderMap[b.id] || 0);
-    });
-
-    return allGroups; // Return the sorted
-  } catch (error) {
-    console.error('Failed to populate groups:', error);
-    return [];
-  }
-};
 export const handleCreateGroup = async (
   groupName: string,
   setNewGroupName: Dispatch<SetStateAction<string>>,
@@ -207,11 +157,11 @@ export const fetchGroups = async (user: User) => {
     );
     const groupSnapshots = await getDocs(groupQuery);
 
-    if (groupSnapshots.docs.map((doccy) => doccy.data()).length > 0) {
-      const populatedGroups = await populateGroups(groupSnapshots);
-      setSelectedGroup(populatedGroups[0]?.id);
+    if (groupSnapshots.docs.length > 0) {
+      const firstGroupId = groupSnapshots.docs[0].id;
+      setSelectedGroup(firstGroupId);
+      await updateDailyIndexes(groupSnapshots);
     }
-
     const unsubscribe = onSnapshot(groupQuery, (snapshot) => {
       const groupsList = snapshot.docs.map((doc) => ({
         ...(doc.data() as any)
@@ -227,5 +177,35 @@ export const fetchGroups = async (user: User) => {
     return unsubscribe;
   } catch (error) {
     console.error('Error fetching puppies: ', error);
+  }
+};
+
+export const updateDailyIndexes = async (
+  groupSnapshots: any
+): Promise<void> => {
+  try {
+    const today = new Date().toLocaleDateString();
+
+    const updatePromises = groupSnapshots.docs.map(async (docSnapshot: any) => {
+      const data = docSnapshot.data() as Group;
+
+      if (data.lastUpdated !== today) {
+        console.log(`Group ${docSnapshot.id} needs to be updated.`);
+        const newDailyIndex = Math.floor(
+          Math.random() * (data.members?.length || 1)
+        );
+
+        const groupRef = doc(db, 'groups', docSnapshot.id);
+        await updateDoc(groupRef, {
+          lastUpdated: today,
+          dailyIndex: newDailyIndex,
+          votesYes: []
+        });
+      }
+    });
+
+    await Promise.all(updatePromises);
+  } catch (error) {
+    console.error('Failed to populate groups:', error);
   }
 };
