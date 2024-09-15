@@ -52,10 +52,16 @@ export default function TabGroupScreen() {
     invitedBool: string;
     groupInviteName: string;
   }>();
-  console.log(invitedBool, 'the invited boolean');
 
   useEffect(() => {
-    if (invitedBool) {
+    // console.log(
+    //   invitedBool,
+    //   groupInviteId,
+    //   groupInviteName,
+    //   'the invited boolean'
+    // );
+
+    if (invitedBool === 'true') {
       checkConnectivity();
 
       const foundGroup = groupsOfUser?.find(

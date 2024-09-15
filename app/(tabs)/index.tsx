@@ -13,7 +13,7 @@ export default function TabOneScreen() {
     userData: state.userData
   }));
 
-  console.log('inthe index pag eis loaded');
+  // console.log('inthe index pag eis loaded');
 
   return (
     <>
