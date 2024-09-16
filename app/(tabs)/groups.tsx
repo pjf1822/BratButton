@@ -123,7 +123,7 @@ export default function TabGroupScreen() {
         <NewGroupForm setModalVisible={setModalVisible} />
         {groupsOfUser.length === 0 && <View style={{ height: 200 }}></View>}
 
-        {groupsOfUser.length > 0 && (
+        {groupsOfUser.length > 0 && selectedGroup && (
           <View
             style={{
               width: Platform.isPad ? '59%' : '66%',
