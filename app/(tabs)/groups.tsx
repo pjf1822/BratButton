@@ -8,7 +8,6 @@ import MyButton from '@/components/MyComponents/MyButton';
 import { handleJoinGroup, showToast } from '@/utils';
 import { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import NetInfo from '@react-native-community/netinfo';
 import GroupPicker from '@/components/GroupPicker';
 import NoInternetModal from '@/components/NoInternetModal';
 import { Unsubscribe, doc, onSnapshot } from 'firebase/firestore';
@@ -34,14 +33,6 @@ export default function TabGroupScreen() {
     }
   });
 
-  // THE INVITE SECTION
-  const [connectedToInternet, setConnectedToInternet] = useState(true);
-
-  const checkConnectivity = async () => {
-    const state = await NetInfo.fetch();
-    setConnectedToInternet(state?.isConnected);
-    return;
-  };
   const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
     groupInviteId?: string;
     invitedBool: string;
@@ -50,8 +41,6 @@ export default function TabGroupScreen() {
 
   useEffect(() => {
     if (invitedBool === 'true') {
-      checkConnectivity();
-
       const foundGroup = groupsOfUser?.find(
         (group) => group.id === groupInviteId
       );
@@ -169,10 +158,6 @@ export default function TabGroupScreen() {
           </View>
         )}
       </View>
-      <NoInternetModal
-        connectedToInternet={connectedToInternet}
-        setConnectedToInternet={setConnectedToInternet}
-      />
     </View>
   );
 }
