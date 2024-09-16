@@ -9,9 +9,11 @@ import {
 import React from 'react';
 import QRCode from 'react-native-qrcode-svg';
 import { myColors } from '@/theme';
+import * as Clipboard from 'expo-clipboard';
 
 import logo from '../assets/brat.jpg';
 import { Group } from '@/zustandStore';
+import { showToast } from '@/utils';
 
 interface QRCodeModalProps {
   selectedGroup?: string;
@@ -28,6 +30,11 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
   setModalVisible,
   groupsOfUser
 }) => {
+  const handleCopyLink = () => {
+    Clipboard.setStringAsync(redirectUrl);
+    showToast('Invite link copied to clipboard!', true, 'top');
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -40,10 +47,12 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
       <TouchableOpacity
         onPress={() => setModalVisible(false)}
         style={styles.modalContainer}
+        onLongPress={handleCopyLink} // Correctly pass the function here
+        activeOpacity={1}
       >
         <View style={styles.modalContent}>
           <QRCode
-            value={redirectUrl || 'https://apps.apple.com/app/id6596806156'}
+            value={redirectUrl}
             size={Platform.isPad ? 800 : 350}
             enableLinearGradient
             linearGradient={[myColors.two, myColors.four]}
