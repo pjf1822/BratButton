@@ -43,7 +43,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
       >
         <View style={styles.modalContent}>
           <QRCode
-            value={redirectUrl}
+            value={redirectUrl || 'https://apps.apple.com/app/id6596806156'}
             size={Platform.isPad ? 800 : 350}
             enableLinearGradient
             linearGradient={[myColors.two, myColors.four]}

@@ -12,11 +12,11 @@ const NoInternetModal: React.FC<NoInternetModalProps> = ({
   connectedToInternet,
   setConnectedToInternet
 }) => {
-  const handleModalClose = () => {
-    setConnectedToInternet(true);
-  };
+  // const handleModalClose = () => {
+  //   setConnectedToInternet(true);
+  // };
   return (
-    <Modal isVisible={!connectedToInternet} onBackdropPress={handleModalClose}>
+    <Modal isVisible={!connectedToInternet} onBackdropPress={() => {}}>
       <View
         style={{
           flex: 1,
@@ -30,8 +30,8 @@ const NoInternetModal: React.FC<NoInternetModalProps> = ({
         <Text
           style={{ fontSize: 18, marginBottom: 40, fontFamily: 'KalMedium' }}
         >
-          You are not connected to the internet. Please check connection and
-          rescan the QR code
+          You are not connected to the internet.Please check your connection and
+          refresh the app/rescan the QR code
         </Text>
       </View>
     </Modal>

@@ -8,9 +8,10 @@ import MyButton from '@/components/MyComponents/MyButton';
 import { handleJoinGroup, showToast } from '@/utils';
 import { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import NetInfo from '@react-native-community/netinfo';
 import GroupPicker from '@/components/GroupPicker';
 import NoInternetModal from '@/components/NoInternetModal';
+import { Unsubscribe, doc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/firebaseConfig';
 
 export default function TabGroupScreen() {
   const { groupsOfUser, selectedGroup, setSelectedGroup } = useGroupStore(
@@ -21,9 +22,8 @@ export default function TabGroupScreen() {
     })
   );
   const [modalVisible, setModalVisible] = useState(false);
-  const [connectedToInternet, setConnectedToInternet] = useState(true);
 
-  // THE REDIRECT
+  // THE REDIRECT INFO
   const redirectUrl = Linking.createURL('/groups', {
     queryParams: {
       groupInviteId: selectedGroup,
@@ -33,13 +33,6 @@ export default function TabGroupScreen() {
     }
   });
 
-  const checkConnectivity = async () => {
-    const state = await NetInfo.fetch();
-    setConnectedToInternet(state?.isConnected);
-    return;
-  };
-
-  // THE INVITE SECTION
   const { groupInviteId, invitedBool, groupInviteName } = useLocalSearchParams<{
     groupInviteId?: string;
     invitedBool: string;
@@ -48,8 +41,6 @@ export default function TabGroupScreen() {
 
   useEffect(() => {
     if (invitedBool === 'true') {
-      checkConnectivity();
-
       const foundGroup = groupsOfUser?.find(
         (group) => group.id === groupInviteId
       );
@@ -64,6 +55,31 @@ export default function TabGroupScreen() {
       router.replace('/groups');
     }
   }, [invitedBool]);
+  // END INVITE SECTION
+
+  // USE EFFECT FOR THE CLOSE MODAL
+  useEffect(() => {
+    let unsubscribe: Unsubscribe | undefined;
+
+    if (modalVisible && selectedGroup) {
+      const groupRef = doc(db, 'groups', selectedGroup);
+      let firstSnapshot = true;
+
+      unsubscribe = onSnapshot(groupRef, (snapshot) => {
+        if (firstSnapshot) {
+          firstSnapshot = false;
+        } else {
+          setModalVisible(false);
+        }
+      });
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [modalVisible]);
 
   return (
     <View style={styles.container}>
@@ -91,8 +107,8 @@ export default function TabGroupScreen() {
             : groupsOfUser?.length > 0
             ? 240
             : 280,
-          objectFit: 'contain',
-          marginTop: 40
+          objectFit: 'cover',
+          marginTop: 24
         }}
       />
 
@@ -120,7 +136,8 @@ export default function TabGroupScreen() {
                 color: myColors.four,
                 textAlign: 'center',
                 fontFamily: 'KalMedium',
-                fontSize: Platform.isPad ? 40 : 30
+                fontSize: Platform.isPad ? 40 : 30,
+                marginTop: 40
               }}
             >
               Your Groups
@@ -141,10 +158,6 @@ export default function TabGroupScreen() {
           </View>
         )}
       </View>
-      <NoInternetModal
-        connectedToInternet={connectedToInternet}
-        setConnectedToInternet={setConnectedToInternet}
-      />
     </View>
   );
 }

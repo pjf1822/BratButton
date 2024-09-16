@@ -25,10 +25,9 @@ const GroupPicker: React.FC<GroupPickerProps> = ({
       }}
       style={{
         display: selectedGroup ? 'flex' : 'none',
-        maxHeight: 100,
+        maxHeight: 80,
         justifyContent: 'center',
         overflow: 'hidden',
-        marginTop: 10,
         marginBottom: 10
       }}
     >

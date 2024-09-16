@@ -1,13 +1,14 @@
 import { fetchGroups, fetchUser } from '@/utils';
-import { useGroupStore } from '@/zustandStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import NetInfo from '@react-native-community/netinfo';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { RootSiblingParent } from 'react-native-root-siblings';
+import NoInternetModal from '@/components/NoInternetModal';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -23,6 +24,13 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [connectedToInternet, setConnectedToInternet] = useState(false);
+  const checkConnectivity = async () => {
+    const state = await NetInfo.fetch();
+    console.log(state, 'the state');
+    setConnectedToInternet(state?.isConnected);
+    return;
+  };
   const [loaded, error] = useFonts({
     KalThin: require('../assets/fonts/Kalnia-Thin.ttf'),
     KalSemiBold: require('../assets/fonts/Kalnia-SemiBold.ttf'),
@@ -40,6 +48,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
+    checkConnectivity();
 
     const fetchDataAndHideSplash = async () => {
       const user = await fetchUser();
@@ -70,6 +79,12 @@ export default function RootLayout() {
 
   return (
     <RootSiblingParent>
+      {!connectedToInternet && (
+        <NoInternetModal
+          connectedToInternet={connectedToInternet}
+          setConnectedToInternet={setConnectedToInternet}
+        />
+      )}
       <RootLayoutNav />
     </RootSiblingParent>
   );
