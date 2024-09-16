@@ -62,15 +62,14 @@ export default function TabOneScreen() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 60
+            marginBottom: 20
           }}
         >
           <View
             style={{
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 60
+              alignItems: 'center'
             }}
           >
             {selectedGroup ? (

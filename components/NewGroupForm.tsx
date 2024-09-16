@@ -10,7 +10,12 @@ const NewGroupForm: React.FC<NewGroupFormProps> = ({ setModalVisible }) => {
   const [newGroupName, setNewGroupName] = useState('');
 
   return (
-    <View style={{ width: '90%', alignSelf: 'center' }}>
+    <View
+      style={{
+        width: '90%',
+        alignSelf: 'center'
+      }}
+    >
       <Text style={styles.modalTitle}>Enter New Group Name</Text>
       <MyTextInput
         placeholder="Group Name"
