@@ -81,11 +81,11 @@ export default function TabLayout() {
             >
               <TabBarIcon
                 name="home"
-                color={focused ? myColors.one : myColors.five}
+                color={focused ? myColors.five : myColors.one}
               />
               <Text
                 style={{
-                  color: focused ? myColors.one : myColors.five,
+                  color: focused ? myColors.five : myColors.one,
                   fontSize: Platform.isPad ? 24 : 17,
                   fontFamily: 'KalMedium'
                 }}
@@ -112,11 +112,11 @@ export default function TabLayout() {
             >
               <TabBarIcon
                 name="users"
-                color={focused ? myColors.one : myColors.five}
+                color={focused ? myColors.five : myColors.one}
               />
               <Text
                 style={{
-                  color: focused ? myColors.one : myColors.five,
+                  color: focused ? myColors.five : myColors.one,
                   fontSize: Platform.isPad ? 24 : 17,
                   fontFamily: 'KalMedium'
                 }}
