@@ -72,7 +72,7 @@ const BitchButton: React.FC<BitchButtonProps> = ({
 export default BitchButton;
 
 const styles = StyleSheet.create({
-  button: {},
+  button: { marginTop: 30 },
   lottieView: {
     width: Platform.isPad ? 500 : 290,
     height: Platform.isPad ? 500 : 290

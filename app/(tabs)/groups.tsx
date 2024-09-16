@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  Image
-} from 'react-native';
+import { StyleSheet, Text, View, Platform, Image } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useGroupStore } from '@/zustandStore';
 import NewGroupForm from '@/components/NewGroupForm';
@@ -54,13 +47,6 @@ export default function TabGroupScreen() {
   }>();
 
   useEffect(() => {
-    // console.log(
-    //   invitedBool,
-    //   groupInviteId,
-    //   groupInviteName,
-    //   'the invited boolean'
-    // );
-
     if (invitedBool === 'true') {
       checkConnectivity();
 
@@ -80,7 +66,7 @@ export default function TabGroupScreen() {
   }, [invitedBool]);
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
+    <View style={styles.container}>
       <QRCodeModal
         selectedGroup={selectedGroup}
         redirectUrl={redirectUrl}
@@ -119,6 +105,7 @@ export default function TabGroupScreen() {
         }}
       >
         <NewGroupForm setModalVisible={setModalVisible} />
+        {groupsOfUser.length === 0 && <View style={{ height: 200 }}></View>}
 
         {groupsOfUser.length > 0 && (
           <View
@@ -158,7 +145,7 @@ export default function TabGroupScreen() {
         connectedToInternet={connectedToInternet}
         setConnectedToInternet={setConnectedToInternet}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 

@@ -13,8 +13,6 @@ export default function TabOneScreen() {
     userData: state.userData
   }));
 
-  // console.log('inthe index pag eis loaded');
-
   return (
     <>
       <View style={styles.container}>
@@ -64,15 +62,14 @@ export default function TabOneScreen() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 60
+            marginBottom: 20
           }}
         >
           <View
             style={{
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 60
+              alignItems: 'center'
             }}
           >
             {selectedGroup ? (
@@ -103,9 +100,9 @@ export default function TabOneScreen() {
             )}
           </View>
         </View>
-
+        {/* 
         <Button color="white" onPress={deleteUserId} title="Delete some shit" />
-        <Button color="white" onPress={viewUserData} title="View stored data" />
+        <Button color="white" onPress={viewUserData} title="View stored data" /> */}
       </View>
     </>
   );
