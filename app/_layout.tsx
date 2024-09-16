@@ -27,7 +27,6 @@ export default function RootLayout() {
   const [connectedToInternet, setConnectedToInternet] = useState(false);
   const checkConnectivity = async () => {
     const state = await NetInfo.fetch();
-    console.log(state, 'the state');
     setConnectedToInternet(state?.isConnected);
     return;
   };
